@@ -1,0 +1,365 @@
+<div><!-- template -->
+    <div id="tplPowerOutput" ng-controller="PowerOutputCtrl">
+        <div class="form-horizontal">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>Power Output</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Allow simultaneously power output</label>
+                        <div class="col-sm-8 radio">
+                            <label>
+                                <input type="radio" ng-model="AIGenConfig.Alt" value="0">Disable&nbsp;&nbsp;
+                            </label>
+                            <label>
+                                <input type="radio" ng-model="AIGenConfig.Alt" value="1">Enable
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer clearfix">
+                    <div class="pull-right">
+                        <button class="btn btn-success" ng-click="btnPowerOutputClick()"><i class="fa fa-check"></i> Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tplSiteSurvey" class="container-fluid">
+        <div ng-controller="SiteSurveyCtrl"><!-- ng-controller -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <span>
+                        <div class="tab-pane active">
+                            <div class='panel panel-default'>
+                                <div class="panel-heading">
+                                    <h3> Site Survey</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <form class='form-horizontal' name="siteSurveyForm">
+                                        <div class="col-lg-10">
+                                            <div class="form-horizontal" ng-class="{'has-error': siteSurveyForm.sendAmount.$error.required || siteSurveyForm.sendAmount.$error.min || siteSurveyForm.sendAmount.$error.max}">
+                                                <label class='col-lg-4 control-label'>Amount of network packets to send</label>
+                                                <div class='col-lg-6 radio' style="padding-top: 0px;">
+                                                    <label>
+                                                        <input ng-model="switchPacketSend" type='radio' value='1'>Amount&nbsp;
+                                                    </label>
+                                                    <label class="form-inline" style="padding-left: 10px; padding-right: 20px;">
+                                                        <input type='number' ng-model="siteSurvey.surveyPacketAmount" class='form-control' name="sendAmount" min=2 max=5000 ng-disabled="siteSurvey.surveyStatus=='start' || siteSurvey.surveyStatus=='auto'" required>
+                                                    </label>
+                                                    <label>
+														<input ng-model="switchPacketSend" type='radio' value='0' ng-disabled="!isSupportExternalFun">Continuous Log&nbsp;&nbsp;
+                                                    </label>
+                                                    <span class="descTooltip" data-toggle="tooltip" title="Continuous Logging only works within WISE Studio">
+                                                        <i class='fa fa-info-circle'></i>
+                                                    </span>
+                                                    <div ng-if="siteSurveyForm.sendAmount.$error.required || siteSurveyForm.sendAmount.$error.min || siteSurveyForm.sendAmount.$error.max" class="control-label" style="text-align: left">Amount of network packets to send must between 2 ~ 5000.</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">&nbsp;</div>
+                                            <div class='form-horizontal' ng-class="{'has-error': siteSurveyForm.ip.$error.required}">
+                                                <label class='col-lg-4 control-label'>IP or hostname</label>
+                                                <div class='col-lg-6'>
+                                                    <input ng-model="siteConfig.IP" type='text' class='form-control' name="ip" maxlength="63" required>
+                                                    <div ng-if="siteSurveyForm.ip.$error.required" class="control-label" style="text-align: left">IP or hostname is required.</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">&nbsp;</div>
+                                            <div class='form-horizontal' ng-class="{'has-error': siteSurveyForm.port.$error.required}">
+                                                <label class='col-lg-4 control-label'>Port Number</label>
+                                                <div class='col-lg-6'>
+                                                    <input ng-model="siteConfig.PWeb" type='number' class='form-control' name="port" max='65535' min='1' required>
+                                                    <div ng-if="siteSurveyForm.port.$error.required" class="control-label" style="text-align: left">Port Number is required.</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">&nbsp;</div>
+                                            <div class='form-horizontal'>
+                                                <label class='col-lg-4 control-label'>Protocol</label>
+                                                <div class='col-lg-6 radio'>
+                                                    <label>
+														<input ng-model="siteConfig.Md" type='radio' value='1'>TCP&nbsp;&nbsp;
+													</label>
+													<label>
+														<input ng-model="siteConfig.Md" type='radio' value='2'>UDP
+													</label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">&nbsp;</div>
+                                            <div class='form-horizontal' ng-class="{'has-error': siteSurveyForm.txLength.$error.required || siteSurveyForm.txLength.$error.min || siteSurveyForm.txLength.$error.max}">
+                                                <label class='col-lg-4 control-label'>Transmission Packet Length</label>
+                                                <div class='col-lg-6'>
+                                                    <div class="input-group">
+                                                        <input ng-model="siteConfig.PubQ" type='number' class='form-control' name="txLength" max='2000' min='32' required>
+                                                        <div class="input-group-addon">byte</div>
+                                                    </div>
+                                                    <div ng-if="siteSurveyForm.txLength.$error.required || siteSurveyForm.txLength.$error.min || siteSurveyForm.txLength.$error.max" class="control-label" style="text-align: left">Transmission Packet Length must between 32 ~ 2000.</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">&nbsp;</div>
+                                            <div class='form-horizontal' ng-class="{'has-error': siteSurveyForm.rxLength.$error.required || siteSurveyForm.rxLength.$error.min || siteSurveyForm.rxLength.$error.max}">
+                                                <label class='col-lg-4 control-label'>Receive Packet Length</label>
+                                                <div class='col-lg-6'>
+                                                    <div class="input-group">
+                                                        <input ng-model="siteConfig.SubQ" type='number' class='form-control' name="rxLength" max='1000' min='32' required>
+                                                        <div class="input-group-addon">byte</div>
+                                                    </div>
+                                                    <div ng-if="siteSurveyForm.rxLength.$error.required || siteSurveyForm.rxLength.$error.min || siteSurveyForm.rxLength.$error.max" class="control-label" style="text-align: left">Receive Packet Length must between 32 ~ 1000.</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">&nbsp;</div>
+                                            <div class='form-horizontal' ng-class="{'has-error': siteSurveyForm.timeout.$error.required || siteSurveyForm.timeout.$error.min || siteSurveyForm.timeout.$error.max}">
+                                                <label class='col-lg-4 control-label'>Timeout</label>
+                                                <div class='col-lg-6'>
+                                                    <div class="input-group">
+                                                        <input ng-model="siteConfig.Tm" type='number' class='form-control' name="timeout" max='60' min='10' required>
+                                                        <div class="input-group-addon">sec</div>
+                                                    </div>
+                                                    <div ng-if="siteSurveyForm.timeout.$error.required || siteSurveyForm.timeout.$error.min || siteSurveyForm.timeout.$error.max" class="control-label" style="text-align: left">Timeout must between 10 ~ 60.</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">&nbsp;</div>
+                                            <div class="form-horizontal">
+                                                <label class='col-lg-4 control-label'></label>
+                                                <div class='col-lg-6'>
+                                                    <div class="row">
+                                                        <div class='col-lg-2'>
+                                                            <button  class='btn btn-success' ng-show="siteSurvey.surveyStatus=='stop'" ng-click="btnSiteSurveyClick(1)" ng-disabled="siteSurveyForm.$error.required || !siteSurveyForm.$valid">
+                                                                <i class="fa fa-check"></i> Start
+                                                            </button>
+                                                            <button  class='btn btn-warning' ng-show="siteSurvey.surveyStatus=='start' || siteSurvey.surveyStatus=='auto'" ng-disabled="cancelButtonDisable" ng-click="btnSiteSurveyClick(0)">
+                                                                <i class="fa fa-check"></i> Cancel
+                                                            </button>
+                                                        </div>
+                                                        <div class='col-lg-2'>
+                                                            <button  class='btn btn-primary' ng-show="siteSurvey.surveyStatus=='stop'" ng-click="btnAutoSiteSurveyClick()" ng-disabled="switchPacketSend === '0' || siteSurveyForm.$error.required || !siteSurveyForm.$valid">
+                                                                <i class="fa fa-check"></i> Auto Test Packet Length
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">&nbsp;</div>
+                                            <div class="form-group" ng-if="siteSurvey.bBtnClicked">
+                                                <label class='col-lg-4 control-label'>Sending Packet: #{{siteSurvey.currentPacketSend}}</label>
+                                            </div>
+                                            <div class="form-group" ng-if="siteSurvey.bBtnClicked">
+                                                <label class='col-lg-4 control-label'>Success Packets: {{siteSurvey.successPacketCount}}</label>
+                                            </div>
+                                            <div class="form-group" ng-if="siteSurvey.bBtnClicked">
+                                                <label class='col-lg-4 control-label'>Failed Packets: {{siteSurvey.failedPacketCount}}</label>
+                                            </div>
+                                            <div class="form-group" ng-if="siteSurvey.bBtnClicked">
+                                                <label class='col-lg-2 control-label'></label>
+                                                <div class='col-lg-10'>
+                                                        <div class='panel panel-warning' style="text-align:center;">
+                                                            <div class="panel-heading">
+                                                                <h4> Packet Error Rate</h4>
+                                                            </div>
+                                                            <div class="panel-body">
+                                                                <h3>{{siteSurvey.packetErrorRate}} </h3>
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" ng-if="siteSurvey.bBtnClicked">
+                                                <label class='col-lg-2 control-label'></label>
+                                                <div class='col-lg-10'>
+                                                    <div class="panel panel-info">
+                                                        <!-- Default panel contents -->
+                                                        <div class="panel-heading" style="text-align:center;">
+                                                            RSRP (dBm)
+                                                        </div>
+                                                        <table class="table" style="table-layout:fixed;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="text-center">Max: {{siteSurvey.maxRssi}}</th>
+                                                                    <th class="text-center">Min: {{siteSurvey.minRssi}}</th>
+                                                                    <th class="text-center">Average: {{siteSurvey.avgRssi}}</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" ng-if="siteSurvey.bBtnClicked">
+                                                <label class='col-lg-2 control-label'></label>
+                                                <div class='col-lg-10'>
+                                                    <div class="panel panel-success">
+                                                        <div class="panel-heading" style="text-align:center;">
+                                                            Response Time (millisecond)
+                                                        </div>
+                                                        <table class="table" style="table-layout:fixed;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="text-center">Max: {{siteSurvey.maxTm}}</th>
+                                                                    <th class="text-center">Average: {{siteSurvey.avgTm}}</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" ng-if="siteSurvey.bBtnClicked && hasErr">
+                                                <label class='col-lg-2 control-label'></label>
+                                                <div class='col-lg-10'>
+                                                    <div class="panel panel-danger">
+                                                        <div class="panel-heading" style="text-align:center;">
+                                                            Fail Status
+                                                        </div>
+                                                        <table id="failStatusTable" class="table" style="table-layout:fixed;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="text-center" ng-style="siteSurvey.totalNoAck > 0 && {color:'#d9534f'}">No Ack: {{siteSurvey.totalNoAck}}</th>
+                                                                    <th class="text-center" ng-style="siteSurvey.totalATError > 0 && {color:'#d9534f'}">AT Error: {{siteSurvey.totalATError}}</th>
+                                                                    <th class="text-center" ng-style="siteSurvey.totalCMSError > 0 && {color:'#d9534f'}">CMS Error: {{siteSurvey.totalCMSError}}</th>
+                                                                    <th class="text-center" ng-style="siteSurvey.totalCMEError > 0 && {color:'#d9534f'}">CME Error: {{siteSurvey.totalCMEError}}</th>
+                                                                    <th class="text-center" ng-style="siteSurvey.totalSocketError > 0 && {color:'#d9534f'}">Socket Error: {{siteSurvey.totalSocketError}}</th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th class="text-center" ng-style="siteSurvey.totalTxErrorByte > 0 && {color:'#d9534f'}" style="border: 0;">Tx Error Byte(s) In Packet: {{siteSurvey.totalTxErrorByte}}</th>
+                                                                    <th class="text-center" ng-style="siteSurvey.totalRxErrorByte > 0 && {color:'#d9534f'}" style="border: 0;">Rx Error Byte(s) In Packet: {{siteSurvey.totalRxErrorByte}}</th>
+                                                                    <th class="text-center" ng-style="siteSurvey.totalWrongServerVersion > 0 && {color:'#d9534f'}" style="border: 0;">Wrong Server Version: {{siteSurvey.totalWrongServerVersion}}</th>
+                                                                    <th class="text-center" ng-style="siteSurvey.totalOtherError > 0 && {color:'#d9534f'}" style="border: 0;">Other Error: {{siteSurvey.totalOtherError}}</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" ng-show="sendList.length > 0">
+                                                <label class='col-lg-2 control-label'></label>
+                                                <div class='col-lg-10' style="height:300px; overflow:auto;">
+                                                    <table class="table table-responsive table-hover" style="table-layout:fixed;">
+                                                        <thead>
+                                                            <tr style="background-color:#f7f7f7;">
+                                                                <th class="text-center">#</th>
+                                                                <th class="text-center">Transmission Packet Length</th>
+                                                                <th class="text-center">Result</th>
+                                                                <th class="text-center">RSRP (dBm)</th>
+                                                                <th class="text-center">Response Time (millisecond)</th>
+                                                                <th class="text-center" ng-show="hasErr">Fail Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="item in sendList" ng-style="{{item.textColor}}">
+                                                                <td class="text-center">{{item.SEn}}</td>
+                                                                <td class="text-center">{{item.PubQ}}</td>
+                                                                <td class="text-center">{{item.Stat == 1 ? 'Success' : 'Failed'}}</td>
+                                                                <td class="text-center">{{item.Rssi}}</td>
+                                                                <td class="text-center">{{item.Tm}}</td>
+                                                                <td class="text-center" ng-show="hasErr">{{item.Err}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="form-horizontal">
+                                                <label class='col-lg-4 control-label'></label>
+                                                <div ng-show="isShowDownload" class='col-lg-2 text-right'>
+                                                    <a ng-if="isSupDownloadAttr" href="data:{{CSVData}}" download="data.csv" class="btn btn-info descTooltip" data-toggle="tooltip" data-html="true"
+                                                        title="
+                                                        Fail Status Mapping:<br/>
+                                                        0: No Ack<br/>
+                                                        1: AT error<br/>
+                                                        2: Rx error byte(s) in packet<br/>
+                                                        3: CMS error<br/>
+                                                        4: CME error<br/>
+                                                        5: Socket error<br/>
+                                                        6: Other error<br/>
+                                                        7: Tx error byte(s) in packet<br/>
+                                                        8: Wrong server version<br/>
+                                                        Error Code: AT command error code">
+                                                        <i class="fa fa-download"></i> Save
+                                                    </a>
+                                                    <button ng-if="!isSupDownloadAttr" ng-click="btnSaveDataClick()" class="btn btn-info descTooltip" data-toggle="tooltip" data-html="true"
+                                                        title="
+                                                        Fail Status Mapping:<br/>
+                                                        0: No Ack<br/>
+                                                        1: AT error<br/>
+                                                        2: Rx error byte(s) in packet<br/>
+                                                        3: CMS error<br/>
+                                                        4: CME error<br/>
+                                                        5: Socket error<br/>
+                                                        6: Other error<br/>
+                                                        7: Tx error byte(s) in packet<br/>
+                                                        8: Wrong server version<br/>
+                                                        Error Code: AT command error code">
+                                                        <i class="fa fa-download"></i> Save
+                                                    </button>
+                                                </div>
+                                                <div class='col-lg-6'>
+                                                    <button  class='btn btn-danger' ng-click="btnLeaveSiteSurveyClick()" ng-disabled="siteSurvey.surveyStatus=='start' || siteSurvey.surveyStatus=='auto'">
+                                                        <i class="fa fa-check"></i> Leave Site Survey Mode
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </span>
+                </div>
+            </div><!-- row -->
+        </div>
+    </div>
+    <div id="tplFWUpgrade" class="container-fluid">
+        <div ng-controller="pagesCtrl"><!-- ng-controller -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="tab-pane active" id="tabFwConfig" ng-show="pageContent == 'fwUpgrade'"> <!-- use ng-show instead of ng-if for rendering of FileUpgradePanel -->
+                        <div class='panel panel-danger' id='panelFileUpgrade'>
+                            <div class="panel-heading">
+                                <!-- <h3> Firmware Upload</h3> -->
+                                <h3> Error </h3>
+                                <h4>
+									{{errorDescription}}
+									<div ng-show="ioBoardEvent === 0" ng-click="onReloadClick()" class="btn btn-danger btn-label-left btn-sm"><span><i class="fa fa-reply"></i></span> Reload</div>
+								</h4>
+                            </div>
+                            <div class="panel-body">
+                                <div class="col-lg-10">
+                                    <form class="form-horizontal">
+                                        <div class="form-group" ng-if="descStr.length > 0">
+                                            <label class="col-lg-4 control-label">Firmware Description</label>
+                                            <div class="col-lg-8">
+                                                <input type="text" ng-model="descStr" class="form-control" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-lg-4 control-label"> Firmware Upload</label>
+                                            <div class="col-lg-8">
+                                                <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                                                    <div class="form-control" data-trigger="fileinput">
+                                                        <i class="fa fa-fw fa-file-text fileinput-exists"></i><span class="fileinput-filename"></span>
+                                                    </div>
+                                                    <span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new"><i class="fa fa-fw fa-folder-open"></i></span><span class="fileinput-exists"><i class="fa fa-fw fa-folder-open"></i></span>
+                                                        <input type="file" data-toggle="tooltip" data-title="Choose Firmware File" id='inpFirmware' accept=".bin">
+                                                    </span>
+                                                    <a data-toggle="tooltip" title="Cancel" href="#btnFirmware" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput" data-original-title title><i class="fa fa-fw fa-times"></i></a>
+                                                    <a data-toggle="tooltip" title="Upload Firmware" class="input-group-addon btn btn-default fileinput-submit" id="btnFirmware"><i class="fa fa-fw fa-download"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">&nbsp;</div>
+                                        <!-- <div class="form-group">
+                                            <div class="col-lg-4">
+                                                &nbsp;
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <button class='btn btn-danger' ng-click="btnLeaveFwUploadClick()">
+                                                    <i class='fa fa-fw fa-power-off'></i> Leave Firmware Upload Mode
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                    </form><!--form-horizontal-->
+                                </div><!-- col-lg-10 -->
+                            </div><!-- panel-body -->
+                        </div><!-- panel -->
+                    </div><!-- tab-pane -->
+                </div>
+            </div><!-- row -->
+        </div><!-- ng-controller -->
+    </div>
+</div><!-- template -->

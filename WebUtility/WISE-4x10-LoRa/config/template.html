@@ -1,0 +1,1148 @@
+<div><!-- template -->
+    <div id="tplPowerOutput" ng-controller="PowerOutputCtrl">
+        <div class="form-horizontal">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>Power Output</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Allow simultaneously power output</label>
+                        <div class="col-sm-8 radio">
+                            <label>
+                                <input type="radio" ng-model="AIGenConfig.Alt" value="0">Disable&nbsp;&nbsp;
+                            </label>
+                            <label>
+                                <input type="radio" ng-model="AIGenConfig.Alt" value="1">Enable
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer clearfix">
+                    <div class="pull-right">
+                        <button class="btn btn-success" ng-click="btnPowerOutputClick()"><i class="fa fa-check"></i> Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tplSiteSurvey" class="container-fluid">
+        <style>
+            #siteSurveyFailStatus .tooltip-inner {
+                text-align: left;
+                max-width: 410px;
+            }
+            #siteSurveyExport .tooltip-inner {
+                text-align: left;
+                min-width: 450px;
+            }
+        </style>
+        <div ng-controller="SiteSurveyCtrl"><!-- ng-controller -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <span ng-if="pageContent =='survey'" >
+                        <div class="tab-pane active">
+                            <div class='panel panel-default'>
+                                <div class="panel-heading">
+                                    <h3> Site Survey</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <form class='form-horizontal' name="siteSurveyForm">
+                                        <div class="col-lg-10">
+                                            <div class="form-group" ng-if="siteSurvey.LoRaStatus !== 0">
+                                                <label class='col-lg-2 control-label'></label>
+                                                <div class='col-lg-10'>
+                                                    <div class='panel panel-primary' style="text-align:center;">
+                                                        <div class="panel-heading">
+                                                            <h4>LoRa Status</h4>
+                                                        </div>
+                                                        <div class="panel-body">
+                                                            <h3>{{siteSurvey.LoRaStatusMap[siteSurvey.LoRaStatus]}}</h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-horizontal" ng-if="siteSurvey.LoRaStatus === 0">
+                                                <label class='col-lg-4 control-label'>Amount of network packets to send</label>
+                                                <div class='col-lg-6'>
+                                                    <input type='number' ng-model="siteSurvey.surveyPacketAmount" class='form-control' min=2 max=5000 ng-disabled="siteSurvey.surveyStatus=='start'" required>
+                                                </div>
+                                            </div>
+                                            <div ng-if="siteSurvey.SizeOfPacket != undefined" class="form-group">&nbsp;</div>
+                                            <div ng-if="siteSurvey.SizeOfPacket != undefined && siteSurvey.LoRaStatus === 0" class='form-horizontal' ng-if="siteSurvey.LoRaStatus === 0">
+                                                <label class='col-lg-4 control-label'>Size of packet</label>
+                                                <div class='col-lg-6 radio'>
+                                                    <label>
+                                                        <input ng-model="siteSurvey.SizeOfPacket" type='radio' value='0'>Minimum packet size&nbsp;&nbsp;
+                                                    </label>
+                                                    <label>
+                                                        <input ng-model="siteSurvey.SizeOfPacket" type='radio' value='1'>Current data size
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">&nbsp;</div>
+                                            <div class="form-horizontal" ng-if="siteSurvey.LoRaStatus === 0">
+                                                <label class="col-lg-4 control-label">Retry</label>
+                                                <div class="col-lg-6" style="padding-top: 7px;">
+                                                    <input type="checkbox" ng-model="siteSurvey.numberOfRetries" ng-true-value="3" ng-false-value="0" ng-checked="siteSurvey.numberOfRetries == 3" id="retry">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">&nbsp;</div>
+                                            <div class="form-horizontal" ng-if="siteSurvey.LoRaStatus === 0">
+                                                <label class='col-lg-4 control-label'></label>
+                                                <div class='col-lg-6'>
+                                                    <button  class='btn btn-success' ng-show="siteSurvey.surveyStatus=='stop'" ng-click="btnSiteSurveyClick(1)" ng-disabled="siteSurveyForm.$error.required || !siteSurveyForm.$valid">
+                                                        <i class="fa fa-check"></i> Start
+                                                    </button>
+                                                    <button  class='btn btn-warning' ng-show="siteSurvey.surveyStatus=='start'" ng-click="btnSiteSurveyClick(0)">
+                                                        <i class="fa fa-check"></i> Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">&nbsp;</div>
+                                            <div class="form-group" ng-if="siteSurvey.bBtnClicked">
+                                                <label class='col-lg-4 control-label'>Sending Packet: #{{siteSurvey.currentPacketSend}}</label>
+                                            </div>
+                                            <div class="form-group" ng-if="siteSurvey.bBtnClicked">
+                                                <label class='col-lg-4 control-label'>Success Packets: {{siteSurvey.successPacketCount}}</label>
+                                            </div>
+                                            <div class="form-group" ng-if="siteSurvey.bBtnClicked">
+                                                <label class='col-lg-4 control-label'>Failed Packets: {{siteSurvey.failedPacketCount}}</label>
+                                            </div>
+                                            <div class="form-group" ng-if="siteSurvey.bBtnClicked">
+                                                <label class='col-lg-2 control-label'></label>
+                                                <div class='col-lg-10'>
+                                                        <div class='panel panel-warning' style="text-align:center;">
+                                                            <div class="panel-heading">
+                                                                <h4> Packet Error Rate</h4>
+                                                            </div>
+                                                            <div class="panel-body">
+                                                                <h3>{{siteSurvey.packetErrorRate}} </h3>
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" ng-if="siteSurvey.bBtnClicked && siteSurvey.SizeOfPacket != undefined">
+                                                <label class='col-lg-2 control-label'></label>
+                                                <div class='col-lg-10'>
+                                                    <div class="panel panel-info">
+                                                        <!-- Default panel contents -->
+                                                        <div class="panel-heading" style="text-align:center;">
+                                                            RSSI
+                                                        </div>
+                                                        <table class="table" style="table-layout:fixed;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="text-center">Max: {{siteSurvey.maxRssi}}</th>
+                                                                    <th class="text-center">Min: {{siteSurvey.minRssi}}</th>
+                                                                    <th class="text-center">Average: {{siteSurvey.avgRssi}}</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" ng-if="siteSurvey.bBtnClicked && siteSurvey.SizeOfPacket != undefined">
+                                                <label class='col-lg-2 control-label'></label>
+                                                <div class='col-lg-10'>
+                                                    <div class="panel panel-success">
+                                                        <!-- Default panel contents -->
+                                                        <div class="panel-heading" style="text-align:center;">
+                                                            SNR
+                                                        </div>
+                                                        <table class="table" style="table-layout:fixed;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="text-center">Max: {{siteSurvey.maxSnr}}</th>
+                                                                    <th class="text-center">Min: {{siteSurvey.minSnr}}</th>
+                                                                    <th class="text-center">Average: {{siteSurvey.avgSnr}}</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="form-group" ng-if="siteSurvey.bBtnClicked && hasTmOrErr">
+                                                <label class='col-lg-2 control-label'></label>
+                                                <div class='col-lg-10'>
+                                                    <div class="panel panel-success">
+                                                        <div class="panel-heading" style="text-align:center;">
+                                                            Backoff Number
+                                                        </div>
+                                                        <table class="table" style="table-layout:fixed;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="text-center">Max: {{siteSurvey.maxBackoffNumber}}</th>
+                                                                    <th class="text-center">Min: {{siteSurvey.minBackoffNumber}}</th>
+                                                                    <th class="text-center">Average: {{siteSurvey.avgBackoffNumber}}</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>-->
+                                            <div class="form-group" ng-if="siteSurvey.bBtnClicked">
+                                                <label class='col-lg-2 control-label'></label>
+                                                <div class='col-lg-10'>
+                                                    <div class="panel panel-danger">
+                                                        <div class="panel-heading" style="text-align:center;">
+                                                            Fail Status
+                                                        </div>
+                                                        <table class="table" style="table-layout:fixed;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="text-center">No Ack: {{siteSurvey.totalNoAck}}</th>
+                                                                    <!-- <th class="text-center">Channel Busy: {{siteSurvey.totalChannelBusy}}</th> -->
+                                                                    <th class="text-center">Other Error: {{siteSurvey.totalChannelBusy}}</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" ng-if="sendList.length > 0">
+                                                <label class='col-lg-2 control-label'></label>
+                                                <div class='col-lg-10' style="height:300px; overflow:auto;">
+                                                    <table class="table table-responsive table-hover" style="table-layout:fixed;">
+                                                        <thead>
+                                                            <tr style="background-color:#f7f7f7;">
+                                                                <th class="text-center">#</th>
+                                                                <th class="text-center">Result</th>
+                                                                <th class="text-center">Total Segmental Packets</th>
+                                                                <th class="text-center">Success Segmental Packets</th>
+                                                                <th class="text-center">RSSI</th>
+                                                                <th class="text-center">SNR</th>
+                                                                <th class="text-center">Fail Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="item in sendList" ng-style="{{item.textColor}}">
+                                                                <td class="text-center">{{item.SEn}}</td>
+                                                                <td class="text-center">{{item.Stat}}</td>
+                                                                <td class="text-center">{{item.Total}}</td>
+                                                                <td class="text-center">{{item.Nm}}</td>
+                                                                <td class="text-center">{{item.Rssi}}</td>
+                                                                <td class="text-center">{{item.Sn}}</td>
+                                                                <td id="siteSurveyFailStatus" class="text-center">
+                                                                    <div class="siteSurveyTooltip" style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;" data-toggle="tooltip" data-placement="left" data-original-title="{{item.Err}}">{{item.Err}}</div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="form-horizontal">
+                                                <label class='col-lg-4 control-label'></label>
+                                                <div ng-show="isShowDownload" class='col-lg-2 text-right' id="siteSurveyExport">
+                                                    <a ng-if="isSupDownloadAttr" href="data:{{CSVData}}" download="data.csv" class="btn btn-info siteSurveyTooltip" data-toggle="tooltip" data-html="true"
+                                                        title="
+                                                        Fail Status Mapping:<br/>
+														3: Site Survey Not EnabledK<br/>
+														2: LoRaWAN Initialization Error<br/>
+														1: LoRa TX Timeout<br/>
+                                                        0: No ACK<br/>
+                                                        -1000: LoRaWAN Busy<br/>
+                                                        -1001: LoRaWAN would block<br/>
+                                                        -1002: Service unknown<br/>
+                                                        -1003: Invalid parameter<br/>
+                                                        -1004: Invalid frequency<br/>
+                                                        -1005: Invalid data rate<br/>
+                                                        -1006: Invalid frequency and data rate<br/>
+                                                        -1009: The device is not in a LoRaWAN<br/>
+                                                        -1010: Payload length error<br/>
+                                                        -1011: The device is switched off<br/>
+                                                        -1012: Stack not initialized<br/>
+                                                        -1013: Service not supported<br/>
+                                                        -1014: Crypto failure<br/>
+                                                        -1015: Invalid port<br/>
+                                                        -1016: Connection in progress<br/>
+                                                        -1017: No active session<br/>
+                                                        -1018: Idle at the moment<br/>
+                                                        -1019: Cannot perform requested operation<br/>
+                                                        -1020: Transmission will continue after duty cycle back-off<br/>
+                                                        -1021: None of the channels is enabled at the moment<br/>
+                                                        -1022: None of the enabled channels is ready for another TX (duty cycle limited)<br/>
+                                                        -1023: Meta-data after an RX or TX is stale<br/>
+                                                        -1024: The device has already joined a network">
+                                                        <i class="fa fa-download"></i> Save
+                                                    </a>
+                                                    <button ng-if="!isSupDownloadAttr" ng-click="btnSaveDataClick()" class="btn btn-info siteSurveyTooltip" data-toggle="tooltip" data-html="true"
+                                                        title="
+                                                        Fail Status Mapping:<br/>
+                                                        0: No ACK<br/>
+                                                        -1000: LoRaWAN Busy<br/>
+                                                        -1001: LoRaWAN would block<br/>
+                                                        -1002: Service unknown<br/>
+                                                        -1003: Invalid parameter<br/>
+                                                        -1004: Invalid frequency<br/>
+                                                        -1005: Invalid data rate<br/>
+                                                        -1006: Invalid frequency and data rate<br/>
+                                                        -1009: The device is not in a LoRaWAN<br/>
+                                                        -1010: Payload length error<br/>
+                                                        -1011: The device is switched off<br/>
+                                                        -1012: Stack not initialized<br/>
+                                                        -1013: Service not supported<br/>
+                                                        -1014: Crypto failure<br/>
+                                                        -1015: Invalid port<br/>
+                                                        -1016: Connection in progress<br/>
+                                                        -1017: No active session<br/>
+                                                        -1018: Idle at the moment<br/>
+                                                        -1019: Cannot perform requested operation<br/>
+                                                        -1020: Transmission will continue after duty cycle back-off<br/>
+                                                        -1021: None of the channels is enabled at the moment<br/>
+                                                        -1022: None of the enabled channels is ready for another TX (duty cycle limited)<br/>
+                                                        -1023: Meta-data after an RX or TX is stale<br/>
+                                                        -1024: The device has already joined a network">
+                                                        <i class="fa fa-download"></i> Save
+                                                    </button>
+                                                </div>
+                                                <div class='col-lg-6'>
+                                                    <button  class='btn btn-danger' ng-click="btnLeaveSiteSurveyClick()" ng-disabled="siteSurvey.surveyStatus=='start'">
+                                                        <i class="fa fa-check"></i> Leave Site Survey Mode
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </span>
+                    <span ng-if="pageContent =='apPacketStatus'">
+                        <div class="tab-pane active">
+                            <div class='panel panel-default'>
+                                <div class="panel-heading">
+                                    <h3> Received Packet Status</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover table-striped table-responsive" style="margin-bottom: 5px">
+                                            <thead>
+                                                <tr>
+                                                    <th>MAC Address</th>
+                                                    <th>Total Packets</th>
+                                                    <th>Receive Packets</th>
+                                                    <th>Average RSSI</th>
+                                                    <th>Max RSSI</th>
+                                                    <th>Min RSSI</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="item in moduleList">
+                                                    <td>
+                                                        {{item.SLs}}
+                                                    </td>
+                                                    <td>
+                                                        {{item.Tm}}
+                                                    </td>
+                                                    <td>
+                                                        {{item.RT}}
+                                                    </td>
+                                                    <td>
+                                                        {{item.RA}}
+                                                    </td>
+                                                    <td>
+                                                        {{item.RH}}
+                                                    </td>
+                                                    <td>
+                                                        {{item.RL}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </span>
+                </div>
+            </div><!-- row -->
+        </div>
+    </div>
+    <div id="tplFWUpgrade" class="container-fluid">
+        <div ng-controller="pagesCtrl"><!-- ng-controller -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="tab-pane active" id="tabFwConfig" ng-show="pageContent == 'fwUpgrade'"> <!-- use ng-show instead of ng-if for rendering of FileUpgradePanel -->
+                        <div class='panel panel-danger' id='panelFileUpgrade'>
+                            <div class="panel-heading">
+                                <!-- <h3> Firmware Upload</h3> -->
+                                <h3> Error </h3>
+								<h4>
+									{{errorDescription}}
+									<div ng-show="ioBoardEvent === 0" ng-click="onReloadClick()" class="btn btn-danger btn-label-left btn-sm"><span><i class="fa fa-reply"></i></span> Reload</div>
+								</h4>
+                            </div>
+                            <div class="panel-body">
+                                <div class="col-lg-10">
+                                    <form class="form-horizontal">
+                                        <div class="form-group" ng-if="descStr.length > 0">
+                                            <label class="col-lg-4 control-label">Firmware Description</label>
+                                            <div class="col-lg-8">
+                                                <input type="text" ng-model="descStr" class="form-control" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-lg-4 control-label"> Firmware Upload</label>
+                                            <div class="col-lg-8">
+                                                <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                                                    <div class="form-control" data-trigger="fileinput">
+                                                        <i class="fa fa-fw fa-file-text fileinput-exists"></i><span class="fileinput-filename"></span>
+                                                    </div>
+                                                    <span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new"><i class="fa fa-fw fa-folder-open"></i></span><span class="fileinput-exists"><i class="fa fa-fw fa-folder-open"></i></span>
+                                                        <input type="file" data-toggle="tooltip" data-title="Choose Firmware File" id='inpFirmware' accept=".bin">
+                                                    </span>
+                                                    <a data-toggle="tooltip" title="Cancel" href="#btnFirmware" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput" data-original-title title><i class="fa fa-fw fa-times"></i></a>
+                                                    <a data-toggle="tooltip" title="Upload Firmware" class="input-group-addon btn btn-default fileinput-submit" id="btnFirmware"><i class="fa fa-fw fa-download"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">&nbsp;</div>
+                                        <!-- <div class="form-group">
+                                            <div class="col-lg-4">
+                                                &nbsp;
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <button class='btn btn-danger' ng-click="btnLeaveFwUploadClick()">
+                                                    <i class='fa fa-fw fa-power-off'></i> Leave Firmware Upload Mode
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                    </form><!--form-horizontal-->
+                                </div><!-- col-lg-10 -->
+                            </div><!-- panel-body -->
+                        </div><!-- panel -->
+                    </div><!-- tab-pane -->
+                </div>
+            </div><!-- row -->
+        </div><!-- ng-controller -->
+    </div>
+    <div id="tplStackLight" ng-controller="StackLightCtrl">
+		<style>
+			#tplStackLight .btnReset {
+				color: #428BCA;
+			}
+			#tplStackLight .btnReset:hover {
+				color: #3071A9;
+			}
+			#tplStackLight .btnReset:active {
+				outline: thin dotted;
+				outline: 5px auto -webkit-focus-ring-color;
+			}
+		</style>
+        <ul class="nav nav-tabs nav-justified" role="tablist">
+			<li ng-class="{'active': activeTab === 'status'}">
+		        <a href data-toggle="tab" ng-click="switchTabTo('status')">Status</a>
+		    </li>
+		    <li ng-class="{'active': activeTab === 'config'}">
+		        <a href data-toggle="tab" ng-click="switchTabTo('config')">Configuration</a>
+			</li>
+			<li ng-class="{'active': activeTab === 'quickConfig'}">
+		        <a href data-toggle="tab" ng-click="switchTabTo('quickConfig')">Quick Configuration</a>
+		    </li>
+		</ul>
+        <div class="tab-content">
+            <div ng-show="activeTab == 'status'" class="tab-pane active">
+                <div class='panel panel-default'>
+					<div class='panel-heading'>
+						<h4>Status</h4>
+					</div>
+					<div class='panel-body'>
+						<div ng-if="true" class="form-group">
+							<div style="display: inline-block; width: 100px; text-align: center;">
+								<div>
+									<div style="width: 40px; height: 40px; background-color: #428BCA; border-radius: 50%; margin-left: 30px;"></div>
+								</div>
+								<div>Light</div>
+							</div>
+							<div style="display: inline-block; width: 100px; text-align: center;">
+								<div>
+									<div style="width: 40px; height: 40px; background-color: #8E8E8E; border-radius: 50%; margin-left: 30px;"></div>
+								</div>
+								<div>Dark</div>
+							</div>
+							<div style="display: inline-block; width: 100px; text-align: center;">
+								<div>
+									<div style="width: 40px; height: 40px; border-radius: 50%; border: 3px #428BCA solid; margin-left: 30px;"></div>
+								</div>
+								<div>Fast Blink</div>
+							</div>
+							<div style="display: inline-block; width: 100px; text-align: center;">
+								<div>
+									<div style="width: 20px; height: 40px; background-color: #428BCA; border-radius: 50%; border-radius: 80px 0 0 80px; margin-left: 30px;"></div>
+								</div>
+								<div>Slow Blink</div>
+							</div>
+						</div>
+						<div ng-if="false" class="form-group">
+							<div class="row">
+								<div class="col-lg-2 col-xs-6">
+									<div class="input-group">
+										<span class="input-group-addon" style="cursor: pointer;" ng-click="changeColumnDisplay('light', $event)">
+											<input style="cursor: pointer;" type="checkbox" ng-model="columnDisplay['light']" ng-click="changeColumnDisplay('light', $event)">
+										</span>
+										<input type="text" class="form-control" value="Light" readonly>
+									</div><!-- /input-group -->
+								</div>
+								<div class="col-lg-2 col-xs-6">
+									<div class="input-group">
+										<span class="input-group-addon" style="cursor: pointer;" ng-click="changeColumnDisplay('dark', $event)">
+											<input style="cursor: pointer;" type="checkbox" ng-model="columnDisplay['dark']" ng-click="changeColumnDisplay('dark', $event)">
+										</span>
+										<input type="text" class="form-control" value="Dark" readonly>
+									</div><!-- /input-group -->
+								</div>
+								<div class="col-lg-2 col-xs-6">
+									<div class="input-group">
+										<span class="input-group-addon" style="cursor: pointer;" ng-click="changeColumnDisplay('fastBlink', $event)">
+											<input style="cursor: pointer;" type="checkbox" ng-model="columnDisplay['fastBlink']" ng-click="changeColumnDisplay('fastBlink', $event)">
+										</span>
+										<input type="text" class="form-control" value="Fast Blink" readonly>
+									</div><!-- /input-group -->
+								</div>
+								<div class="col-lg-2 col-xs-6">
+									<div class="input-group">
+										<span class="input-group-addon" style="cursor: pointer;" ng-click="changeColumnDisplay('slowBlink', $event)">
+											<input style="cursor: pointer;" type="checkbox" ng-model="columnDisplay['slowBlink']" ng-click="changeColumnDisplay('slowBlink', $event)">
+										</span>
+										<input type="text" class="form-control" value="Slow Blink" readonly>
+									</div><!-- /input-group -->
+								</div>
+							</div><!-- /.row -->
+						</div><!-- /.form-group-->
+						<div ng-if="false" class="form-group">
+							<div class="row">
+								<div class="col-lg-1">
+									<div class="dropdown">
+										<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+											Display
+											<span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu">
+											<li ng-click="changeColumnDisplay('light', $event)">
+												<a href="javascript:void(0);"><span ng-if="columnDisplay['light']"><i class="fa fa-check"></i>&nbsp;</span>Light</a>
+											</li>
+											<li ng-click="changeColumnDisplay('dark', $event)">
+												<a href="javascript:void(0);"><span ng-if="columnDisplay['dark']"><i class="fa fa-check"></i>&nbsp;</span>Dark</a>
+											</li>
+											<li ng-click="changeColumnDisplay('fastBlink', $event)">
+												<a href="javascript:void(0);"><span ng-if="columnDisplay['fastBlink']"><i class="fa fa-check"></i>&nbsp;</span>Fast Blink</a>
+											</li>
+											<li ng-click="changeColumnDisplay('slowBlink', $event)">
+												<a href="javascript:void(0);"><span ng-if="columnDisplay['slowBlink']"><i class="fa fa-check"></i>&nbsp;</span>Slow Blink</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div ng-if="false" class="btn-group" style="margin-bottom: 10px; overflow-x: auto; white-space: nowrap; display: flex;">
+							<button style="width: 92px;" type="button" ng-class="{'btn btn-success': columnDisplay['light'], 'btn btn-warning': !columnDisplay['light']}" ng-click="changeColumnDisplay('light', $event)">Light</button>
+							<button style="width: 92px;" type="button" ng-class="{'btn btn-success': columnDisplay['dark'], 'btn btn-warning': !columnDisplay['dark']}" ng-click="changeColumnDisplay('dark', $event)">Dark</button>
+							<button style="width: 92px;" type="button" ng-class="{'btn btn-success': columnDisplay['fastBlink'], 'btn btn-warning': !columnDisplay['fastBlink']}" ng-click="changeColumnDisplay('fastBlink', $event)">Fast Blink</button>
+							<button style="width: 92px;" type="button" ng-class="{'btn btn-success': columnDisplay['slowBlink'], 'btn btn-warning': !columnDisplay['slowBlink']}" ng-click="changeColumnDisplay('slowBlink', $event)">Slow Blink</button>
+						</div>
+						<div class="table-responsive">
+							<table class="table table-bordered table-hover table-striped">
+								<thead>
+									<tr>
+										<th>Channel</th>
+										<th>Status</th>
+										<th>Illumination</th>
+										<th><div class="slSensorTooltip" data-toggle="tooltip" title="unit: 0.01Hz">Frequency</div></th>
+										<th>Detail</th>
+										<!-- <th ng-show="columnDisplay['light']" style="min-width: 336px;">Light</th>
+										<th ng-show="columnDisplay['dark']" style="min-width: 336px;">Dark</th>
+										<th ng-show="columnDisplay['fastBlink']" style="min-width: 336px;">Fast Blink</th>
+										<th ng-show="columnDisplay['slowBlink']" style="min-width: 336px;">Slow Blink</th> -->
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="(idx, item) in slSensorData" ng-if="item.En == 1 && channelMask[idx] !== 0">
+										<td>{{item.Ch + 1}}</td>
+										<!-- <td style="white-space: nowrap;">{{sensorStatus[item.Stat]}}</td> -->
+										<td style="white-space: nowrap;">
+											<div ng-if="sensorStatus[item.Stat] == 'Light'" style="width: 25px; height: 25px; background-color: #428BCA; border-radius: 50%;"></div>
+											<div ng-if="sensorStatus[item.Stat] == 'Fast Blink'" style="width: 25px; height: 25px; border-radius: 50%; border: 3px #428BCA solid;"></div>
+											<div ng-if="sensorStatus[item.Stat] == 'Slow Blink'" style="width: 12.5px; height: 25px; background-color: #428BCA; border-radius: 50%; border-radius: 50px 0 0 50px;"></div>
+											<div ng-if="sensorStatus[item.Stat] == 'Dark'" style="width: 25px; height: 25px; background-color: #8E8E8E; border-radius: 50%;"></div>
+										</td>
+										<td>{{item.Val}}</td>
+										<td>{{item.Fq}}</td>
+										<td>
+											<div style="cursor: pointer;" ng-click="showDetailModal(item)"><i class="fa fa-book"></i></div>
+										</td>
+										<!-- <td ng-show="columnDisplay['light']">
+											<div ng-if="item.Stat != 255">
+												<div ng-if="false" class="form-group row">
+													<div style="float:left; padding-left:20px; padding-top:5px;">
+														<label class="control-label"></label>
+													</div>
+													<div style="float:left; padding-top:15px;">
+														<input type="checkbox" class="Indicator-checkbox" id="lightLatchLed_{{item.Ch}}">
+														<a class="Indicator-light"></a>
+													</div>
+													<div style="float:left; padding-left:15px; padding-top:15px;">
+														<button class="btn btn-primary btn-sm" ng-click="onLatchClearClick(item.Ch, 'light')"><i class="fa fa-eraser"></i> Clear</button>
+													</div>
+												</div>
+												<div class="form-group row">
+													<div style="float:left; padding-left:20px; padding-top:5px; margin-right: 46px;">
+														<label class="control-label">Count</label>
+													</div>
+													<div class="row" id="lightCountLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+													<div class="row" style="float:left; padding-left:20px;">
+														<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'light', 'count')">
+															<i class="fa fa-undo"></i>
+														</div>
+													</div>
+												</div>
+												<div class="form-group row">
+													<div style="float:left; padding-left:20px; padding-top:5px;">
+														<label class="control-label">Total Second</label>
+													</div>
+													<div class="row" id="lightTotalTimeLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+													<div class="row" style="float:left; padding-left:20px;">
+														<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'light', 'time')">
+															<i class="fa fa-undo"></i>
+														</div>
+													</div>
+												</div>
+											</div>
+										</td> -->
+										<!-- <td ng-show="columnDisplay['dark']">
+											<div ng-if="item.Stat != 255">
+												<div ng-if="false" class="form-group row">
+													<div style="float:left; padding-left:20px; padding-top:5px;">
+														<label class="control-label"></label>
+													</div>
+													<div style="float:left; padding-top:15px;">
+														<input type="checkbox" class="Indicator-checkbox" id="darkLatchLed_{{item.Ch}}">
+														<a class="Indicator-light"></a>
+													</div>
+													<div style="float:left; padding-left:15px; padding-top:15px;">
+														<button class="btn btn-primary btn-sm" ng-click="onLatchClearClick(item.Ch, 'dark')"><i class="fa fa-eraser"></i> Clear</button>
+													</div>
+												</div>
+												<div class="form-group row">
+													<div style="float:left; padding-left:20px; padding-top:5px; margin-right: 46px;">
+														<label class="control-label">Count</label>
+													</div>
+													<div class="row" id="darkCountLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+													<div class="row" style="float:left; padding-left:20px;">
+														<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'dark', 'count')">
+															<i class="fa fa-undo"></i>
+														</div>
+													</div>
+												</div>
+												<div class="form-group row">
+													<div style="float:left; padding-left:20px; padding-top:5px;">
+														<label class="control-label">Total Second</label>
+													</div>
+													<div class="row" id="darkTotalTimeLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+													<div class="row" style="float:left; padding-left:20px;">
+														<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'dark', 'time')">
+															<i class="fa fa-undo"></i>
+														</div>
+													</div>
+												</div>
+											</div>
+										</td> -->
+										<!-- <td ng-show="columnDisplay['fastBlink']">
+											<div ng-if="item.Stat != 255">
+												<div ng-if="false" class="form-group row">
+													<div style="float:left; padding-left:20px; padding-top:5px;">
+														<label class="control-label"></label>
+													</div>
+													<div style="float:left; padding-top:15px;">
+														<input type="checkbox" class="Indicator-checkbox" id="fastBlinkLatchLed_{{item.Ch}}">
+														<a class="Indicator-light"></a>
+													</div>
+													<div style="float:left; padding-left:15px; padding-top:15px;">
+														<button class="btn btn-primary btn-sm" ng-click="onLatchClearClick(item.Ch, 'fastBlink')"><i class="fa fa-eraser"></i> Clear</button>
+													</div>
+												</div>
+												<div class="form-group row">
+													<div style="float:left; padding-left:20px; padding-top:5px; margin-right: 46px;">
+														<label class="control-label">Count</label>
+													</div>
+													<div class="row" id="fastBlinkCountLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+													<div class="row" style="float:left; padding-left:20px;">
+														<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'fastBlink', 'count')">
+															<i class="fa fa-undo"></i>
+														</div>
+													</div>
+												</div>
+												<div class="form-group row">
+													<div style="float:left; padding-left:20px; padding-top:5px;">
+														<label class="control-label">Total Second</label>
+													</div>
+													<div class="row" id="fastBlinkTotalTimeLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+													<div class="row" style="float:left; padding-left:20px;">
+														<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'fastBlink', 'time')">
+															<i class="fa fa-undo"></i>
+														</div>
+													</div>
+												</div>
+											</div>
+										</td> -->
+										<!-- <td ng-show="columnDisplay['slowBlink']">
+											<div ng-if="item.Stat != 255">
+												<div ng-if="false" class="form-group row">
+													<div style="float:left; padding-left:20px; padding-top:5px;">
+														<label class="control-label"></label>
+													</div>
+													<div style="float:left; padding-top:15px;">
+														<input type="checkbox" class="Indicator-checkbox" id="slowBlinkLatchLed_{{item.Ch}}">
+														<a class="Indicator-light"></a>
+													</div>
+													<div style="float:left; padding-left:15px; padding-top:15px;">
+														<button class="btn btn-primary btn-sm" ng-click="onLatchClearClick(item.Ch, 'slowBlink')"><i class="fa fa-eraser"></i> Clear</button>
+													</div>
+												</div>
+												<div class="form-group row">
+													<div style="float:left; padding-left:20px; padding-top:5px; margin-right: 46px;">
+														<label class="control-label">Count</label>
+													</div>
+													<div class="row" id="slowBlinkCountLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+													<div class="row" style="float:left; padding-left:20px;">
+														<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'slowBlink', 'count')">
+															<i class="fa fa-undo"></i>
+														</div>
+													</div>
+												</div>
+												<div class="form-group row">
+													<div style="float:left; padding-left:20px; padding-top:5px;">
+														<label class="control-label">Total Second</label>
+													</div>
+													<div class="row" id="slowBlinkTotalTimeLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+													<div class="row" style="float:left; padding-left:20px;">
+														<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'slowBlink', 'time')">
+															<i class="fa fa-undo"></i>
+														</div>
+													</div>
+												</div>
+											</div>
+										</td> -->
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div><!-- panel-body -->
+				</div>
+			</div><!-- tab-pane -->
+			<div ng-repeat="(idx, item) in slSensorData" ng-if="item.En == 1 && channelMask[idx] !== 0" class="modal fade" id="{{'detailModal'+item.Ch}}">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">
+								<span>&times;</span>
+							</button>
+							<div class="modal-title ">
+								Detail
+							</div>
+						</div>
+						<div class="modal-body">
+							<div ng-show="columnDisplay['light']">
+								<table class="table table-bordered table-hover table-striped">
+									<thead>
+										<tr>
+											<th>Light</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>
+												<div ng-if="channelMask[idx] !== 0">
+													<div ng-if="false" class="form-group row">
+														<div style="float:left; padding-left:20px; padding-top:5px;">
+															<label class="control-label"></label>
+														</div>
+														<div style="float:left; padding-top:15px;">
+															<input type="checkbox" class="Indicator-checkbox" id="lightLatchLed_{{item.Ch}}">
+															<a class="Indicator-light"></a>
+														</div>
+														<div style="float:left; padding-left:15px; padding-top:15px;">
+															<button class="btn btn-primary btn-sm" ng-click="onLatchClearClick(item.Ch, 'light')"><i class="fa fa-eraser"></i> Clear</button>
+														</div>
+													</div>
+													<div class="form-group row">
+														<div style="float:left; padding-left:20px; padding-top:5px; margin-right: 46px;">
+															<label class="control-label">Count</label>
+														</div>
+														<div class="row" id="lightCountLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+														<div class="row" style="float:left; padding-left:20px;">
+															<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'light', 'count')">
+																<i class="fa fa-undo"></i>
+															</div>
+														</div>
+													</div>
+													<div class="form-group row">
+														<div style="float:left; padding-left:20px; padding-top:5px;">
+															<label class="control-label">Total Second</label>
+														</div>
+														<div class="row" id="lightTotalTimeLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+														<div class="row" style="float:left; padding-left:20px;">
+															<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'light', 'time')">
+																<i class="fa fa-undo"></i>
+															</div>
+														</div>
+													</div>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div ng-show="columnDisplay['dark']">
+								<table class="table table-bordered table-hover table-striped">
+									<thead>
+										<tr>
+											<th>Dark</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>
+												<div ng-if="channelMask[idx] !== 0">
+													<div ng-if="false" class="form-group row">
+														<div style="float:left; padding-left:20px; padding-top:5px;">
+															<label class="control-label"></label>
+														</div>
+														<div style="float:left; padding-top:15px;">
+															<input type="checkbox" class="Indicator-checkbox" id="darkLatchLed_{{item.Ch}}">
+															<a class="Indicator-light"></a>
+														</div>
+														<div style="float:left; padding-left:15px; padding-top:15px;">
+															<button class="btn btn-primary btn-sm" ng-click="onLatchClearClick(item.Ch, 'dark')"><i class="fa fa-eraser"></i> Clear</button>
+														</div>
+													</div>
+													<div class="form-group row">
+														<div style="float:left; padding-left:20px; padding-top:5px; margin-right: 46px;">
+															<label class="control-label">Count</label>
+														</div>
+														<div class="row" id="darkCountLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+														<div class="row" style="float:left; padding-left:20px;">
+															<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'dark', 'count')">
+																<i class="fa fa-undo"></i>
+															</div>
+														</div>
+													</div>
+													<div class="form-group row">
+														<div style="float:left; padding-left:20px; padding-top:5px;">
+															<label class="control-label">Total Second</label>
+														</div>
+														<div class="row" id="darkTotalTimeLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+														<div class="row" style="float:left; padding-left:20px;">
+															<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'dark', 'time')">
+																<i class="fa fa-undo"></i>
+															</div>
+														</div>
+													</div>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div ng-show="columnDisplay['fastBlink']">
+								<table class="table table-bordered table-hover table-striped">
+									<thead>
+										<tr>
+											<th>Fast Blink</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>
+												<div ng-if="channelMask[idx] !== 0">
+													<div ng-if="false" class="form-group row">
+														<div style="float:left; padding-left:20px; padding-top:5px;">
+															<label class="control-label"></label>
+														</div>
+														<div style="float:left; padding-top:15px;">
+															<input type="checkbox" class="Indicator-checkbox" id="fastBlinkLatchLed_{{item.Ch}}">
+															<a class="Indicator-light"></a>
+														</div>
+														<div style="float:left; padding-left:15px; padding-top:15px;">
+															<button class="btn btn-primary btn-sm" ng-click="onLatchClearClick(item.Ch, 'fastBlink')"><i class="fa fa-eraser"></i> Clear</button>
+														</div>
+													</div>
+													<div class="form-group row">
+														<div style="float:left; padding-left:20px; padding-top:5px; margin-right: 46px;">
+															<label class="control-label">Count</label>
+														</div>
+														<div class="row" id="fastBlinkCountLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+														<div class="row" style="float:left; padding-left:20px;">
+															<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'fastBlink', 'count')">
+																<i class="fa fa-undo"></i>
+															</div>
+														</div>
+													</div>
+													<div class="form-group row">
+														<div style="float:left; padding-left:20px; padding-top:5px;">
+															<label class="control-label">Total Second</label>
+														</div>
+														<div class="row" id="fastBlinkTotalTimeLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+														<div class="row" style="float:left; padding-left:20px;">
+															<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'fastBlink', 'time')">
+																<i class="fa fa-undo"></i>
+															</div>
+														</div>
+													</div>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div ng-show="columnDisplay['slowBlink']">
+								<table class="table table-bordered table-hover table-striped">
+									<thead>
+										<tr>
+											<th>Slow Blink</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>
+												<div ng-if="channelMask[idx] !== 0">
+													<div ng-if="false" class="form-group row">
+														<div style="float:left; padding-left:20px; padding-top:5px;">
+															<label class="control-label"></label>
+														</div>
+														<div style="float:left; padding-top:15px;">
+															<input type="checkbox" class="Indicator-checkbox" id="slowBlinkLatchLed_{{item.Ch}}">
+															<a class="Indicator-light"></a>
+														</div>
+														<div style="float:left; padding-left:15px; padding-top:15px;">
+															<button class="btn btn-primary btn-sm" ng-click="onLatchClearClick(item.Ch, 'slowBlink')"><i class="fa fa-eraser"></i> Clear</button>
+														</div>
+													</div>
+													<div class="form-group row">
+														<div style="float:left; padding-left:20px; padding-top:5px; margin-right: 46px;">
+															<label class="control-label">Count</label>
+														</div>
+														<div class="row" id="slowBlinkCountLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+														<div class="row" style="float:left; padding-left:20px;">
+															<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'slowBlink', 'count')">
+																<i class="fa fa-undo"></i>
+															</div>
+														</div>
+													</div>
+													<div class="form-group row">
+														<div style="float:left; padding-left:20px; padding-top:5px;">
+															<label class="control-label">Total Second</label>
+														</div>
+														<div class="row" id="slowBlinkTotalTimeLed_{{item.Ch}}" style="width:200px; height:40px; float:left;"></div>
+														<div class="row" style="float:left; padding-left:20px;">
+															<div class="btnReset slSensorTooltip" style="float:left; padding: 5px 10px; cursor: pointer; font-size: 16px;" data-toggle="tooltip" title="Reset" ng-click="onResetClick(item.Ch, 'slowBlink', 'time')">
+																<i class="fa fa-undo"></i>
+															</div>
+														</div>
+													</div>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+            <div ng-show="activeTab == 'config'" class="tab-pane active">
+                <div class='panel panel-default'>
+					<div class='panel-heading'>
+						<h4>Configuration</h4>
+					</div>
+					<div class='panel-body'>
+						<div class="panel panel-default form-horizontal">
+							<div class="panel-heading">
+								<div class='form-group'>
+									<label class='col-lg-3 control-label'>Channel</label>
+									<div class='col-lg-1'>
+										<div class='input-group'>
+											<select class='form-control' ng-model="selectedChannel" ng-change="onConfigChannelChange()">
+												<option ng-repeat="(idx, data) in slSensorConfig" ng-selected="data.Ch == selectedChannel" value="{{data.Ch}}" ng-if="data.Ch == 'All' || channelMask[idx] === 1">{{data.displayCh}}</option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-lg-3 control-label'>Tag Name</label>
+									<div class='col-lg-6'>
+										<div class='input-group'>
+											<input type='text' class='form-control' maxlength="21" ng-model="channelObj.Tag" ng-disabled="channelObj.Ch == 'All'">
+										</div>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-lg-3 control-label'>Channel Enable</label>
+									<div class='col-lg-6'>
+										<div class="form-check" style="padding: 7px 0px 7px;">
+											<input class="form-check-input" type="checkbox" ng-model="channelObj.En">
+										</div>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-lg-3 control-label'>Mode</label>
+									<div class='col-lg-8'>
+										<div class="radio" style="padding-bottom: 7px;">
+											<label>
+												<input type="radio" ng-model="channelObj.Md" value="0">On / Off&nbsp;&nbsp;
+											</label>
+											<label>
+												<input type="radio" ng-model="channelObj.Md" value="1">On / Off / Blink<br/>
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-lg-3 control-label'>Delay Time</label>
+									<div class='col-lg-2'>
+										<div class='input-group'>
+											<input type='number' class='form-control' min="1" max="5" ng-model="channelObj.Tm">
+											<div class="input-group-addon">Sec</div>
+										</div>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-lg-3 control-label'>Filter</label>
+									<div class='col-lg-6'>
+										<div class="form-check" style="padding: 7px 0px 7px;">
+											<input class="form-check-input" type="checkbox" ng-model="channelObj.Fltr">
+										</div>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-lg-3 control-label'>Reading Illumination Option</label>
+									<div class='col-lg-6'>
+										<div class="form-check" style="padding: 7px 0px 7px;">
+											<input class="form-check-input" type="checkbox" ng-model="channelObj.SEn">
+										</div>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-lg-3 control-label'>Normal State</label>
+									<div class='col-lg-8'>
+										<div class="radio" style="padding-bottom: 7px;">
+											<label>
+												<input type="radio" ng-model="channelObj.Nm" value="0">Normal Off&nbsp;&nbsp;
+											</label>
+											<label>
+												<input type="radio" ng-model="channelObj.Nm" value="1">Normal On<br/>
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class='panel-body'>
+								<div class='form-group'>
+									<label class='col-lg-3 control-label'>Low Illumination Limit Value</label>
+									<div class='col-lg-2'>
+										<div class='input-group'>
+											<input type='number' class='form-control' min="0" max="83865" ng-model="channelObj.LoA">
+											<div class="input-group-addon">Lux</div>
+										</div>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-lg-3 control-label'>High Illumination Limit Value</label>
+									<div class='col-lg-2'>
+										<div class='input-group'>
+											<input type='number' class='form-control' min="0" max="83865" ng-model="channelObj.HiA">
+											<div class="input-group-addon">Lux</div>
+										</div>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-lg-3 control-label'>Fast Blink Frequency Threshold</label>
+									<div class='col-lg-2'>
+										<div class='input-group'>
+											<input type='number' class='form-control' min="2" max="50" ng-model="channelObj.LEgF">
+											<div class="input-group-addon">0.1Hz</div>
+										</div>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-lg-3 control-label'>Keep Counter Value When Poweroff</label>
+									<div class='col-lg-6'>
+										<div class="form-check" style="padding: 7px 0px 7px;">
+											<input class="form-check-input" type="checkbox" ng-model="channelObj.CntKp">
+										</div>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-lg-3 control-label'>Keep Total Time Value When Poweroff</label>
+									<div class='col-lg-6'>
+										<div class="form-check" style="padding: 7px 0px 7px;">
+											<input class="form-check-input" type="checkbox" ng-model="channelObj.Durl">
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="panel-footer clearfix">
+								<div class="pull-right">
+									<button class="btn btn-success" ng-click="onConfigSubmit()"><i class="fa fa-check"></i> Submit</button>
+								</div>
+							</div>
+						</div><!-- panel -->
+					</div><!-- panel-body -->
+		        </div><!-- panel -->
+			</div><!-- tab-pane -->
+			<div ng-show="activeTab == 'quickConfig'" class="tab-pane active">
+                <div class='panel panel-default'>
+					<div class='panel-heading'>
+						<h4>Quick Configuration</h4>
+					</div>
+					<div class='panel-body'>
+						<div class="panel panel-default form-horizontal">
+							<div class='panel-body'>
+								<div class='form-group'>
+									<label class='col-lg-3 control-label'>Channel Enable</label>
+									<div class='col-lg-3'>
+										<div class="form-check" ng-repeat="data in quickConfigData" ng-if="channelMask[idx] !== 0">
+											<div class="checkbox">
+												<label><input type="checkbox" ng-model="data.En" ng-true-value="1" ng-false-value="0" ng-checked="data.En == 1">Channel {{data.displayCh}}</label>
+											</div>
+										</div>
+									</div>
+									<div ng-if="showImageMap" class='col-lg-1'>
+										<div id="marAreaTooltip" class="slSensorTooltip" data-toggle="tooltip" title=""></div>
+										<div style="background-image: url('/config/235.png'); height: 650px; width: 60px; background-size: contain; background-repeat: no-repeat; position: relative;">
+											<canvas id="imageMapCanvas" style="height: 650px; width: 60px; position: absolute;"></canvas>
+											<img style="height: 650px; position: absolute;" usemap="#slSensorImg" alt="Sensor Image" src="/config/235.png">
+										</div>
+										<map name="slSensorImg">
+											<area shape="rect" coords="0,5,60,30" alt="Channel 1" id="area1" style="cursor: pointer;" ng-click="channelToggle(0)" ng-mouseenter="onImageMapMouseEnter($event)" ng-mouseleave="onImageMapMouseLeave($event)" />
+											<area shape="rect" coords="0,105,60,60" alt="Channel 2" id="area2" style="cursor: pointer;" ng-click="channelToggle(1)" ng-mouseenter="onImageMapMouseEnter($event)" ng-mouseleave="onImageMapMouseLeave($event)" />
+											<area shape="rect" coords="0,125,60,165" alt="Channel 3" id="area3" style="cursor: pointer;" ng-click="channelToggle(2)" ng-mouseenter="onImageMapMouseEnter($event)" ng-mouseleave="onImageMapMouseLeave($event)" />
+											<area shape="rect" coords="0,190,60,230" alt="Channel 4" id="area4" style="cursor: pointer;" ng-click="channelToggle(3)" ng-mouseenter="onImageMapMouseEnter($event)" ng-mouseleave="onImageMapMouseLeave($event)" />
+											<area shape="rect" coords="0,250,60,295" alt="Channel 5" id="area5" style="cursor: pointer;" ng-click="channelToggle(4)" ng-mouseenter="onImageMapMouseEnter($event)" ng-mouseleave="onImageMapMouseLeave($event)" />
+											<area shape="rect" coords="0,315,60,360" alt="Channel 6" id="area6" style="cursor: pointer;" ng-click="channelToggle(5)" ng-mouseenter="onImageMapMouseEnter($event)" ng-mouseleave="onImageMapMouseLeave($event)" />
+											<area shape="rect" coords="0,380,60,425" alt="Channel 7" id="area7" style="cursor: pointer;" ng-click="channelToggle(6)" ng-mouseenter="onImageMapMouseEnter($event)" ng-mouseleave="onImageMapMouseLeave($event)" />
+											<area shape="rect" coords="0,445,60,490" alt="Channel 8" id="area8" style="cursor: pointer;" ng-click="channelToggle(7)" ng-mouseenter="onImageMapMouseEnter($event)" ng-mouseleave="onImageMapMouseLeave($event)" />
+										</map>
+									</div>
+								</div>
+							</div>
+							<div class="panel-footer clearfix">
+								<div class="pull-right">
+									<button class="btn btn-success" ng-click="onQuickConfigSubmit()"><i class="fa fa-check"></i> Submit</button>
+								</div>
+							</div>
+						</div><!-- panel -->
+					</div><!-- panel-body -->
+				</div><!-- panel -->
+			</div><!-- tab-pane -->
+		</div><!-- tab-content -->
+		<!-- Useing Media Query most load css after HTML code in IE -->
+		<style media="screen and (min-width: 768px)">
+			#tplStackLight .modal-dialog {
+				width: 350px;
+				margin: 30px auto;
+			}
+		</style>
+    </div>
+</div><!-- template -->

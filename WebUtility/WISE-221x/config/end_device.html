@@ -1,0 +1,147 @@
+<style>
+/*	.table-hover{
+		background-color: #D9EDF7;
+	}*/
+</style>
+<div ng-controller="SubNodeListCtrl" class="container-fluid" id="Sub-NodeList-Ctrl"> <!-- ng-controller -->
+	<!-- Page Heading -->
+	<div class="row">
+		<div class="col-lg-12">
+			<h2 class="page-header">
+				<span ng-if="currentModuel==''">
+					<i class="fa fa-fw fa-sitemap"></i>
+					End Device List
+				</span>
+				<span ng-if="currentModuel!=''">
+					<i class="fa fa-fw fa-hdd-o"></i>
+					Device: {{currentModuel}} &nbsp;
+					<button class='btn btn-default' ng-click="btnBackToNodeList(item)" ng-show="!bVcomConnection")>
+	                	<i class="fa fa-reply"></i> &nbsp;Back to Device List
+                	</button>
+				</span>
+			</h2>
+		</div>
+	</div> <!-- /.row -->
+
+	<div ng-show="isSectionShow('list')" class="row" >
+		<div class="col-lg-12">
+			<div class="col-sm-12">
+				<div class="dataTables_length">
+					<label>
+						List
+						<select class="form-control" ng-model="pageSize" ng-change="onSetPageSize()">
+					    	<option ng-repeat="item in pageSizeList" value="{{item}}">{{item}}</option>
+					    </select>
+					    entries
+				    </label>
+			    </div>
+		    </div>
+			<div class="table-responsive">
+		        <table class="table table-bordered table-hover table-striped table-responsive" style="margin-bottom: 5px">
+		        	<thead>
+						<tr>
+							<th ng-show="isShowInRfMode('paring')">Module</th>
+							<th>MAC Address</th>
+							<th ng-show="isShowInRfMode('paring')">Information</th>
+							<th>Modbus ID</th>
+							<th>RSSI</th>
+							<th ng-show="isShowInRfMode('paring')">Update Cycle Time</th>
+							<th>Inactive Time</th>
+							<th>Battery Status</th>
+							<th>Battery Level</th>
+							<th>RTC Battery Status</th>
+							<th>Power Source</th>
+							<th>Device Status</th>
+							<!--<th>I/O Configuration</th>-->
+							<th ng-show="isShowInRfMode('paring')">Configuration</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-if="item.SLs!='0'" ng-repeat="item in ItemsByPage[currentPage] | orderBy:columnToOrder:reverse">
+		                    <td ng-show="isShowInRfMode('paring')">
+		                    	{{item.Nm}}<!--{{item.Id}}-->
+		                    </td>
+		                    <!-- <span> -->
+		                    <td>
+		                    	{{(item.SLs == '0')? '--' : item.SLs}}
+		                    </td>
+							<!-- </span> -->
+		                    <td ng-show="isShowInRfMode('paring')">
+		                    	{{item.Desc}}
+		                    </td>
+		                    <td>
+		                    	{{item.Id}}
+		                    </td>
+		                    <td>
+		                    	{{item.Rssi}}
+		                    </td>
+		                    <td ng-show="isShowInRfMode('paring')">
+		                    	{{item.PItv}}
+		                    </td>
+		                    <td>
+		                    	{{item.Tm}}
+		                    </td>
+		                    <td>
+		                    	{{getBatteryStatus(item.BR)}}
+		                    </td>
+		                    <td>
+		                    	<!-- {{(item.Val == 0)? '0' : item.Val}} % -->
+		                    	{{item.Val +''}} %
+		                    </td>
+		                    <td>
+		                    	{{(item.LB == 0)? 'No Error' : 'Low battery'}}
+		                    </td>
+		                    <td>
+		                    	{{getPowerSource(item.Pw)}}
+		                    </td>
+		                    <td>
+		                    	{{(item.RT == 0)? 'Inactive' : 'Active'}}
+		                    </td>
+		                    <!--<td>
+		                    	<button class='btn btn-success btn-sm privilege root admin' ng-show="item.SLs != '0'" ng-click="btnIoStatusClick(item.SLs, item.Nm)">
+		                    	<i class="fa fa-gear"></i>
+		                    	</button>
+		                    </td>-->
+		                    <td ng-show="isShowInRfMode('paring')">
+		                    	<button class='btn btn-success btn-sm privilege root admin' ng-click="btnNodeConfigClick(item.SLs, item.Nm)">
+		                    	<i class="fa fa-gear"></i>
+		                    	</button>
+		                    </td>
+	                	</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="dataTables_info">
+						Showing {{currentStartRecordNumber}} to {{currentEndRecordNumber}} of {{currentTotalRecordNumber}} entries
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="dataTables_paginate paging_simple_numbers">
+						<ul class="pagination">
+				            <li ng-class="{active:0}"><a href="#" ng-click="previousPage()">Previous</a>
+				            </li>
+				            <li ng-repeat="n in range(ItemsByPage.length)" ng-class="{active: n==currentPage}"> <a href="#" ng-click="setPage()" ng-bind="n+1">1</a>
+				            </li>
+				            <li><a href="#" ng-click="nextPage()">Next</a>
+				            </li>
+				        </ul>
+				    </div>
+				</div>
+			</div><!-- row -->
+
+		</div>
+	</div> <!-- /.row -->
+
+	<!--<div ng-show="isSectionShow('device')">
+		<div class="row" id="subnode-io-status">
+		</div>
+	</div>-->
+
+	<div ng-show="isSectionShow('nodeconfig')">
+		<div class="row" id="subnode-node-config"> <!-- container for end device information display -->
+		</div>
+	</div>
+
+</div><!-- ng-controller -->

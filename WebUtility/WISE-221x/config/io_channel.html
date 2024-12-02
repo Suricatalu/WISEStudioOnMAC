@@ -1,0 +1,348 @@
+<div ng-controller="AiChannelCtrl"><!-- ng-controller -->
+    <div class='row'>
+        <div class='tab-pane'>
+            <ul class='nav nav-tabs nav-justified' role='tablist'>
+                <li class='active'>
+                    <a href='#aiStatus' role='tab' data-toggle='tab' ng-click="switchAiTab('status')">Status</a>
+                </li>
+                <li>
+                    <a href='#aiConfig' role='tab' data-toggle='tab' ng-click="switchAiTab('config')">Configuration</a>
+                </li>
+            </ul>
+            <div class='tab-content'>
+                <div class='tab-pane active' id='aiStatus'>
+                    <div class='row'>
+                        <div class='col-lg-12'>
+                            <div class='panel panel-default'>
+                                <div class='panel-heading'>
+                                    <h2 class='panel-title' id='aiStatusInfom'>Status</h2>
+                                </div>
+                                <div class='panel-body'>
+                                    <div class="col-lg-12">
+                                        <!-- <ul class='nav nav-tabs nav-justified' role='tablist'>
+                                            <li class="active">
+                                                <a href="#aiGeneralVal" data-toggle="tab">Current</a>
+                                            </li>
+                                            <li>
+                                                <a href="#aiMaxVal" data-toggle="tab">Max</a>
+                                            </li>
+                                            <li>
+                                                <a href="#aiMinVal" data-toggle="tab">Min</a>
+                                            </li>
+                                        </ul> -->
+                                        <div class="tab-content">
+                                            <div class='panel panel-default' id = '" + this.getTableId() + "'>
+                                                <div class='panel-body'>
+                                                    <div class='table-responsive'>
+                                                        <center><table class='table-control'>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td rowspan='6'>
+                                                                        <div id='AIStatusMeterContainer' style='height:200px; width:220px; display:block; float:left;'></div>
+                                                                    </td>
+                                                                    <td></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class='td-label'><label >Channel:</label></td>
+                                                                    <td class='td-control'>
+                                                                        <select ng-model="selectedOption.Ch" ng-options="channel.Ch as channel.Ch for channel in channelStatus" ng-change="onAiStatusChannelChange()" class="form-control">
+                                                                        </select>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class='td-label'><label>Range:</label></td>
+                                                                    <td class='td-control'>
+                                                                        <p style='margin-left:10px;' id='chRngDescr'>{{statusRange}}</p>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class='td-label'><label>Value:</label></td>
+                                                                    <td class='td-control'>
+                                                                        <p style='margin-left:10px;' id='chValue'>{{statusValue}} {{statusUnit}}</p>
+                                                                    </td>
+                                                                </tr>
+                                                                <!-- <tr class='aiValueType'>
+                                                                    <td class='td-label'><label>Low Alarm Status:</label></td>
+                                                                    <td class='td-control'>
+                                                                        <input type = 'checkbox' class='Indicator-checkbox' id='inpLoA' checked><a class='Indicator-light' style='width:40px; height:25px; float:left;'></a>
+                                                                        <button class='btn btn-warning' id='btnLoA' style='margin-top:-1px;'><span class='fa fa-fw fa-eraser'></span> Clear</button>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr class='aiValueType'>
+                                                                    <td class='td-label'><label>High Alarm Status:</label></td>
+                                                                    <td class='td-control'>
+                                                                        <input type = 'checkbox' id='inpHiA' class='Indicator-checkbox' checked><a class='Indicator-light' style='width:40px; height:25px; float:left;'></a>
+                                                                        <button class='btn btn-warning' id='btnHiA' style='margin-top:-1px;'><span class='fa fa-fw fa-eraser'></span> Clear</button>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr class='aiMinMaxType'>
+                                                                    <td class='td-label'><label>Reset Value:</label></td>
+                                                                    <td class='td-control'><button class='btn btn-success' id='btnClrL'><span class='fa fa-fw fa-refresh'></span> Reset</button></td>
+                                                                </tr> -->
+                                                            </tbody>
+                                                        </table></center>
+                                                    </div>
+                                                    <div class='table-responsive' style='display:block;'>
+                                                        <table class ='table table-bordered table-hover table-striped'>
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class=''>Ch</th>
+                                                                    <th>Range</th>
+                                                                    <th>CT Secondary Current Value(mA)</th>
+                                                                    <th>Value[Hex]</th>
+                                                                    <th>Value[Dec]</th>
+                                                                    <th ng-show="isSupportCT">CT Primary Current Value(A)</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr ng-repeat="item in statusTableData" ng-class="{'info': item.Ch === selectedOption.Ch}" ng-click="onStatusTableClick(item.Ch)">
+                                                                    <td>
+                                                                        {{ item.Ch }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ item.Rng }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ item.ValEg }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ item.ValHex }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ item.ValDec }}
+                                                                    </td>
+                                                                    <td ng-show="isSupportCT">
+                                                                        {{ item.PEgF }}
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+<!--
+                                            <div class="tab-pane active" id="aiGeneralVal">
+                                                <div id='containerAiStatusTable'>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane" id="aiMaxVal">
+                                                <div id='containerAiMaxStatusTable'>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane" id="aiMinVal">
+                                                <div id='containerAiMinStatusTable'>
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                    </div><!-- /.col-lg-12 -->
+                                </div> <!--./panel-body-->
+                            </div> <!--./panel-->
+                        </div> <!-- /.col-lg-12 -->
+                    </div>
+                </div>
+                <div class='tab-pane' id='aiConfig'>
+                    <div class='panel panel-default'>
+                        <div class='panel-heading'>
+                            <h2 class='panel-title' id='aiConfigInfom'>Configuration</h2>
+                        </div>
+                        <div class='panel-body'>
+                            <div class="col-lg-12">
+                                <ul class='nav nav-tabs nav-justified' role='tablist'>
+                                    <li>
+                                        <a href="#tabCommConfig" data-toggle="tab" ng-click="switchAiConfigTab('common')">Common Settings</a>
+                                    </li>
+                                    <li class="active">
+                                        <a href="#tabChConfig" data-toggle="tab" ng-click="switchAiConfigTab('channel')">Channel Settings</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane" id="tabCommConfig">
+                                        <div id='containerAiCommConfig'>
+                                            <div class="form-horizontal">
+                                                <div class='panel panel-default'>
+                                                    <div class='panel-body'>
+                                                        <div class='form-group burnoutType' ng-show="isShowAiBurnout==true">
+                                                            <label class='col-lg-3 control-label'>Burnout Detection</label>
+                                                            <div class='col-lg-8'>
+                                                                <div class='input-group' style='min-width: 20px'>
+                                                                    <span class='input-group-addon'>
+                                                                        <input id='inpEnB' type='checkbox' ng-model="commonConfig.EnB" ng-true-value="1" ng-false-value="0" ng-checked="commonConfig.EnB == 1">
+                                                                    </span>
+                                                                    <input type='text' class='form-control' value='Enabled/Disabled' disabled>
+                                                                </div>
+                                                             </div>
+                                                        </div>
+                                                        <div class='form-group burnoutType' ng-show="isShowAiBurnout==true">
+                                                            <label class='col-lg-3 control-label'>Burnout Detection Mode</label>
+                                                            <div class='col-lg-8'>
+                                                                <select id='selBMd' class='form-control' ng-model="commonConfig.BMd">
+                                                                    <option ng-repeat="data in selBurnoutDetectMode" value="{{$index}}">{{data}}</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <!-- <div class='form-group' id='aiCommonConfigSmp'>
+                                                            <label class='col-lg-3 control-label'>Sampling Rate(Hz)</label>
+                                                            <div class='col-lg-8'>
+                                                                <select id='selSmp' class='form-control' ng-model="commonConfig.Smp">
+                                                                    <option ng-repeat="(key, data) in selSamplingRate" value="{{key}}">{{data}}</option>
+                                                                </select>
+                                                            </div>
+                                                        </div> -->
+                                                        <div class='form-group' id='aiCommonConfigAiT' ng-show="isShowAiFilter==true">
+                                                            <label class='col-lg-3 control-label'>Filter Mode(Hz)</label>
+                                                            <div class='col-lg-8'>
+                                                                <select id='selAiT' class='form-control' ng-model="commonConfig.AiT" disabled>
+                                                                    <option ng-repeat="(key, data) in selFilterMode" value="{{key}}">{{data}}</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class='form-group'>
+                                                            <label class='col-lg-3 control-label'>Resolution</label>
+                                                            <div class='col-lg-8'>
+                                                                <input id='inpRes' type='number' max='23' min='1' class='form-control isNumericType' ng-model="commonConfig.Res" disabled>
+                                                            </div>
+                                                        </div>
+                                                        <div class='form-group'>
+                                                            <label class='col-lg-3 control-label'>Calibration</label>
+                                                            <div class='col-lg-6'>
+                                                                <div class='input-group'>
+                                                                    <button class='btn btn-warning' id='btnCalibration' ng-click="btnCalibrationClick()">
+                                                                        <i class='fa fa-wrench'></i> Restore to Default
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class='panel-footer clearfix' ng-show="isShowAiBurnout==true">
+                                                        <div class='pull-right'>
+                                                            <button id='btnSubmit' class='btn btn-success' ng-click="btnCommonConfigClick()">
+                                                                <i class='fa fa-check'></i> Submit
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane active" id="tabChConfig">
+                                        <div id='containerAiChConfig'>
+                                            <div class='panel panel-default form-horizontal'>
+                                                <div class='panel-body'>
+                                                    <div class='form-group'>
+                                                        <label class='col-lg-3 control-label'>Channel</label>
+                                                        <div class='col-lg-3'>
+                                                            <div class='input-group'>
+                                                                <select ng-model="selectedOption.Ch" ng-options="channel.Ch as channel.Ch for channel in channelConfig" ng-change="onAiConfigChannelChange()" class="form-control">
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class='form-group isModuleInternalOnly'>
+                                                        <label class='col-lg-3 control-label'>Tag Name</label>
+                                                        <div class='col-lg-6'>
+                                                            <div class='input-group'>
+                                                                <input type='text' class='form-control' id='inpTag' ng-model="channelConfig[selectedOption.Ch].Tag" maxlength="21">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class='form-group isChannelOnly'>
+                                                        <label class='col-lg-3 control-label'>Range</label>
+                                                        <div class='col-lg-6'>
+                                                            <div class='input-group'>
+                                                                <select id='selRng' class='form-control' ng-model="channelConfig[selectedOption.Ch].Rng">
+                                                                    <option ng-repeat="(key, data) in selRange" value="{{key}}">{{data}}</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class='form-group isChannelOnly'>
+                                                        <label class='col-lg-3 control-label'>Channel Mask</label>
+                                                        <div class='col-lg-6'>
+                                                            <div class='input-group' style='min-width: 20px'>
+                                                                <span class='input-group-addon'>
+                                                                    <input id='inpEn' type='checkbox' ng-model="channelConfig[selectedOption.Ch].En" ng-true-value="1" ng-false-value="0" ng-checked="channelConfig[selectedOption.Ch].En==1">
+                                                                </span>
+                                                                <input type='text' class='form-control' value='Enabled/Disabled' disabled>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class='form-group isChannelOnly' ng-show="isSupportCT">
+                                                        <label class='col-lg-3 control-label' title="Value must be 100~20000">Turns Ratio (CT)</label>
+                                                        <div class='col-lg-6'>
+                                                            <div class='input-group'>
+                                                                <input type='number' class='form-control' id='inpProp' ng-model="channelConfig[selectedOption.Ch].Prop" maxlength="7">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class='form-group'>
+                                                        <label class='col-lg-3 control-label'>Refresh</label>
+                                                        <div class='col-lg-6'>
+                                                            <div class='input-group'>
+                                                                <button class='btn btn-info' id='btnRefresh' ng-click="btnChannelConfigRefreshClick()">
+                                                                    <i class='fa fa-refresh'></i> Refresh
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class='form-group zsCalibration' ng-show="isShowCalibrationBtn">
+                                                        <label class='col-lg-3 control-label'>Calibration</label>
+                                                        <div class='col-lg-6'>
+                                                            <div class='input-group'>
+                                                                <button class='btn btn-warning' id='btnZSCalibration' ng-click="btnDefaultCalibrationClick()"><i class='fa fa-wrench'></i> Zero/Span Calibration
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- <div class='panel-body' id='" + this.getFormId() + "ioConfigPluginContainer'>
+                                                </div> -->
+                                                <div class='panel-footer clearfix'>
+                                                    <div class='pull-right'>
+                                                        <button class='btn btn-success privilege root admin' id='btnSubmit' ng-click="btnChannelConfigClick()">
+                                                        <i class='fa fa-check'></i> Submit
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p>
+                                            <h4 class='page-header'>Overview</h4>
+                                        </p>
+                                        <div id='containerAiOverview'>
+                                            <table class='table table-bordered table-hover table-striped'>
+                                                <thead>
+                                                    <tr>
+                                                        <td>Channel</td>
+                                                        <td class='isModuleInternalOnly'>Tag Name</td>
+                                                        <td>Range</td>
+                                                        <td>Parameter</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="item in channelConfig" ng-class="{'info': item.Ch === selectedOption.Ch}">
+                                                        <td>
+                                                            {{ item.Ch }}
+                                                        </td>
+                                                        <td>
+                                                            {{ item.Tag }}
+                                                        </td>
+                                                        <td>
+                                                            {{ item.RngName }}
+                                                        </td>
+                                                        <td>
+                                                            En = {{ item.En }}
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

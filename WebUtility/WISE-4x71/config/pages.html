@@ -1,0 +1,47 @@
+<div class="container-fluid">
+	<div ng-controller="pagesCtrl"><!-- ng-controller -->
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="tab-pane active" id="tabFwConfig" ng-show="pageContent == 'fwUpgrade'"> <!-- use ng-show instead of ng-if for rendering of FileUpgradePanel -->
+					<div class='panel panel-danger' id='panelFileUpgrade'>
+						<div class="panel-heading">
+							<!-- <h3> Firmware Upload</h3> -->
+							<h3> Error </h3>
+							<h4> {{errorDescription}}. Firmware upgrade may be required. </h4>
+				    	</div>
+					    <div class="panel-body">
+					    	<div class="col-lg-10">
+						    	<div class="form-horizontal">
+									<label class="col-lg-4 control-label"> Firmware Upload</label>
+									<div class="col-lg-8">
+										<div class="fileinput fileinput-new input-group" data-provides="fileinput">
+											<div class="form-control" data-trigger="fileinput">
+												<i class="fa fa-fw fa-file-text fileinput-exists"></i><span class="fileinput-filename"></span>
+											</div>
+											<span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new"><i class="fa fa-fw fa-folder-open"></i></span><span class="fileinput-exists"><i class="fa fa-fw fa-folder-open"></i></span>
+												<input type="file" data-toggle="tooltip" data-title="Choose Firmware File" id='inpFirmware' accept=".bin">
+											</span>
+											<a data-toggle="tooltip" title="Cancel" href="#btnFirmware" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput" data-original-title title><i class="fa fa-fw fa-times"></i></a>
+											<a data-toggle="tooltip" title="Upload Firmware" class="input-group-addon btn btn-default fileinput-submit" id="btnFirmware"><i class="fa fa-fw fa-download"></i></a>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">&nbsp;</div>
+								<!-- <div class="form-group">
+									<div class="col-lg-4">
+										&nbsp;
+									</div>
+									<div class="col-lg-8">
+										<button class='btn btn-danger' ng-click="btnLeaveFwUploadClick()">
+											<i class='fa fa-fw fa-power-off'></i> Leave Firmware Upload Mode
+										</button>
+									</div>
+								</div> -->
+					    	</div><!-- col-lg-10 -->
+						</div><!-- panel-body -->
+					</div><!-- panel -->
+				</div><!-- tab-pane -->
+			</div>
+		</div><!-- row -->
+	</div><!-- ng-controller -->
+</div>

@@ -1,0 +1,152 @@
+<style>
+	input.ng-invalid {
+		background-color: pink;
+	}
+</style>
+<div class="container-fluid">
+	<!-- Page Heading -->
+	<div class="row">
+		<div class="col-lg-12">
+			<h2 class="page-header"><i class="fa fa-fw fa-key"></i> Access Control </h2>
+		</div>
+	</div><!-- /.row -->
+	<div class="row">
+		<div class="col-lg-12" id='accessCtrlForm'>
+			<ul class="nav nav-pills">
+				<li class="active">
+					<a href="#tabApAccessCtrl" data-toggle="tab">AP</a>
+				</li>
+					<li>
+					<a href="#tabNodeAccessCtrl" data-toggle="tab">End Device</a>
+				</li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane active" id="tabApAccessCtrl">
+					<div class='panel panel-default'>
+						<div class='panel-heading'>
+							<h3>IP Restriction of AP</h3>
+						</div>
+						<div class='panel-body'>
+							<div id ='AccessCrtlTable'>
+								<div class='table-responsive'>
+									<table class='table table-bordered table-hover' id=''>
+										<thead>
+											<tr>
+												<th>Enable/Disable  <input type='checkbox' id='checkboxAccessCtrlEnableAll'></th>
+												<th>IP(Ex: 255.255.255.255)</th>
+											</tr>
+										</thead>
+										<tbody>
+										</tbody>
+									</table>
+								</div>
+							</div><!-- AccessCrtlTable -->
+						</div>
+					</div><!-- panel -->
+				</div><!-- tab-pane -->
+				<div class="tab-pane" id="tabNodeAccessCtrl">
+					<div id="nodeAccessCtrlWrapper" ng-controller="nodeAccessCtrl">
+						<form class='form-horizontal' name="accConfigForm">
+							<div class='panel panel-default'>
+								<div class='panel-heading'>
+									<h3>MAC Restriction of End Devices</h3>
+									<!-- {{controlList}} -->
+								</div>
+								<div class='panel-body'>
+									<div class='table-responsive'>
+										<table class='table table-bordered table-hover'>
+											<thead>
+												<tr>
+													<th>Enable/Disable  <!-- <input type='checkbox'> --></th>
+													<th>MAC Address</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr ng-repeat="item in controlList">
+													<td>
+														<input type="checkbox" ng-model="item.En" ng-true-value="1" ng-false-value="0" ng-checked="item.En == 1"> {{item.Idx}}
+													</td>
+													<td>
+														<input type="text" class="form-control" ng-model="item.MAC" style='min-width: 150px;' maxlength="12" required mac-directive>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<div class="panel-footer clearfix">
+									<div class="pull-right">
+										<button class='btn btn-success privilege root admin' ng-click="btnNodeCtrlClick()" ng-disabled="!controlList || accConfigForm.$error.required || !accConfigForm.$valid">
+											<i class="fa fa-check"></i> Submit
+										</button>
+									</div>
+								</div>
+							</div><!-- panel -->
+						</form>
+					</div>
+				</div><!-- tab-pane -->
+			</div>
+		</div><!-- col-lg-12 -->
+	</div><!-- row -->
+</div>
+<script type="text/javascript">
+	$('#accessCtrlForm a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+		var type = e.target.hash.slice(4);
+		Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+		if(type === "ApAccessCtrl"){
+			loadApAccessControlSetting();
+		}else if(type === "NodeAccessCtrl"){
+			//call angular controller's function
+			var scope = angular.element(document.getElementById("nodeAccessCtrlWrapper")).scope();
+			scope.$apply(function () {
+				scope.loadNodeAccessControlSetting();
+			});
+		}else{
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		}
+	});
+
+	Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+	var accessCtrl = new Advantech.Form.AdvancedForm.AccessCrtlTable("AccessCrtlTable", 8);
+	accessCtrl.initialTable();
+
+	function loadApAccessControlSetting(){
+		httpGetOperation(HTTP_GET,
+						URL_ACCESS_CTRL,
+						onAccessControlPageGetData,
+						accessCtrlErrorCallback);
+	}
+
+	function onAccessControlPageGetData(jsonObj){
+			accessCtrl.setAccessCtrlTb(jsonObj);
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+	};
+
+	function accessCtrlErrorCallback(code, commonMsg, apiErrorCode, apiErrorMsg) {
+		Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		var returnMsg;
+		returnMsg = apiErrorCode!=undefined? Advantech.Profile.API_ERROR_CODE_NAME[apiErrorCode] : "";
+		returnMsg += apiErrorMsg!=undefined && apiErrorMsg!=""? "<p/>(Reason:" + apiErrorMsg + " error, Error number:" +apiErrorCode+")" : "";
+		if(returnMsg == "")
+			returnMsg = commonMsg;
+		Advantech.Form.MessageForm.getInstance().showMessageBox("Error code: " + code, "<i class='fa fa-fw fa-exclamation-triangle'></i>" + returnMsg , null);
+	};
+
+	accessCtrl.onAccessCrtlSubmitted(function(obj, e) {
+		Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+		httpGetOperation(HTTP_PATCH,
+							URL_ACCESS_CTRL,
+							function(){
+							httpGetOperation(HTTP_GET,
+												URL_ACCESS_CTRL,
+												onAccessControlPageGetData,
+												accessCtrlErrorCallback);
+							},
+							accessCtrlErrorCallback,
+							JSON.stringify(e));
+	});
+
+	loadApAccessControlSetting();
+</script>
+	<!-- </div> -->
+<!-- </div> -->

@@ -1,0 +1,212 @@
+<style>
+/*	.table-hover{
+		background-color: #D9EDF7;
+	}*/
+</style>
+<div ng-controller="SubNodeListCtrl" class="container-fluid" id="Sub-NodeList-Ctrl"> <!-- ng-controller -->
+	<!-- Page Heading -->
+	<div class="row">
+		<div class="col-lg-12">
+			<h2 class="page-header">
+				<span ng-if="currentModuel==''">
+					<i class="fa fa-fw fa-sitemap"></i>
+					End Device List
+				</span>
+				<span ng-if="currentModuel!=''">
+					<i class="fa fa-fw fa-hdd-o"></i>
+					Device: {{currentModuel}} &nbsp;
+					<button class='btn btn-default' ng-click="btnBackToNodeList(item)" ng-show="!bVcomConnection")>
+	                	<i class="fa fa-reply"></i> &nbsp;Back to Device List
+                	</button>
+				</span>
+				<span ng-show="currentMode=='view'">
+					<button class='btn btn-info' ng-click="btnGoToEditMode()" ng-show="!bVcomConnection")>
+	                	<i class="fa fa-edit"></i> &nbsp;Edit Mode
+                	</button>
+				</span>
+				<span ng-show="currentMode=='view'">
+					<button class='btn btn-success' ng-show="!bVcomConnection && rfMode==1" data-toggle="modal" data-target="#addDeviceModal">
+	                	<i class="fa fa-plus"></i> &nbsp;Add Device
+                	</button>
+				</span>
+				<span ng-show="currentMode=='edit'">
+					<button class='btn btn-success' ng-click="btnGoToViewMode()" ng-show="!bVcomConnection")>
+	                	<i class="fa fa-reply"></i> &nbsp;Back to View Mode
+                	</button>
+				</span>
+				<span ng-show="currentMode=='edit'">
+					<div class="btn-group">
+						<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						  All Nodes Action<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+						  	<li><a href="#" ng-click="btnClearAllNodeData('io')">Clear I/O data</a></li>
+						  	<li><a href="#" ng-click="btnClearAllNodeData('diag')">Clear Diagnosis data</a></li>
+						</ul>
+					</div>
+				</span>
+			</h2>
+		</div>
+	</div> <!-- /.row -->
+	<div ng-if="isSectionShow('list')" class="row" >
+		<div class="col-lg-12">
+			<div class="col-sm-12">
+				<div class="dataTables_length">
+					<label>
+						List
+						<select class="form-control" ng-model="table.pageSize" ng-change="onSetPageSize()">
+					    	<option ng-repeat="item in pageSizeList" value="{{item}}">{{item}}</option>
+					    </select>
+					    entries
+				    </label>
+			    </div>
+		    </div>
+			<div class="table-responsive">
+		        <table class="table table-bordered table-hover table-striped table-responsive" style="margin-bottom: 5px">
+		        	<thead>
+						<tr>
+							<th ng-show="isShowInRfMode('paring')">Module</th>
+							<th>MAC Address<span class="macTooltip" data-toggle="tooltip" style="margin-left: 3px;" title="Last 12 digits of MAC"><i class='fa fa-info-circle'></i></span></th>
+							<th ng-show="isShowInRfMode('paring')">Information</th>
+							<th>Modbus ID</th>
+							<th>RSSI</th>
+							<th ng-show="isShowInRfMode('paring')">Update Cycle Time</th>
+							<th>Inactive Time</th>
+							<th ng-if="currentMode!='edit'">Battery Status</th>
+							<th ng-if="currentMode!='edit' && isShowBatteryLevel">Battery Level<span class="macTooltip" data-toggle="tooltip" style="margin-left: 3px;" title="Range: 1~5"><i class='fa fa-info-circle'></i></span></th>
+							<th ng-if="currentMode!='edit' && isShowBatteryVoltage">Battery Voltage</th>
+							<th ng-if="currentMode!='edit'">RTC Battery Status</th>
+							<th ng-if="currentMode!='edit'">Power Source</th>
+							<th>Device Status</th>
+							<th ng-show="isShowInRfMode('paring')">Configuration</th>
+                            <th ng-show="currentMode=='edit'">Actions</th>
+                            <th ng-show="currentMode=='view' && !bVcomConnection && rfMode==1">Manual Refresh</th>
+							<th ng-show="currentMode=='view' && !bVcomConnection && rfMode==1">IO Configuration</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-if="item.SLs!='0'" ng-repeat="item in ItemsByPage[currentPage] | orderBy:columnToOrder:reverse">
+		                    <td ng-show="isShowInRfMode('paring')">
+		                    	{{item.Nm}}<!--{{item.Id}}-->
+		                    </td>
+		                    <td>
+		                    	{{(item.SLs == '0')? '--' : item.SLs}}
+		                    </td>
+		                    <td ng-show="isShowInRfMode('paring')">
+		                    	{{item.Desc}}
+		                    </td>
+		                    <td>
+		                    	{{item.Id}}
+		                    </td>
+		                    <td>
+		                    	{{item.Rssi}}
+		                    </td>
+		                    <td ng-show="isShowInRfMode('paring')">
+		                    	{{item.PItv}}
+		                    </td>
+		                    <td>
+		                    	{{item.Tm}}
+		                    </td>
+		                    <td ng-if="currentMode!='edit'">
+		                    	{{getBatteryStatus(item.BR)}}
+		                    </td>
+		                    <td ng-if="currentMode!='edit' && isShowBatteryLevel">
+		                    	{{item.Val}}
+							</td>
+							<td ng-if="currentMode!='edit' && isShowBatteryVoltage">
+		                    	{{item.BVer}}
+		                    </td>
+		                    <td ng-if="currentMode!='edit'">
+		                    	{{getRTCBatteryStatus(item.LB)}}
+		                    </td>
+		                    <td ng-if="currentMode!='edit'">
+		                    	{{(item.Pw === 0) ? 'No Data' : getPowerSource(item.Pw)}}
+		                    </td>
+		                    <td>
+								{{deviceStatus[item.RT]}}
+		                    </td>
+		                    <td ng-show="isShowInRfMode('paring')">
+		                    	<button class='btn btn-success btn-sm privilege root admin' ng-click="btnNodeConfigClick(item.SLs, item.Nm)">
+		                    	<i class="fa fa-gear"></i>
+		                    	</button>
+							</td>
+							<td ng-show="currentMode=='edit'">
+								<div class="btn-group">
+									<button type="button" class="btn btn-default" ng-click="btnNodeClearData('io',item.SLs)">
+										Clear I/O data
+									</button>
+									<button type="button" class="btn btn-default" ng-click="btnNodeClearData('diag', item.SLs)">
+										Clear Diagnosis data
+									</button>
+								</div>
+                            </td>
+                            <td class="col-lg-1" ng-show="currentMode=='view' && !bVcomConnection && rfMode==1" style="text-align: center;">
+                                <button class='btn btn-primary' ng-click="onBtnRefreshNodeClick(item.SLs)">
+                                    <i class="fa fa-refresh"></i>
+                                </button>
+                            </td>
+                            <td class="col-lg-1" ng-show="currentMode=='view' && !bVcomConnection && rfMode==1" style="text-align: center;">
+                                <button class='btn btn-success privilege root admin' ng-show="item.SLs != '0'" ng-click="btnIoStatusClick(item.SLs, item.Nm)">
+                                <i class="fa fa-gear"></i>
+                                </button>
+                            </td>
+	                	</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="dataTables_info">
+						Showing {{currentStartRecordNumber}} to {{currentEndRecordNumber}} of {{currentTotalRecordNumber}} entries
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="dataTables_paginate paging_simple_numbers">
+						<ul class="pagination">
+				            <li ng-if="ItemsByPage" ng-class="{active:0}"><a href="#" ng-click="previousPage($event)">Previous</a>
+				            </li>
+				            <li ng-repeat="n in range(ItemsByPage.length)" ng-class="{active: n==currentPage}"> <a href="#" ng-click="setPage($event)" ng-bind="n+1">1</a>
+				            </li>
+				            <li ng-if="ItemsByPage"><a href="#" ng-click="nextPage($event)">Next</a>
+				            </li>
+				        </ul>
+				    </div>
+				</div>
+			</div><!-- row -->
+
+		</div>
+	</div> <!-- /.row -->
+
+	<div ng-show="isSectionShow('device')">
+		<div class="row" id="subnode-io-status">
+		</div>
+	</div>
+
+	<!--<div ng-if="isSectionShow('nodeconfig')">
+		<div class="row" id="subnode-node-config">
+		</div>
+    </div>-->
+    <!-- addDeviceModal -->
+    <div class="modal fade" id="addDeviceModal" tabindex="-1" role="dialog" aria-labelledby="addDeviceModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="addDeviceModalLabel">Add Device</h4>
+                </div>
+                <form id="addDeviceForm">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="deviceMac" class="control-label">MAC ID of end node<span class="macTooltip" data-toggle="tooltip" style="margin-left: 3px; margin-right: 3px;" title="Please use last 12 digits of MAC"><i class='fa fa-info-circle'></i></span>:</label>
+                            <input type="text" class="form-control" id="deviceMac" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" ng-click="onBtnAddDeviceClick()">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div><!-- ng-controller -->

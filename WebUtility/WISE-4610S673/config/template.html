@@ -1,0 +1,284 @@
+<div><!-- template -->
+    <div id="tplMeter" ng-controller="MeterCtrl"><!-- ng-controller -->
+        <style>
+            .btn-default.active{
+                background-color: white;
+            }
+        </style>
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="tab-pane">
+                    <ul class="nav nav-tabs nav-justified" role="tablist">
+                        <li ng-class="{'active': activeTab === 'status'}">
+                            <a href data-toggle="tab" ng-click="switchTabTo('status')">Status</a>
+                        </li>
+                        <li ng-class="{'active': activeTab === 'config'}">
+                            <a href data-toggle="tab" ng-click="switchTabTo('config')">Configuration</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div ng-show="isTabShow('status')" class="tab-pane active">
+                            <div class='panel panel-default'>
+                                <div class='panel-heading'>
+                                    <h4>Status</h4>
+                                </div>
+                                <div class='panel-body'>
+                                    <div class="tab-content">
+                                        <p></p>
+                                        <div class='panel panel-default'>
+                                            <div class='panel-body'>
+                                                <div class='table-responsive'>
+                                                    <center>
+                                                        <table class='table-control'>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="min-width: 400px">
+                                                                        <div class="btn-group" data-toggle="buttons">
+                                                                            <label class="btn btn-success" style="width:200px">
+                                                                                <input type="radio" name="options" id="option1" autocomplete="off" checked>{{meterValueList[0].name}} ({{meterValueList[0].unit}})
+                                                                            </label>
+                                                                            <label class="btn btn-default" style="width:160px">
+                                                                                <input type="radio" name="options" id="option2" autocomplete="off"> {{ showMeterValue(0) }}
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class='td-label'><label style="margin: 0;">Channel:</label></td>
+                                                                    <td style="min-width: 300px">
+                                                                        <select style="margin-left:10px;" class='form-control' ng-model="selectedChannel.ch" ng-change="onValueChannelChange(selectedChannel.ch)">
+                                                                            <option ng-repeat="(key, data) in channelSelectList" value="{{key}}">{{data}}</option>
+                                                                        </select>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="min-width: 400px">
+                                                                        <div class="btn-group" data-toggle="buttons">
+                                                                            <label class="btn btn-success" style="width:200px">
+                                                                                <input type="radio" name="options" id="option1" autocomplete="off" checked>{{meterValueList[1].name}} ({{meterValueList[1].unit}})
+                                                                            </label>
+                                                                            <label class="btn btn-default" style="width:160px">
+                                                                                <input type="radio" name="options" id="option2" autocomplete="off"> {{ showMeterValue(1) }}
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class='td-label'><label style="margin: 0;">Type:</label></td>
+                                                                    <td class='td-control' style="min-width: 300px"><p style='margin-left:10px;'>{{ObjMeterType[channelObj.UID]}}</p></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="min-width: 400px">
+                                                                        <div class="btn-group" data-toggle="buttons">
+                                                                            <label class="btn btn-success" style="width:200px">
+                                                                                <input type="radio" name="options" id="option1" autocomplete="off" checked>{{meterValueList[2].name}} ({{meterValueList[2].unit}})
+                                                                            </label>
+                                                                            <label class="btn btn-default" style="width:160px">
+                                                                                <input type="radio" name="options" id="option2" autocomplete="off"> {{ showMeterValue(2) }}
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class='td-label'><label style="margin: 0;">Primary ID:</label></td>
+                                                                    <td class='td-control' style="min-width: 300px"><p style='margin-left:10px;'>{{channelObj.Id}}</p></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="min-width: 400px">
+                                                                        <div class="btn-group" data-toggle="buttons">
+                                                                            <label class="btn btn-primary" style="width:200px">
+                                                                                <input type="radio" name="options" id="option1" autocomplete="off" checked>{{meterValueList[3].name}} ({{meterValueList[3].unit}})
+                                                                            </label>
+                                                                            <label class="btn btn-default" style="width:160px">
+                                                                                <input type="radio" name="options" id="option2" autocomplete="off"> {{ showMeterValue(3) }}
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class='td-label'><label style="margin: 0;">Value:</label></td>
+                                                                    <td class='td-control' style="min-width: 300px"><p style='margin-left:10px;'>{{channelObj.value}}</p></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="min-width: 400px">
+                                                                        <div class="btn-group" data-toggle="buttons">
+                                                                            <label class="btn btn-primary" style="width:200px">
+                                                                                <input type="radio" name="options" id="option1" autocomplete="off" checked>{{meterValueList[4].name}} ({{meterValueList[4].unit}})
+                                                                            </label>
+                                                                            <label class="btn btn-default" style="width:160px">
+                                                                                <input type="radio" name="options" id="option2" autocomplete="off"> {{ showMeterValue(4) }}
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="min-width: 400px">
+                                                                        <div class="btn-group" data-toggle="buttons">
+                                                                            <label class="btn btn-primary" style="width:200px">
+                                                                                <input type="radio" name="options" id="option1" autocomplete="off" checked>{{meterValueList[5].name}} ({{meterValueList[5].unit}})
+                                                                            </label>
+                                                                            <label class="btn btn-default" style="width:160px">
+                                                                                <input type="radio" name="options" id="option2" autocomplete="off"> {{ showMeterValue(5) }}
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class='td-label'><label style="margin: 0;">Meter Status:</label></td>
+                                                                    <td class='td-control' style="min-width: 300px"><p style='margin-left:10px;'>{{ObjMeterStatus[channelObj.Stat]}}</p></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="min-width: 400px">
+                                                                        <div class="btn-group" data-toggle="buttons">
+                                                                            <label class="btn btn-primary" style="width:200px">
+                                                                                <input type="radio" name="options" id="option1" autocomplete="off" checked>{{meterValueList[6].name}} ({{meterValueList[6].unit}})
+                                                                            </label>
+                                                                            <label class="btn btn-default" style="width:160px">
+                                                                                <input type="radio" name="options" id="option2" autocomplete="off"> {{ showMeterValue(6) }}
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="min-width: 400px">
+                                                                        <div class="btn-group" data-toggle="buttons">
+                                                                            <label class="btn btn-warning" style="width:200px">
+                                                                                <input type="radio" name="options" id="option1" autocomplete="off" checked>{{meterValueList[7].name}} ({{meterValueList[7].unit}})
+                                                                            </label>
+                                                                            <label class="btn btn-default" style="width:160px">
+                                                                                <input type="radio" name="options" id="option2" autocomplete="off"> {{ showMeterValue(7) }}
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="min-width: 400px">
+                                                                        <div class="btn-group" data-toggle="buttons">
+                                                                            <label class="btn btn-info" style="width:200px">
+                                                                                <input type="radio" name="options" id="option1" autocomplete="off" checked>{{meterValueList[8].name}} ({{meterValueList[8].unit}})
+                                                                            </label>
+                                                                            <label class="btn btn-default" style="width:160px">
+                                                                                <input type="radio" name="options" id="option2" autocomplete="off"> {{ showMeterValue(8) }}
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="min-width: 400px">
+                                                                        <div class="btn-group" data-toggle="buttons">
+                                                                            <label class="btn btn-warning" style="width:200px">
+                                                                                <input type="radio" name="options" id="option1" autocomplete="off" checked>{{meterValueList[9].name}}
+                                                                            </label>
+                                                                            <label class="btn btn-default" style="width:160px">
+                                                                                <input type="radio" name="options" id="option2" autocomplete="off"> {{ showMeterValue(9) }}
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td ng-if="showMeterValue(9) === 0">&nbsp;</td>
+                                                                    <td ng-if="showMeterValue(9) === 0">&nbsp;</td>
+                                                                    <td ng-if="showMeterValue(9) > 0" class='td-label'><label style="margin: 0;">Error:</label></td>
+                                                                    <td ng-if="showMeterValue(9) > 0" class='td-control' style="min-width: 300px"><p style='margin-left:10px;'>{{meterValueErrorList[showMeterValue(9)]}}</p></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </center>
+                                                </div>
+                                                <div class='table-responsive' style='display:block;'>
+                                                    <table id='"+this.getTableId()+"_overview' class ='table table-bordered table-hover table-striped'>
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Channel</th>
+                                                                <th>Status</th>
+                                                                <th>Type</th>
+                                                                <th>Value</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="channel in meterValues" ng-click="onTableRowClick(channel.Idx)">
+                                                                <td>{{channel.Idx}}</td>
+                                                                <td>{{channel.En === 1 ? 'Enable' : 'Disable'}}</td>
+                                                                <td>{{ObjMeterType[channel.UID]}}</td>
+                                                                <td>{{channel.value}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div><!-- panel-body -->
+                                        </div><!-- panel -->
+                                    </div><!-- tab-content -->
+                                </div><!-- panel-body -->
+                            </div>
+                        </div><!-- tab-pane -->
+                        <div ng-show="isTabShow('config')" class="tab-pane active">
+                            <div class='panel panel-default'>
+                                <div class='panel-heading'>
+                                    <h4>Configuration</h4>
+                                </div>
+                                <div class='panel-body'>
+                                    <div class="panel panel-default form-horizontal">
+                                        <div class='panel-body'>
+                                            <div class='form-group'>
+                                                <label class='col-lg-3 control-label'>Channel</label>
+                                                <div class='col-lg-3'>
+                                                    <div class='input-group'>
+                                                        <select class='form-control' ng-model="selectedChannel.ch" ng-change="onConfigChannelChange(selectedChannel.ch)">
+                                                            <option ng-repeat="(key, data) in channelSelectList" value="{{key}}">{{data}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='form-group'>
+                                                <label class='col-sm-3 control-label'>Channel Mask</label>
+                                                <div class='col-sm-8'>
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input type="radio" ng-model="channelObj.En" value="0">Disable&nbsp;&nbsp;
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" ng-model="channelObj.En" value="1">Enable<br/>
+                                                        </label>
+                                                    </div>
+                                                    </div>
+                                            </div>
+                                            <div class="well">
+                                                <div class='form-group'>
+                                                    <label class='col-sm-3 control-label'>Type</label>
+                                                    <div class='col-sm-8'>
+                                                        <div class='input-group' style='padding-top: 7px;'>
+                                                            {{ObjMeterType[channelObj.UID]}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class='form-group'>
+                                                    <label class='col-sm-3 control-label'>Primary ID</label>
+                                                    <div class='col-sm-8'>
+                                                        <div class='input-group' style='padding-top: 7px;'>
+                                                            {{channelObj.Id}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='form-group'>
+                                                <label class='col-sm-3 control-label'>Meter Value Enable</label>
+                                                <div class='col-sm-8'>
+                                                    <div class="form-check" ng-repeat="item in channelObj.arrMeterValue">
+                                                        <div class="checkbox">
+                                                            <label><input type="checkbox" ng-model="item.val" ng-true-value="1" ng-false-value="0" ng-checked="item.val == 1">{{meterValueList[$index].name}}</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div><!-- panel-body -->
+                                        <div class="panel-footer clearfix">
+                                            <div class="pull-right">
+                                                <button class="btn btn-success privilege root admin" ng-click="onMeterConfigClick()"><i class="fa fa-check"></i> Submit</button>
+                                            </div>
+                                        </div>
+                                    </div><!-- panel -->
+                                </div><!-- panel-body -->
+                            </div><!-- panel -->
+                        </div><!-- tab-pane -->
+                    </div><!-- tab-content -->
+                </div>
+            </div>
+        </div>
+    </div><!-- ng-controller -->
+</div><!-- template -->

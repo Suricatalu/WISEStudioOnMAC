@@ -1,0 +1,760 @@
+<style>
+/*	.input-value-check.ng-invalid {
+	    border: 1px solid #f00;
+	}*/
+	.error-message{
+	  	color:red;
+	}
+	.ok-message{
+	  	color:green;
+	}
+	.input-value-check{
+		border: 0px transparent;
+		background-color: transparent;
+	}
+	.status-input-check.ng-invalid {
+	    border: 1px solid #f00;
+	}
+	.rule_valid{
+	  	background-color: #D5FFD5;
+	}
+	.rule_invalid{
+	  	background-color: #D7D7D7;
+	}
+	.form-control{
+		box-shadow:0px -1px 1px rgba(0, 0, 0, 0.075) inset;
+	}
+	.form-control.rule_id{
+		border: 0px transparent;
+		background-color: transparent;
+		box-shadow:none;
+	}
+	.affix {
+	    width: 30%;
+	    position: fixed;
+	    top: 30%;
+		left: 40%;
+	}
+	.tooltip-inner {
+		text-align: left;
+	}
+</style>
+
+<div ng-controller="ComPortSettingCtrl"><!-- ng-controller -->
+	<style>
+		.btn-default.active{
+			background-color: white;
+		}
+	</style>
+	<div class="col-lg-12 row">
+		<div class="tab-content">
+			<div class="tab-pane active">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class='form-horizontal'>
+							<div class="row" id="protocol" style="display:none">
+								<div class="col-lg-10">
+									<div class='form-group'>
+										<label class='col-sm-4 control-label'>Protocol</label>
+										<div class='col-sm-7'>
+											<select class="form-control" id="selProt" ng-model="comPortSetting.Prot" ng-change="onProtocolChange()">
+												<option value="0">Modbus/RTU (Client)</option>
+												<option value="1">Transparent</option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="panelModbus" style="display:none">
+								<ul class="nav nav-tabs nav-justified" role="tablist">
+									<li ng-class="{'active': activeTab === 'status'}">
+										<a href data-toggle="tab" ng-click="switchTabTo('status')">Status</a>
+									</li>
+									<li ng-show="!isSupportMTTA" ng-class="{'active': activeTab === 'modbus'}">
+										<a href data-toggle="tab" ng-click="switchTabTo('modbus')">Modbus/RTU Configuration</a>
+									</li>
+									<li ng-show="!isSupportMTTA" ng-class="{'active': activeTab === 'diag'}">
+										<a href data-toggle="tab" ng-click="switchTabTo('diag')">Diagnostician</a>
+									</li>
+								</ul>
+								<div class="tab-content">
+									<div ng-show="isTabShow('diag')" class="tab-pane active">
+										<div class='panel panel-default'>
+											<div class='panel-heading'>
+												<h4>Modbus/RTU Server Response Time</h4>
+											</div>
+											<div class='panel-body'>
+												<form class='form-horizontal'>
+													<table class="table table-bordered">
+														<thead>
+															<tr>
+																<th title="Rule ID">Rule</th>
+																<th title="Current server device response time">Current Response Time(ms)</th>
+																<th title='Max server deivce response time'>Max Response Time(ms)</th>
+																<th title="Min server deivce response time">Min Response Time(ms)</th>
+																<th title="Modbus RTU Polling Status">Status</th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr ng-repeat="item in responseTimeData">
+																<td>
+																	{{ item.Idx }}
+																	<span ng-show="item.writeOnly">(Write Only)</span>
+																</td>
+																<td>
+																	{{ item.CRT }}
+																</td>
+																<td>
+																	{{ item.HRT }}
+																</td>
+																<td>
+																	{{ item.LRT }}
+																</td>
+																<td>
+																	{{ item.status }}
+																</td>
+															</tr>
+														</tbody>
+													</table>
+													<div class="col-sm-12">
+														<div  class="text-center text-danger">
+															Polling: {{responseTimeQueryCount}} times...
+														</div>
+													</div>
+													<div class='col-lg-12'>
+														<div class="pull-right">
+															<button  class='btn btn-success privilege root admin' ng-click="btnDiagnosticResetClick()">
+																<i class="fa fa-check"></i> Reset Response Time
+															</button>
+														</div>
+													</div>
+												</form><!--./form-->
+											</div><!--./panel-body-->
+										</div><!--./panel-->
+									</div><!-- tab-pane -->
+									<div ng-show="isTabShow('modbus')" class="tab-pane active">
+										<div class='panel panel-default'>
+											<div class='panel-heading'>
+												<h4>Modbus/RTU Configuration</h4>
+											</div>
+											<div class='panel-body'>
+												<ul class="nav nav-tabs nav-justified" role="tablist">
+													<li ng-class="{'active': configActiveTab === 'config_common'}">
+														<a href data-toggle="tab" ng-click="switchConfigTabTo('config_common')">Common Setting</a>
+													</li>
+													<li ng-class="{'active': configActiveTab === 'config_rule'}">
+														<a href data-toggle="tab" ng-click="switchConfigTabTo('config_rule')">Rule Setting</a>
+													</li>
+												</ul>
+												<div class="tab-content">
+													<div ng-show="isConfigTabShow('config_common')" class="tab-pane active">
+														<form class='form-horizontal' name="configCommonForm">
+															<div class="panel-body">
+																<div class='col-lg-10'>
+																	<div class='form-group'>
+																		<label class='col-sm-4 control-label' for='inpPWeb'> Baud rate</label>
+																		<div class='col-sm-8'>
+																			<select class="form-control" ng-model="comPortSetting.BR" ng-class="">
+																				<option ng-repeat="(key, data) in baudRateSelectList" value="{{key}}">{{data}}</option>
+																			</select>
+																		</div>
+																	</div><!--./form-group-->
+																	<div class='form-group'>
+																		<label class='col-sm-4 control-label' for='inpIdl'>Data Bit</label>
+																		<div class='col-sm-8'>
+																			<select class="form-control" ng-model="comPortSetting.DB" disabled>
+																				<option ng-repeat="(key, data) in DataBitSelectList" ng-if="key==1" value="{{key}}">{{data}}</option>
+																			</select>
+																		</div>
+																	</div><!--./form-group-->
+																	<div class='form-group'>
+																		<label class='col-sm-4 control-label'>Parity</label>
+																		<div class='col-sm-8'>
+																			<select class="form-control" ng-model="comPortSetting.P">
+																				<option ng-repeat="(key, data) in ParitySelectList" value="{{key}}">{{data}}</option>
+																			</select>
+																		</div>
+																	</div><!--./form-group-->
+																	<div class='form-group'>
+																		<label class='col-sm-4 control-label'>Stop Bit</label>
+																		<div class='col-sm-8'>
+																			<select class="form-control" ng-model="comPortSetting.SB">
+																				<option ng-repeat="(key, data) in StopBitSelectList" value="{{key}}">{{data}}</option>
+																			</select>
+																		</div>
+																	</div><!--./form-group-->
+																</div><!--./col-lg-10-->
+																<div class='col-lg-10'>
+																	<br>
+																</div>
+																<div class='col-lg-10'>
+																	<div class='form-group'>
+																		<label class='col-sm-4 control-label'>Server response timeout</label>
+																		<div class='col-sm-8'>
+																			<div class="input-group">
+																				<input type="number" ng-model="modbusCommonSetting.RT" class="form-control status-input-check" min="50" max="5000" required>
+																				<div class="input-group-addon">ms</div>
+																			</div>
+																		</div>
+																	</div><!--./form-group-->
+																	<div class='form-group'>
+																		<label class='col-sm-4 control-label'>Delay between Polls</label>
+																		<div class='col-sm-8'>
+																			<div class="input-group">
+																				<input type="number" ng-model="modbusCommonSetting.DBP" class="form-control status-input-check" min="1" max="1000" required>
+																				<div class="input-group-addon">ms</div>
+																			</div>
+																		</div>
+																	</div><!--./form-group-->
+																	<div class='form-group'>
+																		<label class='col-sm-4 control-label'>CRC Check</label>
+																		<div class='col-sm-8'>
+																			<div class="radio">
+																				<!-- <input type="checkbox" ng-model="modbusCommonSetting.EnC" ng-true-value="1" ng-false-value="0" ng-checked="modbusCommonSetting.EnC == 1"><br/> -->
+																				<label>
+																					<input type="radio" ng-model="modbusCommonSetting.EnC" value="0">Disable&nbsp;&nbsp;
+																				</label>
+																				<label>
+																					<input type="radio" ng-model="modbusCommonSetting.EnC" value="1">Enable<br/>
+																				</label>
+																			</div>
+																		</div>
+																	</div><!--./form-group-->
+																</div>
+															</div><!-- panel-body -->
+															<div class='col-lg-12'>
+																<div class="pull-right">
+																	<button  class='btn btn-success privilege root admin' ng-click="btnModbusComSettingClick()" ng-disabled="configCommonForm.$error.required || !configCommonForm.$valid">
+																		<i class="fa fa-check"></i> Submit
+																	</button>
+																</div>
+															</div>
+														</form>
+													</div>
+													<div ng-show="isConfigTabShow('config_rule')" class="tab-pane active">
+														<br>
+														<form name="configCoilForm">
+															<div class="table-responsive">
+																<table class="table table-bordered">
+																	<thead>
+																		<tr>
+																			<th title="Rule ID">Rule</th>
+																			<th title="Modus RTU Server device ID. Range: 1~255" style="min-width: 100px">Server ID</th>
+																			<th title='Modbus RTU function code used for polling' style="min-width: 180px">Type</th>
+																			<th title="Modus RTU Polling Address. Range: 1~65535">Start Address</th>
+																			<th title="Number of Address Length. Range: 1~{{max_channel_amount}}">Length</th>
+																			<th title="R: Read Only, W: Write Only, R/W: Read or Write" style="min-width: 100px">R/W</th>
+																			<th title="Interval of polling(s). Range: 1~65535" style="min-width: 100px">Scan Interval</th>
+																			<th title="Channel number for RESTful request. Range: 0~{{max_channel_amount-1}}. Value start from: Previos Channel Number + Previous Address Length">Mapping Channel</th>
+																			<th title="Enable/disable Modbus RTU 'deviation' for registers, and 'change of state' for coils">Deviation/COS</th>
+																			<th title="The deviation value of register raw data" style="min-width: 100px">Deviation Value</th>
+																			<th title="Rule is valid or invalid">Rule Status</th>
+																		</tr>
+																	</thead>
+																	<tbody>
+																		<tr ng-repeat="item in modbusRuleSetting">
+																			<!-- <td ng-class="{'rule_valid': !configCoilForm.$error.required && configCoilForm.$valid && item.valid, 'rule_invalid': configCoilForm.$error.required || !configCoilForm.$valid || !item.valid }"> -->
+																			<!-- <td ng-class="{'rule_valid': item.valid, 'rule_invalid': !item.valid }">
+																				<span class="form-control rule_id">{{ item.Idx }}</span>
+																			</td> -->
+																			<td ng-class="{'rule_valid': item.ruleStatus, 'rule_invalid': !item.ruleStatus }">
+																				<span class="form-control rule_id">{{ item.Idx }}</span>
+																			</td>
+																			<td>
+																				<input type="number" ng-model="item.SID" class="form-control input-value-check" min="1" max="255" required ng-change="onSlaveIdChange(item.Idx, item.SID)">
+																				<span class="error-message" ng-show="errorIndicatorSlaveId[item.Idx]">Invalid</span>
+																			</td>
+																			<td>
+																				<select class="form-control input-value-check" ng-model="item.FC" ng-change="onFunctionCodeChange(item.Idx, item.FC)" ng-disabled="ruleDisableEdit[item.Idx]">
+																					<option value="0">Disable</option>
+																					<option value="1">01 Coil status</option>
+																					<option value="2">02 Input status</option>
+																					<option value="3">03 Holding register</option>
+																					<option value="4">04 Input register</option>
+																				</select>
+																				<!-- <div class="pull-left">
+																					<button  class='btn btn-info btn-xs privilege root admin' ng-click="btnModbusConfigCopy('FC')" ng-show="$index==0">
+																						Copy to all
+																					</button>
+																				</div> -->
+																			</td>
+																			<td>
+																				<input type="number" ng-model="item.Addr" class="form-control input-value-check" min="1" max="65535" required ng-change="onStartAddressChange(item.Idx, item.Addr)" ng-disabled="ruleDisableEdit[item.Idx]">
+																				<!-- <div class="pull-left">
+																					<button  class='btn btn-info btn-xs privilege root admin' ng-click="btnModbusConfigCopy('Addr')" ng-show="$index==0">
+																						Copy to all
+																					</button>
+																				</div> -->
+																				<span class="error-message" ng-show="errorIndicatorStartAddress[item.Idx]">Invalid</span>
+																			</td>
+																			<td>
+																				<input type="number" ng-model="item.NOP" class="form-control input-value-check" min="1" max="{{max_channel_amount}}" required ng-change="onChannelQuantityChange(item.Idx, item.NOP)" ng-disabled="ruleDisableEdit[item.Idx]">
+																				<!-- <div class="pull-left">
+																					<button  class='btn btn-info btn-xs privilege root admin' ng-click="btnModbusConfigCopy('NOP')" ng-show="$index==0">
+																						Copy to all
+																					</button>
+																				</div> -->
+																				<span class="error-message" ng-show="errorIndicatorLength[item.Idx]">Invalid</span>
+																				<span class="error-message" ng-show="ruleLengthOccupiedError[item.Idx]">Occupied</span>
+																			</td>
+																			<td>
+																				<select ng-model="item.Prop" class="form-control input-value-check">
+																					<option value="0">R</option>
+																					<option value="1">W</option>
+																					<option value="2">R/W</option>
+																				</select>
+																				<!-- <div class="pull-left">
+																					<button  class='btn btn-info btn-xs privilege root admin' ng-click="btnModbusConfigCopy('Prop')" ng-show="$index==0">
+																						Copy to all
+																					</button>
+																				</div> -->
+																			</td>
+																			<td style="background-color:#FFFFCA">
+																				<input type="number" ng-model="item.SItv" class="form-control input-value-check" min="1" max="65535" required ng-change="onIntervalChange(item.Idx, item.SItv)" ng-disabled="item.DevE!=1">
+																				<!-- <div class="pull-left">
+																					<button  class='btn btn-info btn-xs privilege root admin' ng-click="btnModbusConfigCopy('SItv')" ng-show="$index==0">
+																						Copy to all
+																					</button>
+																				</div> -->
+																				<span class="error-message" ng-show="errorIndicatorScanInterval[item.Idx]">Invalid</span>
+																			</td>
+																			<td style="background-color:#FFFFCA">
+																				<input type="number" min="0" max="{{max_channel_amount-1}}" ng-model="item.MCh" class="form-control input-value-check" ng-pattern="modbusAddressPattern" required ng-change="onMappingChannelChange(item.Idx, item.MCh)" ng-disabled="ruleDisableEdit[item.Idx]">
+																				<span class="error-message" ng-show="errorIndicatorMappingChannel[item.Idx]">Invalid</span>
+																				<span class="error-message" ng-show="ruleChannelOccupiedError[item.Idx]">Occupied</span>
+																			</td>
+																			<td style="background-color:#FFFFCA">
+																				<input type="checkbox" ng-model="item.DevE" ng-true-value="1" ng-false-value="0" ng-checked="item.DevE == 1"><br/>
+																			</td>
+																			<td>
+																				<input type="number" ng-model="item.Dev" class="form-control input-value-check" min="1" max="65535" required ng-change="onDevValueChange(item.Idx, item.Dev)" ng-disabled="item.DevE!=1">
+																				<span class="error-message" ng-show="errorIndicatorDevValue[item.Idx]">Invalid</span>
+																			</td>
+																			<td style="background-color:#FFFFCA">
+																				<!-- <div class="error-message" ng-show="configCoilForm.$error.required || !configCoilForm.$valid || !item.valid">
+																					<span title="Invalid"><h4><i class='fa fa-fw fa-times-circle'></i></h1></span>
+																				</div>
+																				<div class="ok-message" ng-show="!configCoilForm.$error.required && configCoilForm.$valid && item.valid">
+																					<span title="Valid"><h4><i class='fa fa-fw fa-check-circle'></i></h4></span>
+																				</div> -->
+																				<div class="error-message" ng-show="!item.ruleStatus">
+																					<span title="Invalid"><h4><i class='fa fa-fw fa-times-circle'></i></h1></span>
+																				</div>
+																				<div class="ok-message" ng-show="item.ruleStatus">
+																					<span title="Valid"><h4><i class='fa fa-fw fa-check-circle'></i></h4></span>
+																				</div>
+																			</td>
+																		</tr>
+																	</tbody>
+																</table>
+															</div><!-- table-responsive -->
+															<div class="pull-right">
+																<button  class='btn btn-success privilege root admin' ng-click="btnModbusClick()" ng-disabled="configCoilForm.$error.required || !configCoilForm.$valid || modbusCoilErrorIndicator">
+																	<i class="fa fa-check"></i> Submit
+																</button>
+															</div>
+														</form>
+														<br>
+														<div class='col-lg-10'>
+															<label class='col-sm-8 control-label'>
+																<i class='fa fa-fw fa-info-circle'></i>
+																Total {{max_channel_amount}} coils or registers can be configured.
+															</label>
+														</div>
+														<div class='col-lg-10'>
+															<label class='col-sm-8 control-label'>
+																<i class='fa fa-fw fa-info-circle'></i>
+																All data in data logger will be cleared if rule is changed.
+															</label>
+														</div>
+														<div class='col-lg-10'>
+															<label class='col-sm-8 control-label'>
+																<i class='fa fa-fw fa-info-circle'></i>
+																Mouse over table title to show tip.
+															</label>
+														</div>
+													</div><!-- ng-show -->
+												</div><!-- tab-content -->
+											</div><!-- panel-body -->
+										</div>
+									</div><!-- tab-pane -->
+									<div ng-show="isTabShow('status')" class="tab-pane active">
+										<div class='panel panel-default'>
+											<div class='panel-heading'>
+												<h4>Status</h4>
+											</div>
+											<div ng-show="!isSupportMTTA" class='panel-body'>
+												<ul class="nav nav-tabs nav-justified" role="tablist">
+													<li ng-class="{'active': statusActiveTab === 'status_bit'}">
+														<a href data-toggle="tab" ng-click="switchStatusTab('status_bit')">Bit Status</a>
+													</li>
+													<li ng-class="{'active': statusActiveTab === 'status_word'}">
+														<a href data-toggle="tab" ng-click="switchStatusTab('status_word')">Word Status</a>
+													</li>
+												</ul>
+												<div class="tab-content">
+													<p></p>
+													<div ng-show="isStatusTabShow('status_bit')" class="tab-pane active">
+														<div class='col-sm-12'>
+															<p></p>
+														</div>
+														<div class="col-sm-12">
+															<div class="dataTables_length">
+																<label>
+																	Show
+																	<select class="form-control" ng-model="pageSize" ng-change="onSetPageSize()">
+																		<option ng-repeat="item in pageSizeList" value="{{item}}">{{item}}</option>
+																	</select>
+																	entries
+																</label>
+																<div class="pull-right">
+																	<button  class='btn btn-info privilege root admin' ng-click="btnStatusSwitchMode()" ng-show="!isStatusEditMode">
+																		<i class="fa fa-edit"></i> Edit
+																	</button>
+																	<button  class='btn btn-warning privilege root admin' ng-click="btnStatusSwitchMode()" ng-show="isStatusEditMode">
+																		<i class="fa fa-reply"></i> View
+																	</button>
+																	<br>
+																</div>
+															</div>
+														</div>
+														<div class="affix" ng-show="isStatusEditMode && queryExapsionDataWriteResultText!=''">
+															<div class="alert alert-warning text-center">
+																<h4>&nbsp;<b>{{queryExapsionDataWriteResultText}}</b></h4>
+															</div>
+														</div>
+														<div class="table-responsive">
+															<table class="table table-bordered table-hover table-striped table-responsive" style="margin-bottom: 5px">
+																<thead>
+																	<tr>
+																		<th>Channel</th>
+																		<th>Value</th>
+																		<th>Status</th>
+																		<th title="Modbus RTU Address">Server ID</th>
+																		<th>Server Address</th>
+																		<!--<th>R/W Property</th>-->
+																		<th ng-show="isStatusEditMode"></th>
+																	</tr>
+																</thead>
+																<tbody>
+																	<tr ng-repeat="item in ItemsByPage[currentPage] | orderBy:columnToOrder:reverse">
+																		<td>
+																			{{item.Ch}}
+																		</td>
+																		<td>
+																			<span ng-show="!isStatusEditMode && !item.writeOnly && item.Evt!=16">{{item.Val}}</span>
+																			<span ng-show="!isStatusEditMode && item.writeOnly">(Write Only)</span>
+																			<span ng-show="isStatusEditMode && item.Evt!=16">
+																				<input type="radio" ng-model="item.Val" value="0">  0 &nbsp;&nbsp;
+																				<input type="radio" ng-model="item.Val" value="1">  1
+																			</span>
+																		</td>
+																		<td>
+																			{{modbusRtuChannelStatusCodeList[item.Evt]}}
+																		</td>
+																		<td>{{item.SID}}</td>
+																		<td>{{item.Addr}}</td>
+																		<!--<td>{{item.Prop}}</td>-->
+																		<td ng-show="isStatusEditMode">
+																			<button class='btn btn-success btn-xs privilege root admin' ng-click="btnApplyStatusValue(item.Ch)" ng-disabled="!isStatusEditMode || item.Evt==16 || isQueryExapsionDataWriteResult">
+																				Apply
+																			</button>
+																		</td>
+																	</tr>
+																</tbody>
+															</table>
+														</div>
+														<div class="row">
+															<div class="col-sm-6">
+																<div class="dataTables_info">
+																	Showing {{currentStartRecordNumber}} to {{currentEndRecordNumber}} of {{currentTotalRecordNumber}} entries
+																</div>
+															</div>
+															<div class="col-sm-6">
+																<div class="dataTables_paginate paging_simple_numbers">
+																	<ul class="pagination">
+																		<li ng-class="{active:0}"><a href="#" ng-click="previousPage()">Previous</a>
+																		</li>
+																		<li ng-repeat="n in range(ItemsByPage.length)" ng-class="{active: n==currentPage}"> <a href="#" ng-click="setPage()" ng-bind="n+1">1</a>
+																		</li>
+																		<li><a href="#" ng-click="nextPage()">Next</a>
+																		</li>
+																	</ul>
+																</div>
+															</div>
+														</div><!-- row -->
+														<div class="col-sm-12">
+															<div  class="text-center text-danger">
+																Polling: {{statusQueryCount}} times...
+															</div>
+														</div>
+													</div><!-- ng-show -->
+													<div ng-show="isStatusTabShow('status_word')" class="tab-pane active">
+														<div class='col-sm-12'>
+															<p></p>
+														</div>
+														<div class="col-sm-12">
+															<div class="dataTables_length">
+																<label>
+																	Show
+																	<select class="form-control" ng-model="pageSize" ng-change="onSetPageSize()">
+																		<option ng-repeat="item in pageSizeList" value="{{item}}">{{item}}</option>
+																	</select>
+																	entries
+																</label>
+																<div class="pull-right">
+																	<button  class='btn btn-info privilege root admin' ng-click="btnStatusSwitchMode()" ng-show="!isStatusEditMode">
+																		<i class="fa fa-edit"></i> Edit
+																	</button>
+																	<button  class='btn btn-warning privilege root admin' ng-click="btnStatusSwitchMode()" ng-show="isStatusEditMode">
+																		<i class="fa fa-reply"></i> View
+																	</button>
+																</div>
+															</div>
+														</div>
+														<div class="affix" ng-show="isStatusEditMode && queryExapsionDataWriteResultText!=''">
+															<div class="alert alert-warning text-center">
+																<h4>&nbsp;<b>{{queryExapsionDataWriteResultText}}</b></h4>
+															</div>
+														</div>
+														<div class="table-responsive">
+															<form name="statusWordForm">
+																<table class="table table-bordered table-hover table-striped table-responsive" style="margin-bottom: 5px">
+																	<thead>
+																		<tr>
+																			<th>Channel</th>
+																			<th>Value</th>
+																			<th>Status</th>
+																			<th title="Modbus RTU Address">Server ID</th>
+																			<th>Server Address</th>
+																			<!--<th>Mapping Address(4X)</th>-->
+																			<th ng-show="isStatusEditMode"></th>
+																		</tr>
+																	</thead>
+																	<tbody>
+																		<tr ng-repeat="item in ItemsByPage[currentPage] | orderBy:columnToOrder:reverse">
+																			<td>
+																				{{item.Ch}}
+																			</td>
+																			<td>
+																				<span ng-show="!isStatusEditMode && !item.writeOnly && item.Evt!=16">{{item.Val}}</span>
+																				<span ng-show="!isStatusEditMode && item.writeOnly">(Write Only)</span>
+																				<span ng-show="isStatusEditMode && item.Evt!=16">
+																					<input type="number" ng-model="item.Val" class="form-control status-input-check" min="0" max="65535" required>
+																				</span>
+																			</td>
+																			<td>
+																				{{modbusRtuChannelStatusCodeList[item.Evt]}}
+																			</td>
+																			<td>{{item.SID}}</td>
+																			<td>{{item.Addr}}</td>
+																			<!--<td>{{item.MAddr}}</td>-->
+																			<td ng-show="isStatusEditMode">
+																				<button class='btn btn-success btn-xs privilege root admin' ng-click="btnApplyStatusValue(item.Ch)" ng-disabled="statusWordForm.$error.required || !statusWordForm.$valid || !isStatusEditMode || item.Evt==16 || isQueryExapsionDataWriteResult">
+																					Apply
+																				</button>
+																			</td>
+																		</tr>
+																	</tbody>
+																</table>
+															</form>
+														</div><!-- table-responsive -->
+														<div class="row">
+															<div class="col-sm-6">
+																<div class="dataTables_info">
+																	Showing {{currentStartRecordNumber}} to {{currentEndRecordNumber}} of {{currentTotalRecordNumber}} entries
+																</div>
+															</div>
+															<div class="col-sm-6">
+																<div class="dataTables_paginate paging_simple_numbers">
+																	<ul class="pagination">
+																		<li ng-class="{active:0}"><a href="#" ng-click="previousPage()">Previous</a>
+																		</li>
+																		<li ng-repeat="n in range(ItemsByPage.length)" ng-class="{active: n==currentPage}"> <a href="#" ng-click="setPage()" ng-bind="n+1">1</a>
+																		</li>
+																		<li><a href="#" ng-click="nextPage()">Next</a>
+																		</li>
+																	</ul>
+																</div>
+															</div>
+														</div><!-- row -->
+														<div class="col-sm-12">
+															<div  class="text-center text-danger">
+																Polling: {{statusQueryCount}} times...
+															</div>
+														</div>
+													</div><!-- ng-show -->
+												</div><!-- tab-content -->
+											</div><!-- panel-body -->
+											<div ng-show="isSupportMTTA" class='panel-body'>
+												<div class="tab-content">
+													<p></p>
+													<div class="panel panel-default">
+														<div class="panel-body">
+															<div class="table-responsive">
+																<center>
+																	<table class="table-control">
+																		<tbody>
+																			<tr ng-repeat="item in MttaMeterItemArr">
+																				<td style="min-width: 400px" class="ng-scope">
+																					<div class="btn-group" data-toggle="buttons">
+																						<label class="btn btn-primary ng-binding" style="width:200px">
+																							<input type="radio" name="options" id="option1" autocomplete="off" checked="">{{item.name}} {{(item.unit) ? "(" + item.unit + ")" : ""}}
+																						</label>
+																						<label class="btn btn-default ng-binding" style="width:160px">
+																							<input type="radio" name="options" id="option2" autocomplete="off">{{(item.value)?item.value:"&nbsp;"}}
+																						</label>
+																					</div>
+																				</td>
+																			</tr>
+																		</tbody>
+																	</table>
+																</center>
+															</div>
+														</div><!-- panel-body -->
+													</div>
+												</div>
+											</div><!-- panel-body -->
+										</div>
+									</div><!-- tab-pane -->
+								</div>
+							</div>
+							<div class="row" id="panelTransparent" style="display:none">
+								<form name="transparentGenConfigForm">
+									<div class="col-lg-10">
+										<div class='form-group'>
+											<label class='col-sm-4 control-label' for='inpPWeb'>Baud rate</label>
+											<div class='col-sm-7'>
+												<select class="form-control" ng-model="comPortSetting.BR" ng-class="">
+													<option ng-repeat="(key, data) in baudRateSelectList" value="{{key}}">{{data}}</option>
+												</select>
+											</div>
+										</div><!--./form-group-->
+										<div class='form-group'>
+											<label class='col-sm-4 control-label' for='inpIdl'>Data Bit</label>
+											<div class='col-sm-7'>
+												<select class="form-control" ng-model="comPortSetting.DB">
+													<option ng-repeat="(key, data) in DataBitSelectList" value="{{key}}">{{data}}</option>
+												</select>
+											</div>
+										</div><!--./form-group-->
+										<div class='form-group'>
+											<label class='col-sm-4 control-label'>Parity</label>
+											<div class='col-sm-7'>
+												<select class="form-control" ng-model="comPortSetting.P">
+													<option ng-repeat="(key, data) in ParitySelectList" value="{{key}}">{{data}}</option>
+												</select>
+											</div>
+										</div><!--./form-group-->
+										<div class='form-group'>
+											<label class='col-sm-4 control-label'>Stop Bit</label>
+											<div class='col-sm-7'>
+												<select class="form-control" ng-model="comPortSetting.SB">
+													<option ng-repeat="(key, data) in StopBitSelectList" value="{{key}}">{{data}}</option>
+												</select>
+											</div>
+										</div><!--./form-group-->
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Response Timeout</label>
+											<div class="col-sm-7">
+												<div class="input-group">
+													<input type="number" ng-model="transparentGenConfig.RT" class="form-control status-input-check" min="0" max="5000 " required="">
+													<div class="input-group-addon">ms</div>
+												</div>
+											</div>
+											<div class='col-sm-1'>
+												<i class='fa fa-fw fa-info-circle control-label' data-toggle="tooltip" data-html="true" title="1-5000 ms,<br>0: disable"></i>
+											</div>
+										</div><!--./form-group-->
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Minimum Payload Length</label>
+											<div class="col-sm-7">
+												<input type="number" ng-model="transparentGenConfig.Lng" class="form-control status-input-check" min="0" max="2048" required="">
+											</div>
+											<div class='col-sm-1'>
+												<i class='fa fa-fw fa-info-circle control-label' data-toggle="tooltip" data-html="true" title="1~2048,<br>0: disable"></i>
+											</div>
+										</div><!--./form-group-->
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Start Character</label>
+											<div class="col-sm-7">
+												<input type="text" ng-model="transparentGenConfig.TSt" class="form-control status-input-check" maxlength="8" ng-pattern="/^$|^([\da-fA-F]{2}){1,4}$/">
+											</div>
+											<div class='col-sm-1'>
+												<i class='fa fa-fw fa-info-circle control-label' data-toggle="tooltip" data-html="true" title="Hex format, max 4 characters<br>Ex: “0D0A” (2 characters: 0x0D, 0x0A), “0D0A0000” (4 characters: 0x0D, 0x0A, 0x00, 0x00)"></i>
+											</div>
+										</div><!--./form-group-->
+										<div class="form-group">
+											<label class="col-sm-4 control-label">End Character</label>
+											<div class="col-sm-7">
+												<input type="text" ng-model="transparentGenConfig.EnC" class="form-control status-input-check" maxlength="8" ng-pattern="/^$|^([\da-fA-F]{2}){1,4}$/">
+											</div>
+											<div class='col-sm-1'>
+												<i class='fa fa-fw fa-info-circle control-label' data-toggle="tooltip" data-html="true" title="Hex format, max 4 characters<br>Ex: “0D0A” (2 characters: 0x0D, 0x0A), “0D0A0000” (4 characters: 0x0D, 0x0A, 0x00, 0x00)"></i>
+											</div>
+										</div><!--./form-group-->
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Length</label>
+											<div class="col-sm-7">
+												<input type="number" ng-model="transparentGenConfig.FC" class="form-control status-input-check" min="0" max="2048" required="">
+											</div>
+											<div class='col-sm-1'>
+												<i class='fa fa-fw fa-info-circle control-label' data-toggle="tooltip" data-html="true" title="1~2048,<br>0: disable"></i>
+											</div>
+										</div><!--./form-group-->
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Break Time</label>
+											<div class="col-sm-7">
+												<div class="input-group">
+													<input type="number" ng-model="transparentGenConfig.STim" class="form-control status-input-check" min="0" max="5000" required="">
+													<div class="input-group-addon">ms</div>
+												</div>
+											</div>
+											<div class='col-sm-1'>
+												<i class='fa fa-fw fa-info-circle control-label' data-toggle="tooltip" data-html="true" title="1-5000 ms,<br>0: disable"></i>
+											</div>
+										</div><!--./form-group-->
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Maximum Length of Under Processing Payload</label>
+											<div class="col-sm-7">
+												<input type="number" ng-model="transparentGenConfig.Total" class="form-control status-input-check" min="1" max="2048" required="">
+											</div>
+											<div class='col-sm-1'>
+												<i class='fa fa-fw fa-info-circle control-label' data-toggle="tooltip" data-html="true" title="1-2048"></i>
+											</div>
+										</div><!--./form-group-->
+										<div class="form-group">
+											<label class="col-sm-4 control-label"></label>
+											<div class="col-sm-7">
+												<div class="radio">
+													<label>
+														<input type="radio" ng-model="transparentGenConfig.SEn" value="0">Send if over the Maximum Length of Under Processing Payload&nbsp;&nbsp;
+													</label>
+													<label>
+														<input type="radio" ng-model="transparentGenConfig.SEn" value="1">Drop if over the Maximum Length of Under Processing Payload<br/>
+													</label>
+												</div>
+											</div>
+										</div><!--./form-group-->
+									</div>
+									<div class="col-lg-12">
+										<div class="pull-right">
+											<button class="btn btn-success privilege root admin" ng-click="btnTransparentGenConfigClick()" ng-disabled="transparentGenConfigForm.$error.required || !transparentGenConfigForm.$valid">
+												<i class="fa fa-check"></i> Submit
+											</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+						<div class="pull-right" id="protocolChangeSubmitButton" style="display:none">
+							<button class='btn btn-success privilege root admin' ng-click="btnProtocolChangeClick()">
+								<i class="fa fa-check"></i> Submit
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,221 @@
+<style>
+	.form-control{
+		box-shadow:0px -1px 1px rgba(0, 0, 0, 0.075) inset;
+	}
+	.form-control[readonly]{
+		border: 0px transparent;
+		background-color: transparent;
+		cursor: auto;
+	}
+	.form-control:hover{
+		background-color: #d9edf7;
+		box-shadow:none;
+	}
+	.form-control:active{
+		background-color: #d9edf7;
+		border: 0px transparent;
+		box-shadow:none;
+	}
+	.form-control:focus{
+		background-color: transparent;
+		border: 0px transparent;
+		box-shadow:none;
+	}
+</style>
+<div class="container-fluid">
+	<!-- Page Heading -->
+	<div class="row">
+		<div class="col-lg-12">
+			<h2 class="page-header"> <i class="fa fa-fw fa-info-circle"></i> Information</h2>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12" id='DashboardContext'>
+			<!--Coupler Information Panel -->
+			<div class='col-xs-12 col-sm-12 col-md-12' id='DashboardCouplerInformationPanel'>
+				<!-- <div id="upgradePrompt" style="color: #999999; display: none; text-align: center;">Firmware version is newer than supported. Please consider upgrade WISE Studio.</div> -->
+				<div class='panel panel-green'>
+					<div class='panel-heading'>
+						<h3 class='panel-title'><i class='fa fa-fw fa-tablet'></i>Module Information</h3>
+					</div>
+					<div class='panel-body'>
+						<div class='form-horizontal' id='frmCommonInfo'>
+							<div class='form-group'>
+								<label class='col-md-3 col-sm-3 col-xs-8 control-label'>Model Name</label>
+								<div class='col-md-9 col-sm-9 col-xs-12'>
+									<input type='text' id='inpId' class='form-control' data-toggle='tooltip' data-placement='bottom' title='Device name' readonly>
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-3 col-sm-3 col-xs-8 control-label'>Customized Name</label>
+								<div class='col-md-9 col-sm-9 col-xs-12'>
+									<input type='text' id='inpNm' class='form-control' readonly>
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class='col-sm-3 col-xs-8 control-label' for='form-styles'>UUID</label>
+								<div class='col-sm-9 col-xs-12'>
+									<input type='text' id='inpUID' class='form-control' readonly>
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class='col-sm-3 col-xs-8 control-label' for='form-styles'>Location</label>
+								<div class='col-sm-9 col-xs-12'>
+									<textarea class='form-control' id='inpLoc' rows='3' readonly></textarea>
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class='col-sm-3 col-xs-8 control-label' for='form-styles'>Description</label>
+								<div class='col-sm-9 col-xs-12'>
+									<textarea class='form-control' id='inpDes' rows='3' readonly></textarea>
+								</div>
+							</div>
+							<!-- <div class='form-group'>
+								<label class='col-sm-3 col-xs-8 control-label' for='form-styles'>Model Mode</label>
+								<div class='col-sm-9 col-xs-12'>
+									<input type='text' id='inpWMd' class='form-control' readonly>
+								</div>
+							</div> -->
+							<!-- <div class='form-group'>
+								<label class='col-sm-3 col-xs-8 control-label' for='form-styles'>RF Mode</label>
+								<div class='col-sm-9 col-xs-12'>
+									<input type='text' id='inpRfMd' class='form-control' readonly>
+								</div>
+							</div> -->
+						</div><!--./form-->
+						<!-- <div class='text-right'>
+							<a href='/config/config.html' data-config='ModuleInfo' onclick="return loadConfigPage();" class='ajax-link' >Go to Configuration <i class='fa fa-arrow-circle-right'></i></a>
+						</div> -->
+					</div><!--./panel-body-->
+				</div><!--./panel-->
+			</div>
+			<!--Coupler Information Panel End-->
+
+			<!--General Status Panel -->
+			<div class='col-xs-12 col-sm-12' id='GeneralStatusPanel'>
+				<div class='panel panel-primary'>
+					<div class='panel-heading'>
+						<h3 class='panel-title'>
+							<i class='fa fa-fw fa-inbox'>
+							</i>
+							Power Status
+						</h3>
+					</div>
+					<div class='panel-body'>
+						<div class='form-horizontal'>
+							<div class='form-group'>
+								<label class='col-md-2 col-sm-3 col-xs-6 control-label'>Power Source</label>
+								<div class='col-md-4 col-sm-3 col-xs-12'>
+									<input id='inpPw' type='text' class='form-control' readonly>
+								</div>
+								<label class='col-md-2 col-sm-3 col-xs-6 control-label'>RTC Battery</label>
+								<div class='col-md-4 col-sm-3 col-xs-12'>
+									<input id='inpLB' type='text' class='form-control' readonly>
+								</div>
+							</div>
+							<div class='form-group' id="batteryInfo1">
+								<label class='col-md-2 col-sm-3 col-xs-6 control-label'>Battery Capacity</label>
+								<div class='col-md-4 col-sm-3 col-xs-12'>
+									<input id='inpVal' type='text' class='form-control' readonly>
+								</div>
+							</div>
+							<div class='form-group' id="batteryInfo2">
+								<label class='col-md-2 col-sm-3 col-xs-6 control-label'>Battery Temperature</label>
+								<div class='col-md-4 col-sm-3 col-xs-12'>
+									<input id='inpTst' type='text' class='form-control' readonly>
+								</div>
+								<label class='col-md-2 col-sm-3 col-xs-6 control-label'>Battery Cycle Count</label>
+								<div class='col-md-4 col-sm-3 col-xs-12'>
+									<input id='inpAmt' type='text' class='form-control' readonly>
+								</div>
+							</div>
+							<div class='form-group' id="batteryInfo3">
+								<label class='col-md-2 col-sm-3 col-xs-6 control-label'>Battery Status</label>
+								<div class='col-md-10 col-sm-9 col-xs-10'>
+									<input id='inpStat' type='text' class='form-control' title="" readonly>
+								</div>
+							</div>
+						</div><!-- form-horizontal -->
+						<div class="pull-right">
+							<button class='btn btn-info' id='btnGeneralRefresh'>
+								<i class="fa fa-refresh"></i> Refresh
+							</button>
+						</div>
+					</div><!--panel-body-->
+				</div><!-- panel -->
+			</div>
+			<!--General Status Panel End-->
+
+			<!-- NetworkConfigPanel -->
+				<div class='col-xs-12 col-sm-12 col-md-12' id='DashboardNetworkPanel'>
+					<div class='panel panel-yellow'>
+						<div class='panel-heading'>
+							<h3 class='panel-title'><i class='fa fa-fw fa-globe'></i>LoRa Information</h3>
+						</div>
+						<div class='panel-body'>
+							<div class='form-horizontal' id='frmNetworkConfig'>
+								<div class='form-group'>
+									<label class='col-md-2 col-sm-3 col-xs-6 control-label'>Mode</label>
+									<div class='col-md-4 col-sm-3 col-xs-12'>
+										<input id='inpMd' type='text' class='form-control' readonly>
+									</div>
+									<label class='col-md-2 col-sm-3 col-xs-6 control-label'>Device Class</label>
+									<div class='col-md-4 col-sm-3 col-xs-12'>
+										<input id='inpDev' type='text' class='form-control' readonly>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-md-2 col-sm-3 col-xs-6 control-label'>Activation Mode</label>
+									<div class='col-md-4 col-sm-3 col-xs-12'>
+										<input id='inpSel' type='text' class='form-control' readonly>
+									</div>
+									<label class='col-md-2 col-sm-3 col-xs-6 control-label' id="labelRT">Data Rate</label>
+									<div class='col-md-4 col-sm-3 col-xs-12'>
+										<input id='inpRT' type='text' class='form-control' readonly>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-md-2 col-sm-3 col-xs-6 control-label'>Device Address</label>
+									<div class='col-md-10 col-sm-9 col-xs-10'>
+										<input id='inpAddr' type='text' class='form-control' readonly>
+									</div>
+								</div>
+							</div><!--form-horizontal-->
+						</div><!--panel-body-->
+					</div><!--panel-->
+				</div>
+			<!-- NetworkConfigPanel End-->
+
+			<!--Slot Information Panel -->
+			<div class='col-xs-12 col-sm-12' id='DashboardSlotInformationPanel'>
+				<div class='panel panel-red'>
+					<div class='panel-heading'>
+						<h3 class='panel-title'>
+							<i class='fa fa-fw fa-th-list'>
+							</i>
+							Device Information
+						</h3>
+					</div>
+					<div class='panel-body'>
+						<div class='table-responsive'>
+							<table class='table table-bordered table-hover table-striped' id='tbSoltInfoTable'>
+								<thead>
+									<tr>
+										<th>Device Name</th>
+										<th>Device Description</th>
+										<th>Firmware Description</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--Slot Information Panel End-->
+		</div>
+		<!-- /.row -->
+	</div>
+	<!-- /.container-fluid -->
+</div>

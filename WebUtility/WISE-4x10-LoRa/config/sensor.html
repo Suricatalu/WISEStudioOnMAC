@@ -1,0 +1,283 @@
+<div ng-controller="SensorCtrl"><!-- ng-controller -->
+	<div class="col-lg-12">
+		<ul class="nav nav-tabs nav-justified" role="tablist">
+			<li ng-class="{'active': activeTab === 'status'}">
+		        <a href data-toggle="tab" ng-click="switchTabTo('status')">Status</a>
+		    </li>
+		    <li ng-class="{'active': activeTab === 'config'}">
+		        <a href data-toggle="tab" ng-click="switchTabTo('config')">Configuration</a>
+		    </li>
+		</ul>
+		<div class="tab-content">
+			<div ng-show="isTabShow('status')" class="tab-pane active">
+				<div class='panel panel-default'>
+					<div class='panel-heading'>
+						<h4>Status</h4>
+					</div>
+					<div class='panel-body'>
+						<ul class="nav nav-tabs nav-justified" role="tablist">
+							<li ng-class="{'active': statusActiveTab === 'status_current'}">
+						        <a href data-toggle="tab" ng-click="switchStatusTab('status_current')">Current</a>
+						    </li>
+						    <li ng-class="{'active': statusActiveTab === 'status_max'}">
+						        <a href data-toggle="tab" ng-click="switchStatusTab('status_max')">Max</a>
+						    </li>
+						    <li ng-class="{'active': statusActiveTab === 'status_min'}">
+						        <a href data-toggle="tab" ng-click="switchStatusTab('status_min')">Min</a>
+						    </li>
+						</ul>
+						<div class="tab-content">
+							<p></p>
+							<div class='panel panel-default'>
+		                        <div class='panel-body'>
+		                            <div class='table-responsive'>
+			                            <center>
+			                            	<table class='table-control'>
+			                                    <tbody>
+			                                        <tr>
+			                                            <td rowspan='7' style="min-width: 420px">
+					                                        <div class="col-md-11">
+					                                            <div class="panel panel-primary">
+						                                            <div class="panel-heading">
+						                                                <h2 class="panel-title"><i class="fa fa-fw fa-dashboard"></i>&nbsp;{{channelObj.RangeName}}</h2>
+						                                            </div>
+						                                            <div class="panel-body">
+						                                                <div id="Temperature" style="font-size:45px;text-align:center;">{{channelObj.value}}&nbsp;{{channelObj.UnitName}}</div>
+						                                            </div>
+						                                        </div>
+						                                    </div>
+			                                            </td>
+			                                        </tr>
+			                                        <tr>
+			                                            <td class='td-label'><label >Channel:</label></td>
+			                                            <td class='td-control'>
+			                                            	<select class='form-control' ng-model="selectedChannel.ch" ng-change="onValueChannelChange(selectedChannel.ch)">
+			                                            		<option ng-repeat="(key, data) in channelSelectList" value="{{key}}">{{data}}</option>
+			                                            	</select>
+			                                            </td>
+			                                        </tr>
+			                                        <tr>
+			                                            <td class='td-label'><label>Range:</label></td>
+			                                            <td class='td-control'><p style='margin-left:10px;'>{{channelObj.RangeName}}</p></td>
+			                                        </tr>
+			                                        <tr>
+			                                            <td class='td-label'><label>Value:</label></td>
+			                                            <td class='td-control'><p style='margin-left:10px;'>{{channelObj.value}}</p></td>
+			                                        </tr>
+			                                        <tr ng-show="statusActiveTab === 'status_current'">
+			                                            <td class='td-label'><label>Low Alarm Status:</label></td>
+			                                            <td class='td-control'>
+			                                                <input type = 'checkbox' class='Indicator-checkbox' ng-checked="channelObj.LoA==1"><a class='Indicator-light' style='width:40px; height:25px; float:left;'></a>
+			                                                <button class='btn btn-warning' style='margin-top:-1px;' ng-click="onClearLowAlarmClick()">
+			                                                	<span class='fa fa-fw fa-eraser'></span> Clear
+			                                                </button>
+			                                            </td>
+			                                        </tr>
+			                                        <tr ng-show="statusActiveTab === 'status_current'">
+			                                            <td class='td-label'><label>High Alarm Status:</label></td>
+			                                            <td class='td-control'>
+			                                                <input type = 'checkbox' class='Indicator-checkbox' ng-checked="channelObj.HiA==1"><a class='Indicator-light' style='width:40px; height:25px; float:left;'></a>
+			                                                <button class='btn btn-warning' style='margin-top:-1px;' ng-click="onClearHighAlarmClick()">
+			                                                	<span class='fa fa-fw fa-eraser'></span> Clear
+			                                                </button>
+			                                            </td>
+			                                        </tr>
+			                                        <tr ng-hide="statusActiveTab === 'status_current'">
+			                                            <td class='td-label'><label>Reset Value:</label></td>
+			                                            <td class='td-control'>
+			                                            	<button class='btn btn-success' ng-click="onResetValueClick()">
+			                                            		<span class='fa fa-fw fa-refresh'></span> Reset
+			                                            	</button>
+			                                            </td>
+			                                        </tr>
+			                                    </tbody>
+			                                </table>
+		                                </center>
+		                            </div>
+		                            <div class='table-responsive' style='display:block;'>
+		                                <table id='"+this.getTableId()+"_overview' class ='table table-bordered table-hover table-striped'>
+		                                    <thead>
+		                                        <tr>
+		                                            <th>Channel</th>
+		                                            <th>Range</th>
+		                                            <th>Unit</th>
+		                                            <th>Status</th>
+		                                            <th>Value</th>
+		                                        </tr>
+		                                    </thead>
+		                                    <tbody>
+												<tr ng-repeat="channel in sensorValues" ng-click="onTableRowClick(channel.Ch)">
+													<td>{{channel.Ch}}</td>
+													<td>{{channel.RangeName}}</td>
+													<td>{{channel.UnitName}}</td>
+													<td>{{channel.EventName}}</td>
+													<td>{{channel.value}}</td>
+												</tr>
+		                                    </tbody>
+		                                </table>
+		                            </div>
+		                        </div><!-- panel-body -->
+		                    </div><!-- panel -->
+						</div><!-- tab-content -->
+					</div><!-- panel-body -->
+				</div>
+			</div><!-- tab-pane -->
+			<div ng-show="isTabShow('config')" class="tab-pane active">
+				<div class='panel panel-default'>
+					<div class='panel-heading'>
+						<h4>Configuration</h4>
+					</div>
+					<div class='panel-body'>
+						<div class="panel panel-default form-horizontal">
+							<div class='panel-body'>
+								<div class='form-group'>
+									<label class='col-lg-3 control-label'>Channel</label>
+				                    <div class='col-lg-3'>
+					                    <div class='input-group'>
+						                    <select class='form-control' ng-model="selectedChannel.ch" ng-change="onConfigChannelChange(selectedChannel.ch)">
+						                    	<option ng-repeat="(key, data) in channelSelectList" value="{{key}}">{{data}}</option>
+						                    </select>
+					                    </div>
+				                    </div>
+								</div>
+								<div class='form-group'>
+	                        		<label class='col-lg-3 control-label'>Tag Name</label>
+			                        <div class='col-lg-6'>
+				                        <div class='input-group'>
+				                        	<input type='text' class='form-control' id='inpTag' maxlength="21" ng-model="channelObj.Tag" value="{{channelObj.Tag}}">
+				                        </div>
+	                        		</div>
+	                        	</div>
+	                        	<div class='form-group'>
+			                        <label class='col-lg-3 control-label'>Range</label>
+			                        <div class='col-lg-6'>
+				                        <div class='input-group'>
+			    	        	            <!--<select class='form-control' ng-model="channelObj.Rng" ng-change="onRangeChange(channelObj.Rng)">
+			    	        	            	<option ng-disabled="channelObj.Rng==4128" ng-repeat="(key, data) in TemperatureList" value="{{key}}" >{{data.name}}</option>
+			    	        	            	<option ng-disabled="channelObj.Rng!=4128" ng-repeat="(key, data) in HumidityList" value="{{key}}">{{data.name}}</option>
+			    	        	            </select>-->
+											<select class='form-control' ng-model="channelObj.Rng" ng-change="onRangeChange(channelObj.Rng)">
+			    	        	            	<option ng-repeat="(key, data) in CurrentList" ng-selected="{{key==channelObj.Rng}}" value="{{key}}">{{data.name}}</option>
+			    	        	            </select>
+			            	            </div>
+		                        	</div>
+		                        </div>
+	                        	<div class='form-group'>
+			                        <label class='col-lg-3 control-label'>One Measurement Interval</label>
+			                        <div class='col-lg-3'>
+										<div class='input-group'>
+											<input class='form-control' type='text' ng-model='channelObj.PItv' max='8640000' min='100' step='10'>
+											<span class='input-group-addon' style='min-width: 5px'>10ms</span>
+										</div>
+		                        	</div>
+		                        </div>
+								<div class="well">
+									<div class='form-group'>
+					                    <label class='col-sm-3 control-label'>Enable Low Alarm</label>
+					                    <div class='col-sm-8'>
+					                        <div class="radio">
+												<label>
+													<input type="radio" ng-model="channelObj.EnLA" value="0">Disable&nbsp;&nbsp;
+												</label>
+												<label>
+													<input type="radio" ng-model="channelObj.EnLA" value="1">Enable<br/>
+												</label>
+											</div>
+					                     </div>
+					                </div>
+					                <div class='form-group' ng-show="channelObj.EnLA==1">
+					                    <label class='col-sm-3 control-label'>Low Alarm Mode</label>
+					                    <div class='col-sm-3'>
+					                        <select class='form-control' ng-model="channelObj.LAMd">
+					                        	<option value='0'>Momentary</option>
+					                        	<option value='1'>Latch</option>
+					                        </select>
+					                    </div>
+					                </div>
+					                <div class='form-group' ng-show="channelObj.EnLA==1">
+					                    <label class='col-sm-3 control-label'>Low Alarm Value</label>
+					                    <div class='col-sm-8'>
+					                        <div class='input-group' style='min-width: 20px'>
+					                            <input id='inpLoA' type='text' class='form-control' maxlength="12" ng-model="channelObj.LoA">
+					                            <span class="input-group-addon" style="width: 5px">{{channelObj.UnitName}}</span>
+					                        </div>
+					                    </div>
+					                </div>
+								</div>
+								<div class="well">
+					                <div class='form-group'>
+					                    <label class='col-sm-3 control-label'>Enable High Alarm</label>
+					                    <div class='col-sm-8'>
+					                        <div class="radio">
+												<label>
+													<input type="radio" ng-model="channelObj.EnHA" value="0">Disable&nbsp;&nbsp;
+												</label>
+												<label>
+													<input type="radio" ng-model="channelObj.EnHA" value="1">Enable<br/>
+												</label>
+											</div>
+					                     </div>
+					                </div>
+					                <div class='form-group' ng-show="channelObj.EnHA==1">
+					                    <label class='col-sm-3 control-label'>High Alarm Mode</label>
+					                    <div class='col-sm-3'>
+					                        <select class='form-control' ng-model="channelObj.HAMd">
+					                        	<option value='0'>Momentary</option>
+					                        	<option value='1'>Latch</option>
+					                        </select>
+					                    </div>
+					                </div>
+					                <div class='form-group' ng-show="channelObj.EnHA==1">
+					                    <label class='col-sm-3 control-label'>High Alarm Value</label>
+					                    <div class='col-sm-8'>
+					                        <div class='input-group' style='min-width: 20px'>
+					                            <input id='inpHiA' type='text' class='form-control' maxlength="12" ng-model="channelObj.HiA">
+					                            <span class="input-group-addon" style="width: 5px">{{channelObj.UnitName}}</span>
+					                        </div>
+					                    </div>
+					                </div>
+								</div>
+	                        	<div class='form-group'>
+			                        <label class='col-lg-3 control-label'>Sensor Offset Range</label>
+			                        <div class='col-lg-6'>
+				                        <div class='input-group'>
+			    	        	            <!--<select class='form-control' ng-model="channelObj.RCD" ng-change="onOffsetRangeChange(channelObj.RCD)">
+			    	        	            	<option ng-disabled="channelObj.RCD==4128" ng-repeat="(key, data) in TemperatureList" value="{{key}}" >{{data.name}}</option>
+			    	        	            	<option ng-disabled="channelObj.RCD!=4128" ng-repeat="(key, data) in HumidityList" value="{{key}}">{{data.name}}</option>
+			        	        	        </select>-->
+											<select class='form-control' ng-model="channelObj.RCD" ng-change="onOffsetRangeChange(channelObj.RCD)">
+			    	        	            	<option ng-repeat="(key, data) in CurrentOffsetList" ng-selected="key==channelObj.RCD" value="{{key}}">{{data.name}}</option>
+			    	        	            </select>
+			            	            </div>
+		                        	</div>
+		                        </div>
+				                <div class='form-group'>
+				                    <label class='col-sm-3 control-label'>Sensor Offset Value</label>
+				                    <div class='col-sm-8'>
+				                        <div class='input-group' style='min-width: 20px'>
+				                            <input type='text' class='form-control' maxlength="30" ng-model="channelObj.Val">
+				                            <span class="input-group-addon" style="width: 5px">{{channelObj.OffsetUnitName}}</span>
+				                        </div>
+				                    </div>
+				                </div>
+				                <div class='form-group'>
+				                    <label class='col-sm-3 control-label'>Sensor Deviation Value</label>
+				                    <div class='col-sm-8'>
+				                        <div class='input-group' style='min-width: 20px'>
+				                            <input type='text' class='form-control' maxlength="30" ng-model="channelObj.Dev">
+				                        </div>
+				                    </div>
+				                </div>
+							</div><!-- panel-body -->
+							<div class="panel-footer clearfix">
+								<div class="pull-right">
+									<button class="btn btn-success privilege root admin" ng-click="onConfigClick()"><i class="fa fa-check"></i> Submit</button>
+								</div>
+							</div>
+		            	</div><!-- panel -->
+					</div><!-- panel-body -->
+		        </div><!-- panel -->
+			</div><!-- tab-pane -->
+		</div><!-- tab-content -->
+	</div>
+</div><!-- ng-controller -->

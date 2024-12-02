@@ -1,0 +1,330 @@
+<style>
+	#siteSurveyFailStatus .tooltip-inner {
+		text-align: left;
+		max-width: 410px;
+	}
+	#siteSurveyExport .tooltip-inner {
+		text-align: left;
+		min-width: 450px;
+	}
+</style>
+<div class="container-fluid">
+	<div ng-controller="pagesCtrl"><!-- ng-controller -->
+		<div class="row">
+			<div class="col-lg-12">
+				<span ng-if="pageContent =='survey'" >
+					<div class="tab-pane active">
+						<div class='panel panel-default'>
+							<div class="panel-heading">
+								<h3> Site Survey</h3>
+							</div>
+							<div class="panel-body">
+								<form class='form-horizontal' name="siteSurveyForm">
+									<div class="col-lg-10">
+                                        <div class="form-group" ng-if="siteSurvey.LoRaStatus !== 0">
+                                            <label class='col-lg-2 control-label'></label>
+                                            <div class='col-lg-10'>
+                                                <div class='panel panel-primary' style="text-align:center;">
+                                                    <div class="panel-heading">
+                                                        <h4>LoRa Status</h4>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <h3>{{siteSurvey.LoRaStatusMap[siteSurvey.LoRaStatus]}}</h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+										<div class="form-horizontal" ng-if="siteSurvey.LoRaStatus === 0">
+											<label class='col-lg-4 control-label'>Amount of network packets to send</label>
+											<div class='col-lg-6'>
+												<input type='number' ng-model="siteSurvey.surveyPacketAmount" class='form-control' min=2 max=5000 ng-disabled="siteSurvey.surveyStatus=='start'" required>
+											</div>
+										</div>
+										<div ng-if="siteSurvey.SizeOfPacket != undefined" class="form-group">&nbsp;</div>
+										<div ng-if="siteSurvey.SizeOfPacket != undefined && siteSurvey.LoRaStatus === 0" class='form-horizontal' ng-if="siteSurvey.LoRaStatus === 0">
+											<label class='col-lg-4 control-label'>Size of packet</label>
+											<div class='col-lg-6 radio'>
+												<label>
+													<input ng-model="siteSurvey.SizeOfPacket" type='radio' value='0'>Minimum packet size&nbsp;&nbsp;
+												</label>
+												<label>
+													<input ng-model="siteSurvey.SizeOfPacket" type='radio' value='1'>Current vibration data size
+												</label>
+											</div>
+										</div>
+										<div class="form-group">&nbsp;</div>
+										<div class="form-horizontal" ng-if="siteSurvey.LoRaStatus === 0">
+											<label class="col-lg-4 control-label">Retry</label>
+											<div class="col-lg-6" style="padding-top: 7px;">
+												<input type="checkbox" ng-model="siteSurvey.numberOfRetries" ng-true-value="3" ng-false-value="0" ng-checked="siteSurvey.numberOfRetries == 3" id="retry">
+											</div>
+										</div>
+										<div class="form-group">&nbsp;</div>
+										<div class="form-horizontal" ng-if="siteSurvey.LoRaStatus === 0">
+											<label class='col-lg-4 control-label'></label>
+											<div class='col-lg-6'>
+												<button  class='btn btn-success' ng-show="siteSurvey.surveyStatus=='stop'" ng-click="btnSiteSurveyClick(1)" ng-disabled="siteSurveyForm.$error.required || !siteSurveyForm.$valid">
+													<i class="fa fa-check"></i> Start
+												</button>
+												<button  class='btn btn-warning' ng-show="siteSurvey.surveyStatus=='start'" ng-click="btnSiteSurveyClick(0)">
+													<i class="fa fa-check"></i> Cancel
+												</button>
+											</div>
+										</div>
+										<div class="form-group">&nbsp;</div>
+										<div class="form-group" ng-if="siteSurvey.bBtnClicked">
+											<label class='col-lg-4 control-label'>Sending Packet: #{{siteSurvey.currentPacketSend}}</label>
+										</div>
+										<div class="form-group" ng-if="siteSurvey.bBtnClicked">
+											<label class='col-lg-4 control-label'>Success Packets: {{siteSurvey.successPacketCount}}</label>
+										</div>
+										<div class="form-group" ng-if="siteSurvey.bBtnClicked">
+											<label class='col-lg-4 control-label'>Failed Packets: {{siteSurvey.failedPacketCount}}</label>
+										</div>
+										<div class="form-group" ng-if="siteSurvey.bBtnClicked">
+											<label class='col-lg-2 control-label'></label>
+											<div class='col-lg-10'>
+													<div class='panel panel-warning' style="text-align:center;">
+														<div class="panel-heading">
+															<h4> Packet Error Rate</h4>
+														</div>
+														<div class="panel-body">
+															<h3>{{siteSurvey.packetErrorRate}} </h3>
+														</div>
+													</div>
+											</div>
+										</div>
+										<div class="form-group" ng-if="siteSurvey.bBtnClicked && siteSurvey.SizeOfPacket != undefined">
+											<label class='col-lg-2 control-label'></label>
+											<div class='col-lg-10'>
+												<div class="panel panel-info">
+													<!-- Default panel contents -->
+													<div class="panel-heading" style="text-align:center;">
+														RSSI
+													</div>
+													<table class="table" style="table-layout:fixed;">
+														<thead>
+															<tr>
+																<th class="text-center">Max: {{siteSurvey.maxRssi}}</th>
+																<th class="text-center">Min: {{siteSurvey.minRssi}}</th>
+																<th class="text-center">Average: {{siteSurvey.avgRssi}}</th>
+															</tr>
+														</thead>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="form-group" ng-if="siteSurvey.bBtnClicked && siteSurvey.SizeOfPacket != undefined">
+											<label class='col-lg-2 control-label'></label>
+											<div class='col-lg-10'>
+												<div class="panel panel-success">
+													<!-- Default panel contents -->
+													<div class="panel-heading" style="text-align:center;">
+														SNR
+													</div>
+													<table class="table" style="table-layout:fixed;">
+														<thead>
+															<tr>
+																<th class="text-center">Max: {{siteSurvey.maxSnr}}</th>
+																<th class="text-center">Min: {{siteSurvey.minSnr}}</th>
+																<th class="text-center">Average: {{siteSurvey.avgSnr}}</th>
+															</tr>
+														</thead>
+													</table>
+												</div>
+											</div>
+										</div>
+										<!-- <div class="form-group" ng-if="siteSurvey.bBtnClicked && hasTmOrErr">
+											<label class='col-lg-2 control-label'></label>
+											<div class='col-lg-10'>
+												<div class="panel panel-success">
+													<div class="panel-heading" style="text-align:center;">
+														Backoff Number
+													</div>
+													<table class="table" style="table-layout:fixed;">
+														<thead>
+															<tr>
+																<th class="text-center">Max: {{siteSurvey.maxBackoffNumber}}</th>
+																<th class="text-center">Min: {{siteSurvey.minBackoffNumber}}</th>
+																<th class="text-center">Average: {{siteSurvey.avgBackoffNumber}}</th>
+															</tr>
+														</thead>
+													</table>
+												</div>
+											</div>
+										</div>-->
+										<div class="form-group" ng-if="siteSurvey.bBtnClicked">
+											<label class='col-lg-2 control-label'></label>
+											<div class='col-lg-10'>
+												<div class="panel panel-danger">
+													<div class="panel-heading" style="text-align:center;">
+														Fail Status
+													</div>
+													<table class="table" style="table-layout:fixed;">
+														<thead>
+															<tr>
+																<th class="text-center">No Ack: {{siteSurvey.totalNoAck}}</th>
+																<!-- <th class="text-center">Channel Busy: {{siteSurvey.totalChannelBusy}}</th> -->
+																<th class="text-center">Other Error: {{siteSurvey.totalChannelBusy}}</th>
+															</tr>
+														</thead>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="form-group" ng-if="sendList.length > 0">
+											<label class='col-lg-2 control-label'></label>
+											<div class='col-lg-10' style="height:300px; overflow:auto;">
+												<table class="table table-responsive table-hover" style="table-layout:fixed;">
+													<thead>
+														<tr style="background-color:#f7f7f7;">
+															<th class="text-center">#</th>
+															<th class="text-center">Result</th>
+															<th class="text-center">Total Segmental Packets</th>
+															<th class="text-center">Success Segmental Packets</th>
+															<th class="text-center">RSSI</th>
+															<th class="text-center">SNR</th>
+															<th class="text-center">Fail Status</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr ng-repeat="item in sendList" ng-style="{{item.textColor}}">
+															<td class="text-center">{{item.SEn}}</td>
+															<td class="text-center">{{item.Stat}}</td>
+															<td class="text-center">{{item.Total}}</td>
+															<td class="text-center">{{item.Nm}}</td>
+															<td class="text-center">{{item.Rssi}}</td>
+															<td class="text-center">{{item.Sn}}</td>
+															<td id="siteSurveyFailStatus" class="text-center">
+																<div class="siteSurveyTooltip" style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;" data-toggle="tooltip" data-placement="left" data-original-title="{{item.Err}}">{{item.Err}}</div>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<div class="form-horizontal">
+											<label class='col-lg-4 control-label'></label>
+											<div ng-show="isShowDownload" class='col-lg-2 text-right' id="siteSurveyExport">
+												<a ng-if="isSupDownloadAttr" href="data:{{CSVData}}" download="data.csv" class="btn btn-info siteSurveyTooltip" data-toggle="tooltip" data-html="true"
+													title="
+													Fail Status Mapping:<br/>
+													0: No ACK<br/>
+													-1000: LoRaWAN Busy<br/>
+													-1001: LoRaWAN would block<br/>
+													-1002: Service unknown<br/>
+													-1003: Invalid parameter<br/>
+													-1004: Invalid frequency<br/>
+													-1005: Invalid data rate<br/>
+													-1006: Invalid frequency and data rate<br/>
+													-1009: The device is not in a LoRaWAN<br/>
+													-1010: Payload length error<br/>
+													-1011: The device is switched off<br/>
+													-1012: Stack not initialized<br/>
+													-1013: Service not supported<br/>
+													-1014: Crypto failure<br/>
+													-1015: Invalid port<br/>
+													-1016: Connection in progress<br/>
+													-1017: No active session<br/>
+													-1018: Idle at the moment<br/>
+													-1019: Cannot perform requested operation<br/>
+													-1020: Transmission will continue after duty cycle back-off<br/>
+													-1021: None of the channels is enabled at the moment<br/>
+													-1022: None of the enabled channels is ready for another TX (duty cycle limited)<br/>
+													-1023: Meta-data after an RX or TX is stale<br/>
+													-1024: The device has already joined a network">
+													<i class="fa fa-download"></i> Save
+												</a>
+												<button ng-if="!isSupDownloadAttr" ng-click="btnSaveDataClick()" class="btn btn-info siteSurveyTooltip" data-toggle="tooltip" data-html="true"
+													title="
+													Fail Status Mapping:<br/>
+													0: No ACK<br/>
+													-1000: LoRaWAN Busy<br/>
+													-1001: LoRaWAN would block<br/>
+													-1002: Service unknown<br/>
+													-1003: Invalid parameter<br/>
+													-1004: Invalid frequency<br/>
+													-1005: Invalid data rate<br/>
+													-1006: Invalid frequency and data rate<br/>
+													-1009: The device is not in a LoRaWAN<br/>
+													-1010: Payload length error<br/>
+													-1011: The device is switched off<br/>
+													-1012: Stack not initialized<br/>
+													-1013: Service not supported<br/>
+													-1014: Crypto failure<br/>
+													-1015: Invalid port<br/>
+													-1016: Connection in progress<br/>
+													-1017: No active session<br/>
+													-1018: Idle at the moment<br/>
+													-1019: Cannot perform requested operation<br/>
+													-1020: Transmission will continue after duty cycle back-off<br/>
+													-1021: None of the channels is enabled at the moment<br/>
+													-1022: None of the enabled channels is ready for another TX (duty cycle limited)<br/>
+													-1023: Meta-data after an RX or TX is stale<br/>
+													-1024: The device has already joined a network">
+													<i class="fa fa-download"></i> Save
+												</button>
+											</div>
+											<div class='col-lg-6'>
+												<button  class='btn btn-danger' ng-click="btnLeaveSiteSurveyClick()" ng-disabled="siteSurvey.surveyStatus=='start'">
+													<i class="fa fa-check"></i> Leave Site Survey Mode
+												</button>
+											</div>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</span>
+				<span ng-if="pageContent =='apPacketStatus'">
+					<div class="tab-pane active">
+						<div class='panel panel-default'>
+							<div class="panel-heading">
+								<h3> Received Packet Status</h3>
+							</div>
+							<div class="panel-body">
+								<div class="table-responsive">
+									<table class="table table-bordered table-hover table-striped table-responsive" style="margin-bottom: 5px">
+										<thead>
+											<tr>
+												<th>MAC Address</th>
+												<th>Total Packets</th>
+												<th>Receive Packets</th>
+												<th>Average RSSI</th>
+												<th>Max RSSI</th>
+												<th>Min RSSI</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="item in moduleList">
+												<td>
+													{{item.SLs}}
+												</td>
+												<td>
+													{{item.Tm}}
+												</td>
+												<td>
+													{{item.RT}}
+												</td>
+												<td>
+													{{item.RA}}
+												</td>
+												<td>
+													{{item.RH}}
+												</td>
+												<td>
+													{{item.RL}}
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</span>
+			</div>
+		</div><!-- row -->
+	</div>
+</div>

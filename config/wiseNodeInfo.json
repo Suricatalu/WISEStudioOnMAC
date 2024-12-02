@@ -1,0 +1,43 @@
+{
+    "WISE-4471":
+    {
+        "baudrate": 57600,
+        "guifolder": "WISE-4x71",
+        "restformat": "seperated"
+    },
+
+    "WISE-4671":
+    {
+        "baudrate": 57600,
+        "guifolder": "WISE-4x71",
+        "restformat": "seperated"
+    },
+
+    "WISE-2410":
+    {
+        "baudrate": 256000,
+        "guifolder": "WISE-241x",
+        "restformat": "combined"
+    },
+
+    "WISE-2200-M":
+    {
+        "baudrate": 256000,
+        "guifolder": "WISE-2200",
+        "restformat": "combined"
+    },
+
+    "WISE-4610":
+    {
+        "baudrate": 57600,
+        "guifolder": "WISE-4x10-LoRa",
+        "restformat": "seperated"
+    },
+
+    "WISE-4210":
+    {
+        "baudrate": 57600,
+        "guifolder": "WISE-4x10-Sub",
+        "restformat": "combined"
+    }
+}

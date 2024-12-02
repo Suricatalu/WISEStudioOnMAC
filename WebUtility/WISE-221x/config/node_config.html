@@ -1,0 +1,601 @@
+<div ng-controller="RFConfigCtrl" class="container-fluid"> <!-- ng-controller -->
+	<!-- Page Heading -->
+	<div class="row">
+		<div class="col-lg-12">
+			<ul class="nav nav-pills">
+				<li ng-class="{'active': activeConfigTab === 'Information'}">
+					<a href="#tabInformConfig" ng-click="ShowInformTab()" data-toggle="tab">Information</a>
+				</li>
+				<!-- <li ng-class="{'active': activeConfigTab === 'Time'}">
+					<a href="#tabTimeConfig" ng-click="ShowTimeTab()" data-toggle="tab">Time & Date</a>
+				</li> -->
+				<li ng-class="{'active': activeConfigTab === 'Control'}">
+					<a href="#tabControl" ng-click="ShowControlTab()" data-toggle="tab">Control</a>
+				</li>
+ 				<li ng-class="{'active': activeConfigTab === 'RF'}">
+					<a href="#tabRFConfig" ng-click="ShowRFTab()" data-toggle="tab">RF Status</a>
+				</li>
+				<li ng-class="{'active': activeConfigTab === 'Update'}">
+					<a href="#tabUpdateInterval" ng-click="ShowUpdateTab()" data-toggle="tab">Data Update</a>
+				</li>
+				<li ng-class="{'active': activeConfigTab === 'IO'}">
+					<a href="#tabIOConfig" ng-click="ShowIOTab()" data-toggle="tab">IO Status</a>
+				</li>
+				<li ng-class="{'active': activeConfigTab === 'FW'}">
+					<a href="#tabFileUpgrade" ng-click="ShowFirmwareTab()" data-toggle="tab">Firmware</a>
+				</li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane active" id="tabInformConfig" ng-show="isConfigShow('Information')">
+					<!--Coupler Information Panel -->
+					<div class='panel panel-default' id='couplerInformationPanel'>
+						<div class='panel-heading'>
+							<h3>Information</h3>
+						</div>
+						<div class='panel-body'>
+							<h4 id='top' class='page-header'>Module Information</h4>
+							<form class='form-horizontal' id='frmCommonInfo' >
+								<div class='form-group' >
+									<label class='col-sm-2 col-xs-6 control-label'>Model Name</label>
+									<div class='col-sm-4 col-xs-12'>
+										<input type='text' ng-model="SysInfo.Id" class='form-control' disabled='disabled'>
+									</div>
+									<label class='col-sm-2 col-xs-6 control-label'>Customized Name</label>
+									<div class='col-sm-4 col-xs-12'>
+										<input type='text' ng-model="SysInfo.Nm" class='form-control' maxlength="63">
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-2 col-xs-6 control-label' for='form-styles'>UUID</label>
+									<div class='col-sm-10 col-xs-12'>
+										<input type='text' ng-model="SysInfo.UID" class='form-control' maxlength="31">
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-2 col-xs-6 control-label' for='form-styles'>Description</label>
+									<div class='col-sm-10 col-xs-12'>
+										<textarea class='form-control' ng-model="SysInfo.Des" rows='3' maxlength="127"></textarea>
+									</div>
+								</div>
+								<h4 id='top' class='page-header'>Location Information</h4>
+								<div class='form-group'>
+									<label class='col-sm-2 col-xs-6 control-label'  for='form-styles'>Latitude</label>
+									<div class='col-sm-4 col-xs-12'>
+										<input type='text' ng-model="SysInfo.Lat" min='-90' max='90' class='form-control' maxlength="15">
+									</div>
+									<label class='col-sm-2 col-xs-6 control-label' for='form-styles' maxlength="15">Longitude</label>
+									<div class='col-sm-4 col-xs-12'>
+										<input type='text' ng-model="SysInfo.Lng" min='-180' max='180' class='form-control' maxlength="15">
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-2 col-xs-6 control-label' for='form-styles'>Altitude</label>
+									<div class='col-sm-4 col-xs-12'>
+										<input type='text' ng-model="SysInfo.Alt" class='form-control' maxlength="15">
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-2 col-xs-6 control-label' for='form-styles'>Location</label>
+									<div class='col-sm-10 col-xs-12'>
+										<textarea class='form-control' ng-model="SysInfo.Loc" rows='3' maxlength="127"></textarea>
+									</div>
+								</div>
+							</form><!--./form-->
+						</div><!--./panel-body-->
+						<div class="panel-footer clearfix">
+							<div class="pull-right">
+								<button type='submit' class='btn btn-success privilege root admin' ng-click="onSysInfoClick()">
+									<i class="fa fa-check"></i> Submit
+								</button>
+							</div>
+						</div>
+					</div><!--./panel-->
+				</div>
+				<div class="tab-pane active" id="tabTimeConfig" ng-show="isConfigShow('Time')">
+					<div class='panel panel-default' id='TimeSettingPanel'>
+						<div class='panel-heading'>
+							<h3>Local Time</h3>
+						</div>
+						<div class='panel-body'>
+							<div class='form-horizontal' id='frmTimeConfig'>
+								<div class='col-lg-12'>
+									<div class='form-group'>
+										<label class='col-sm-3 control-label'>Current Time</label>
+										<div class='col-sm-6'>
+											<div class='input-group'>
+												<input id='inpTm' type='text' class='form-control' ng-model="TimeInfo.Tm" maxlength='64' disabled>
+												<span class='input-group-btn'>
+													<button class='btn btn-default' id='btnRefreshTm' ng-click="onTimeRefreshClick()">
+														<i class='fa fa-fw fa-refresh'></i>
+													</button>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class='col-lg-12'>
+									<div class='form-group'>
+										<label class='col-sm-3 control-label'>Time Zone</label>
+										<div class='col-sm-6'>
+											<div class='input-group'>
+												<select ng-model="TimeInfo.TZC" id='selTZ' class='form-control'>
+													<option value='24' >(GMT-12:00) International Date Line West</option>
+													<option value='65' >(GMT-11:00) Midway Island, Samoa</option>
+													<option value='39' >(GMT-10:00) Hawaii</option>
+													<option value='2'  >(GMT-09:00) Alaska</option>
+													<option value='58' >(GMT-08:00) Pacific Time (US/Canada)</option>
+													<option value='59' >(GMT-08:00) Tijuana, Baja California</option>
+													<option value='75' >(GMT-07:00) Arizona</option>
+													<option value='47' >(GMT-07:00) Mountain Time (US/Canada)</option>
+													<option value='48' >(GMT-07:00) Chihuahua, La Paz, Mazatlan</option>
+													<option value='15' >(GMT-06:00) Central America</option>
+													<option value='21' >(GMT-06:00) Central Time (US/Canada)</option>
+													<option value='22' >(GMT-06:00) Guadalajara, Mexico City, Monterrey</option>
+													<option value='11' >(GMT-06:00) Saskatchewan</option>
+													<option value='63' >(GMT-05:00) Bogota, Lima, Quito, Rio Branco</option>
+													<option value='29' >(GMT-05:00) Eastern Time (US/Canada)</option>
+													<option value='74' >(GMT-05:00) Indiana (East)</option>
+													<option value='6'  >(GMT-04:00) Atlantic Time (Canada)</option>
+													<option value='64' >(GMT-04:00) La Paz</option>
+													<option value='17' >(GMT-04:00) Manaus</option>
+													<option value='57' >(GMT-04:00) Santiago</option>
+													<option value='85' >(GMT-04:30) Caracas</option>
+													<option value='54' >(GMT-03:30) Newfoundland</option>
+													<option value='28' >(GMT-03:00) Brasilia</option>
+													<option value='62' >(GMT-03:00) Buenos Aires, Georgetown</option>
+													<option value='36' >(GMT-03:00) Greenland</option>
+													<option value='83' >(GMT-03:00) Montevideo</option>
+													<option value='45' >(GMT-02:00) Mid-Atlantic</option>
+													<option value='10' >(GMT-01:00) Azores</option>
+													<option value='12' >(GMT-01:00) Cape Verde Is.</option>
+													<option value='37' >(GMT) Casablanca, Monrovia, Reykjavik</option>
+													<option value='35' >(GMT) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London</option>
+													<option value='79' >(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna</option>
+													<option value='18' >(GMT+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague</option>
+													<option value='60' >(GMT+01:00) Brussels, Copenhagen, Madrid, Paris</option>
+													<option value='19' >(GMT+01:00) Sarajevo, Skopje, Warsaw, Zagreb</option>
+													<option value='78' >(GMT+01:00) West Central Africa</option>
+													<option value='43' >(GMT+02:00) Amman</option>
+													<option value='38' >(GMT+02:00) Athens, Bucharest, Istanbul</option>
+													<option value='46' >(GMT+02:00) Beirut</option>
+													<option value='27' >(GMT+02:00) Minsk</option>
+													<option value='30' >(GMT+02:00) Cairo</option>
+													<option value='68' >(GMT+02:00) Harare, Pretoria</option>
+													<option value='33' >(GMT+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius</option>
+													<option value='42' >(GMT+02:00) Jerusalem</option>
+													<option value='51' >(GMT+02:00) Windhoek</option>
+													<option value='5' >(GMT+03:00) Baghdad</option>
+													<option value='3' >(GMT+03:00) Kuwait, Riyadh</option>
+													<option value='61' >(GMT+03:00) Moscow, St. Petersburg, Volgograd</option>
+													<option value='25' >(GMT+03:00) Nairobi</option>
+													<option value='34' >(GMT+03:00) Tbilisi</option>
+													<option value='41' >(GMT+03:30) Tehran</option>
+													<option value='4' >(GMT+04:00) Abu Dhabi, Muscat</option>
+													<option value='9' >(GMT+04:00) Baku</option>
+													<option value='84' >(GMT+04:00) Caucasus Standard Time</option>
+													<option value='13' >(GMT+04:00) Yerevan</option>
+													<option value='1' >(GMT+04:30) Kabul</option>
+													<option value='31' >(GMT+05:00) Ekaterinburg</option>
+													<option value='80' >(GMT+05:00) Islamabad, Karachi, Tashkent</option>
+													<option value='40' >(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi</option>
+													<option value='69' >(GMT+05:30) Sri Jayawardenepura</option>
+													<option value='52' >(GMT+05:45) Kathmandu</option>
+													<option value='50' >(GMT+06:00) Almaty, Novosibirsk</option>
+													<option value='16' >(GMT+06:00) Astana, Dhaka</option>
+													<option value='49' >(GMT+06:30) Yangon (Rangoon)</option>
+													<option value='66' >(GMT+07:00) Bangkok, Hanoi, Jakarta</option>
+													<option value='56' >(GMT+07:00) Krasnoyarsk</option>
+													<option value='23' >(GMT+08:00) Beijing, Chongqing, Hong Kong, Urumqi</option>
+													<option value='55' >(GMT+08:00) Irkutsk, Ulaan Bataar</option>
+													<option value='67' >(GMT+08:00) Kuala Lumpur, Singapore</option>
+													<option value='77' >(GMT+08:00) Perth</option>
+													<option value='70' >(GMT+08:00) Taipei</option>
+													<option value='72' >(GMT+09:00) Osaka, Sapporo, Tokyo</option>
+													<option value='44' >(GMT+09:00) Seoul</option>
+													<option value='82' >(GMT+09:00) Yakutsk</option>
+													<option value='14' >(GMT+09:30) Adelaide</option>
+													<option value='7' >(GMT+09:30) Darwin</option>
+													<option value='26' >(GMT+10:00) Brisbane</option>
+													<option value='8' >(GMT+10:00) Canberra, Melbourne, Sydney</option>
+													<option value='81' >(GMT+10:00) Guam, Port Moresby</option>
+													<option value='71' >(GMT+10:00) Hobart</option>
+													<option value='76' >(GMT+10:00) Vladivostok</option>
+													<option value='20' >(GMT+11:00) Magadan, Solomon Is., New Caledonia</option>
+													<option value='53' >(GMT+12:00) Auckland, Wellington</option>
+													<option value='32' >(GMT+12:00) Fiji, Kamchatka, Marshall Is.</option>
+													<option value='73' >(GMT+13:00) Nuku'alofa</option>
+												</select>
+												<span class='input-group-btn '>
+													<button class='btn btn-default privilege root admin' id='btnTZ' ng-click="onTimeZoneClick()">
+														<i class='fa fa-fw fa-save'> </i>
+													</button>
+												</span>
+											</div>
+										</div>
+									</div><!--./form-group-->
+								</div><!--./col-lg-12-->
+								<div class='col-lg-12  privilege root admin'>
+									<div class='form-group'>
+										<label class='col-sm-3 control-label'>Time Calibration</label>
+										<div class='col-sm-6'>
+											<div class='input-group' >
+												<span class="input-group-addon"><span class="fa fa-wrench"></span>
+												</span>
+												<input type='text' class="form-control" id='inpDatetimepicker' placeholder="Click Me..." data-date-format="YYYY-MM-DDTHH:mm:ss">
+												<span class='input-group-btn'>
+													<button class='btn btn-default  privilege root admin' id='btnTm' ng-click="onTimeCalibrationClick()">
+														<i class='fa fa-fw fa-save'> </i>
+													</button>
+												</span>
+											</div>
+										</div>
+									</div><!--./form-group-->
+								</div><!--./col-lg-12-->
+							</div><!--./form-->
+						</div>
+					</div>
+				</div><!-- time & date -->
+				<div class="tab-pane active" id="tabIOConfig" ng-show="isConfigShow('IO')">
+						<div class="row" id="subnode-io-status"> <!-- container for end device information display -->
+						</div>
+					</div>
+				<div class="tab-pane active" id="tabRFConfig" ng-show="isConfigShow('RF')">
+					<div class="panel panel-default">
+					    <div class="panel-heading">
+					        <h3> RF Module</h3>
+					    </div>
+					    <div class="panel-body">
+						<div class="col-lg-12">
+							<ul class="nav nav-tabs nav-justified" role="tablist">
+								<li ng-class="{'active': activeRFTab === 'status'}" style="display:none">
+							        <a href data-toggle="tab" ng-click="switchRFTabTo('status')">Status</a>
+							    </li>
+							    <li ng-class="{'active': activeRFTab === 'config'}">
+							        <a href data-toggle="tab" ng-click="switchRFTabTo('config')">Configuration</a>
+							    </li>
+							</ul>
+							<div class="tab-content">
+								<div ng-show="isRFTabShow('status')" class="tab-pane active">
+									<div class='panel panel-default'>
+										<div class='panel-heading'>
+											<h4>Status</h4>
+										</div>
+										<form class="form-horizontal">
+											<div class='panel-body'>
+												<div class='col-lg-12'>
+													<div class='form-group'>
+														<label class='col-lg-3 control-label'>RSSI</label>
+											            <div class='col-lg-6'>
+												            <div class='input-group'>
+											                 	<input type='text' class='form-control' ng-model="RFStatus.Rssi" disabled>
+												            </div>
+											            </div>
+													</div>
+			<!-- 										<div class='form-group'>
+								                       	<label class='col-lg-3 control-label'>The Last Updating Time</label>
+										                <div class='col-lg-3'>
+											                <div class='input-group'>
+											                 	<input type='text' class='form-control' ng-model="RFStatus.Tm" value="{{RFStatus.Tm}}" disabled>
+											                </div>
+								                       	</div>
+								                    </div> -->
+								                </div>
+											</div><!-- panel-body -->
+						                </form>
+									</div>
+								</div><!-- tab-pane -->
+								<div ng-show="isRFTabShow('config')" class="tab-pane active">
+									<div class='panel panel-default'>
+										<div class='panel-heading'>
+											<h4>Configuration</h4>
+										</div>
+										<div class="form-horizontal">
+											<div class='panel-body'>
+												<div class='form-group'>
+													<label class='col-lg-3 control-label'>RF Operation Mode</label>
+										            <div class='col-lg-3'>
+											            <div class='input-group'>
+															<select class='form-control' ng-model="RFConfig.Md" disabled>
+																<option value='0'>Push Mode</option>
+																<option value='1'>Paring Mode</option>
+															</select>
+											            </div>
+										            </div>
+												</div>
+												<div class='form-group'>
+													<label class='col-lg-3 control-label'>RF Region</label>
+										            <div class='col-lg-3'>
+											            <div class='input-group'>
+															<select class='form-control' ng-model="RFConfig.Reg" ng-change="onRfRegionChange()" disabled>
+																<option ng-repeat="data in rfRegionSelectList" value="{{$index}}">{{data}}</option>
+															</select>
+											            </div>
+										            </div>
+												</div>
+												<div class='form-group'>
+							                       	<label class='col-lg-3 control-label'>Data Rate (bps)</label>
+									                <div class='col-lg-6'>
+										                <div class='input-group'>
+															<!-- <select class='form-control' ng-model="RFConfig.RT">
+																<option value='0'>50k</option>
+																<option value='1'>625</option>
+															</select> -->
+															<select class='form-control' ng-model="RFConfig.RT">
+																<option ng-repeat="data in rfDataRateSelectList" value="{{$index}}">{{data}}</option>
+															</select>
+										                </div>
+							                       	</div>
+							                    </div>
+							                    <div class='form-group'>
+													<label class='col-lg-3 control-label'>Tx Power (dBm)</label>
+										            <div class='col-lg-3'>
+											            <div class='input-group'>
+										                 	<!-- <input type='number' class='form-control' ng-model="RFConfig.Pw" min='1' max='14'> -->
+										                 	<select class='form-control' ng-model="RFConfig.Pw">
+																<option ng-repeat="data in rfTxPowerSelectList" value="{{$index}}">{{data}}</option>
+															</select>
+										                 </div>
+										            </div>
+												</div>
+							                    <div class='form-group'>
+													<label class='col-lg-3 control-label'>Baseband (kHz)</label>
+										            <div class='col-lg-3'>
+											            <div class='input-group'>
+										                 	<!-- <input type='number' class='form-control' ng-model="RFConfig.Fq" min="0"> -->
+										                 	<select class='form-control' ng-model="RFConfig.Fq">
+																<option ng-repeat="data in rfFrequencySelectList" value="{{$index}}">{{data}}</option>
+															</select>
+										                </div>
+										            </div>
+												</div>
+												<!-- <div ng-show="slotId == '0'" class='form-group'>
+													<label class='col-lg-3 control-label'>RTC synchronization</label>
+										            <div class='col-lg-6'>
+										                <div class='input-group'>
+					                        				<button class='btn btn-info' ng-click="onRTCClick()"><i class='fa fa-refresh'></i> RTC synchronization
+					                        				</button>
+										                </div>
+							                       	</div>
+							                    </div> -->
+							            	</div><!-- panel-body -->
+							            	<div class="panel-footer clearfix">
+												<div class="pull-right">
+													<button class="btn btn-success privilege root admin" ng-click="onRfConfigClick()"><i class="fa fa-check"></i> Submit</button>
+												</div>
+											</div>
+										</div>
+							        </div><!-- panel -->
+								</div><!-- tab-pane -->
+							</div><!-- tab-content -->
+						</div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane active" id="tabUpdateInterval" ng-show="isConfigShow('Update')">
+					<div class="panel panel-default">
+					    <div class="panel-heading">
+					        <h3> Data Update</h3>
+					    </div>
+					    <div class="panel-body">
+							<form class='form-horizontal'>
+								<div class='col-lg-10'>
+									<div class='form-group'>
+										<label class='col-sm-4 control-label' title="Value is 1~2592000">Data Sample and Update Interval (sec)</label>
+										<div class='col-sm-4'>
+											<input type="number" ng-model="UpdateConfig.PItv" class="form-control" min="1" max="2592000" required>
+										</div>
+									</div><!--./form-group-->
+								</div><!--./col-lg-10-->
+<!--
+								<div class='col-lg-10'>
+									<div class='form-group'>
+										<div class='col-sm-3'></div>
+										<label class='col-sm-7'>
+											<span class="fa fw-fa fa-info-circle"></span> Enable following Change of State(COS) items to send data when event occurs
+										</label>
+									</div>
+								</div>
+								<div class='col-lg-10' ng-show="isUpdateItemDisplay('DICOS')">
+									<div class='form-group'>
+										<label class='col-sm-4 control-label'>DI COS</label>
+										<div class='col-sm-6'>
+											<span ng-repeat="item in diUpdateArr">
+												CH{{$index}}&nbsp;<input type='checkbox' ng-model="item.val" ng-true-value="1" ng-false-value="0" ng-checked="item.val == 1">&nbsp;&nbsp;
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class='col-lg-10' ng-show="isUpdateItemDisplay('DOCOS')">
+									<div class='form-group'>
+										<label class='col-sm-4 control-label'>DO COS</label>
+										<div class='col-sm-6'>
+											<span ng-repeat="item in doUpdateArr">
+												CH{{$index}}&nbsp;<input type='checkbox' ng-model="item.val" ng-true-value="1" ng-false-value="0" ng-checked="item.val == 1">&nbsp;&nbsp;
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class='col-lg-10' ng-show="isUpdateItemDisplay('AICOS')">
+									<div class='form-group'>
+										<label class='col-sm-4 control-label'>AI Deviation</label>
+										<div class='col-sm-6'>
+											<span ng-repeat="item in aiUpdateArr">
+												CH{{$index}}&nbsp;<input type='checkbox' ng-model="item.val" ng-true-value="1" ng-false-value="0" ng-checked="item.val == 1">&nbsp;&nbsp;
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class='col-lg-10' ng-show="isUpdateItemDisplay('AIDR')">
+									<div class='form-group'>
+										<label class='col-sm-4 control-label'>AI Deviation Rate</label>
+										<div class='col-sm-3'>
+											<div class='input-group' style='min-width: 20px'>
+												<input type='number' ng-model="UpdateConfig.AIDR" min="1" max="99" ng-disabled="UpdateConfig.AICOS==0">
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class='col-lg-10' ng-show="isUpdateItemDisplay('SCOS')">
+									<div class='form-group'>
+										<label class='col-sm-4 control-label'>Sensor Deviation</label>
+										<div class='col-sm-6'>
+											<span ng-repeat="item in sensorUpdateArr">
+												CH_{{$index}}&nbsp;<input type='checkbox' ng-model="item.SCOS" ng-true-value="1" ng-false-value="0" ng-checked="item.SCOS == 1">&nbsp;&nbsp;
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class='col-lg-10' ng-show="isUpdateItemDisplay('SHiA')">
+									<div class='form-group'>
+										<label class='col-sm-4 control-label'>Sensor High Alarm</label>
+										<div class='col-sm-6'>
+											<span ng-repeat="item in sensorUpdateArr">
+												CH_{{$index}}&nbsp;<input type='checkbox' ng-model="item.SHiA" ng-true-value="1" ng-false-value="0" ng-checked="item.SHiA == 1">&nbsp;&nbsp;
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class='col-lg-10' ng-show="isUpdateItemDisplay('SLoA')">
+									<div class='form-group'>
+										<label class='col-sm-4 control-label'>Sensor Low Alarm</label>
+										<div class='col-sm-6'>
+											<span ng-repeat="item in sensorUpdateArr">
+												CH_{{$index}}&nbsp;<input type='checkbox' ng-model="item.SLoA" ng-true-value="1" ng-false-value="0" ng-checked="item.SLoA == 1">&nbsp;&nbsp;
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class='col-lg-10' ng-show="isUpdateItemDisplay('COS')">
+									<div class='form-group'>
+										<label class='col-sm-4 control-label'>COM COS</label>
+										<div class='col-sm-6'>
+											<span ng-repeat="item in com1UpdateArr">
+												Rule{{$index}}&nbsp;<input type='checkbox' ng-model="item.val" ng-true-value="1" ng-false-value="0" ng-checked="item.val == 1">&nbsp;&nbsp;
+											</span>
+										</div>
+									</div>
+								</div>
+ -->
+							</form>
+						</div><!-- panel-body -->
+						<div class="panel-footer clearfix">
+							<div class="pull-right">
+								<button class="btn btn-success" ng-click="onBtnUpdateIntervalClick()" ng-disabled="isUpdateIntervalInvalid()"><i class="fa fa-check"></i> Submit</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane active" id="tabControl" ng-show="isConfigShow('Control')">
+					<div class="panel panel-default" id='panelControlCommand'>
+						<div class="panel-heading">
+							<h3> Control</h3>
+						</div>
+						<div class="panel-body">
+							<div class="form-horizontal">
+								<!-- <div class='form-group'>
+									<label class="col-sm-4 control-label"> Locate</label>
+									<div class='col-sm-6'>
+										<div class='input-group' >
+											<span class="input-group-addon"><span class="fa fa-wrench"></span>
+											</span>
+											<input type='text' class="form-control" ng-value="($scope.Locate)?'Enable':'Disable'" disabled>
+											<span class='input-group-btn'>
+												<button class='btn btn-default' ng-click="NodeControl('Lc')">
+													<i class='fa fa-fw fa-toggle-off'> </i>
+												</button>
+											</span>
+										</div>
+									</div>
+								</div> -->
+								<div ng-if="isSupportExternalFun" class='form-group'>
+									<label class="col-sm-4 control-label"> Restore to Default</label>
+									<div class='col-sm-6'>
+										<div class='input-group' >
+											<span class="input-group-addon"><span class="fa fa-wrench"></span>
+											</span>
+											<input type='text' class="form-control" value="Restore" disabled>
+											<span class='input-group-btn'>
+												<button class='btn btn-default' ng-click="NodeControl('RFD')">
+													<i class='fa fa-fw fa-truck'> </i>
+												</button>
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class="col-sm-4 control-label"> System Restart</label>
+									<div class='col-sm-6'>
+										<div class='input-group' >
+											<span class="input-group-addon"><span class="fa fa-wrench"></span>
+											</span>
+											<input type='text' class="form-control" id='inpRst' value="Restart" disabled>
+											<span class='input-group-btn'>
+												<button class='btn btn-default' ng-click="NodeControl('Rst')">
+													<i class='fa fa-fw fa-power-off'></i>
+												</button>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane active" id="tabFwConfig" ng-show="isConfigShow('FW')">
+					<div class='panel panel-default' id='panelFileUpgrade'>
+						<div class="panel-heading">
+				        <h3> Firmware Upload</h3>
+				    </div>
+				    <div class="panel-body">
+				    	<div class="col-lg-10">
+					    	<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-lg-4 control-label"> Firmware Upload</label>
+									<div class="col-lg-8">
+										<button class='btn btn-danger' ng-click="btnFwUploadClick()">
+											<i class='fa fa-fw fa-power-off'></i> Enter Firmware Upload Mode
+										</button>
+									</div>
+									<!-- <label class="col-lg-4 control-label"> Firmware Upload</label>
+									<div class="col-lg-8">
+										<div class="fileinput fileinput-new input-group" data-provides="fileinput">
+											<div class="form-control" data-trigger="fileinput">
+												<i class="fa fa-fw fa-file-text fileinput-exists"></i><span class="fileinput-filename"></span>
+											</div>
+											<span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new"><i class="fa fa-fw fa-folder-open"></i></span><span class="fileinput-exists"><i class="fa fa-fw fa-folder-open"></i></span>
+												<input type="file" data-toggle="tooltip" data-title="Choose Firmware File" id='inpFirmware' accept=".bin">
+											</span>
+											<a data-toggle="tooltip" title="Cancel" href="#btnFirmware" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput" data-original-title title><i class="fa fa-fw fa-times"></i></a>
+											<a data-toggle="tooltip" title="Upload Firmware" class="input-group-addon btn btn-default fileinput-submit" id="btnFirmware"><i class="fa fa-fw fa-download"></i></a>
+										</div>
+									</div> -->
+								</div>
+								<div class="form-group">
+									<label class="col-lg-4 control-label">Configuration File Upload</label>
+									<div class="col-lg-8">
+										<div class="fileinput fileinput-new input-group" data-provides="fileinput">
+											<div class="form-control" data-trigger="fileinput">
+												<i class="fa fa-fw fa-file-copy fileinput-exists"></i><span class="fileinput-filename"></span>
+											</div>
+											<span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new"><i class="fa fa-fw fa-folder-open"></i></span><span class="fileinput-exists"><i class="fa fa-fw fa-folder-open"></i></span>
+												<input type="file" data-toggle="tooltip" title="Choose Configuration File" id='inpGroupConfig' accept=".cfg">
+											</span>
+											<a data-toggle="tooltip" title="Cancel" href="#btnGroupConfig" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput" data-original-title title><i class="fa fa-fw fa-times"></i></a>
+											<a data-toggle="tooltip" title="Upload Configuration File" class="input-group-addon btn btn-default fileinput-submit" id="btnGroupConfig"><i class="fa fa-fw fa-download"></i></a>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-lg-4 control-label">Configuration File Export</label>
+									<div class="col-lg-8">
+										<button class="btn btn-default" type="button" ng-click="onClickExportConfig()">Export Configuration File</button>
+									</div>
+								</div>
+							</div><!-- form-horizontal -->
+				    	</div><!-- col-lg-10 -->
+					</div><!-- panel-body -->
+				</div>
+			</div>
+		</div>
+	<!-- </div> --><!-- row -->
+</div><!-- ng-controller -->

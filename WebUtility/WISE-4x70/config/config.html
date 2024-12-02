@@ -1,0 +1,3099 @@
+<div ng-controller="CellularCtrl">
+<div class="container-fluid">
+	<!-- Page Heading -->
+	<div class="row">
+		<div class="col-lg-12">
+			<h2 class="page-header"> <i class="fa fa-fw fa-wrench"></i> Configuration</h2>
+		</div>
+	</div>
+	<!-- /.row -->
+	<div class="row">
+		<div class="col-lg-12" id='configMainForm'>
+			<ul class="nav nav-pills">
+				<li>
+					<a href="#tabModuleInfo" data-toggle="tab">Information</a>
+				</li>
+				<li ng-show="isSupportWorkingMode">
+					<a href="#tabMode" ng-click="onClickModeConfig()" data-toggle="tab">Mode</a>
+				</li>
+ 				<!--<li>
+					<a href="#tabNetwork" data-toggle="tab">Network</a>
+				</li>-->
+ 				<li>
+					<a href="#tabCellular" ng-click="showCellularTab()" data-toggle="tab">Cellular</a>
+				</li>
+				<li ng-show="isSupportGps">
+					<a href="#tabPosition" ng-click="onClickPositionStatus()" data-toggle="tab">Positioning</a>
+				</li>
+				<li>
+					<a href="#tabNetworkApp" ng-click="showNetworkAppTab()" data-toggle="tab">Network App</a>
+				</li>
+				<li>
+					<a href="#tabTimeInfo" data-toggle="tab">Time & Date</a>
+				</li>
+				<!--<li>
+					<a href="#tabSNTP" data-toggle="tab">SNTP</a>
+				</li>-->
+				<!--<li>
+				<li>
+					<a href="#tabModbusInfo" data-toggle="tab">Modbus</a>
+				</li>
+				</li>-->
+				<li>
+					<a href="#tabControl" data-toggle="tab">Control</a>
+				</li>
+				<!--<li>
+					<a href="#tabGeneral" data-toggle="tab">General</a>
+				</li>-->
+				<li>
+					<a href="#tabCloud" data-toggle="tab">Cloud</a>
+				</li>
+				<li>
+					<a href="#tabFileUpgrade" data-toggle="tab">Firmware</a>
+				</li>
+				<!--<li>
+					<a href="#tabAccount" data-toggle="tab">Account</a>
+				</li>-->
+			</ul>
+			<div id='contentSysInfo' class="tab-content">
+				<div class="tab-pane" id="tabModuleInfo">
+					<!--Coupler Information Panel -->
+					<div class='panel panel-default' id='couplerInformationPanel'>
+						<div class='panel-heading'>
+							<h3>Information</h3>
+						</div>
+						<div class='panel-body'>
+							<h4 id='top' class='page-header'>Module Information</h4>
+							<form class='form-horizontal' id='frmCommonInfo' >
+								<div class='form-group' >
+									<label class='col-sm-2 col-xs-6 control-label'>Model Name</label>
+									<div class='col-sm-4 col-xs-12'>
+										<input type='text' id='inpId' class='form-control' disabled='disabled'>
+									</div>
+									<label class='col-sm-2 col-xs-6 control-label'>Customized Name</label>
+									<div class='col-sm-4 col-xs-12'>
+										<input type='text' id='inpNm' class='form-control' maxlength="63">
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-2 col-xs-6 control-label' for='form-styles'>UUID</label>
+									<div class='col-sm-10 col-xs-12'>
+										<input type='text' id='inpUID' class='form-control' maxlength="31">
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-2 col-xs-6 control-label' for='form-styles'>Description</label>
+									<div class='col-sm-10 col-xs-12'>
+										<textarea class='form-control' id='inpDes' rows='3' maxlength="127"></textarea>
+									</div>
+								</div>
+								<h4 id='top' class='page-header'>Location Information</h4>
+								<div class='form-group'>
+									<label class='col-sm-2 col-xs-6 control-label'  for='form-styles'>Latitude</label>
+									<div class='col-sm-4 col-xs-12'>
+										<input type='text' id='inpLat' min='-90' max='90' class='form-control' maxlength="15">
+									</div>
+									<label class='col-sm-2 col-xs-6 control-label' for='form-styles' maxlength="15">Longitude</label>
+									<div class='col-sm-4 col-xs-12'>
+										<input type='text' id='inpLng' min='-180' max='180' class='form-control' maxlength="15">
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-2 col-xs-6 control-label' for='form-styles'>Altitude</label>
+									<div class='col-sm-4 col-xs-12'>
+										<input type='text' id='inpAlt' class='form-control' maxlength="15">
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-2 col-xs-6 control-label' for='form-styles'>Location</label>
+									<div class='col-sm-10 col-xs-12'>
+										<textarea class='form-control' id='inpLoc' rows='3' maxlength="127"></textarea>
+									</div>
+								</div>
+							</form><!--./form-->
+						</div><!--./panel-body-->
+						<div class="panel-footer clearfix">
+							<div class="pull-right">
+								<button type='submit' class='btn btn-success' id='btnCommonInfo'>
+									<i class="fa fa-check"></i> Submit
+								</button>
+							</div>
+						</div>
+					</div><!--./panel-->
+				</div>
+				<div class="tab-pane" id="tabMode">
+					<div class='panel panel-default' id='ModePanel'>
+						<div class='panel-heading'>
+							<h3>Working Mode</h3>
+						</div>
+						<div class='panel-body'>
+							<form class='form-horizontal'>
+								<div class='col-lg-10'>
+									<div class='form-group'>
+										<label class='col-sm-4 control-label'>Working Mode for I/O board</label>
+										<div class='col-sm-4'>
+											<select class='form-control' ng-model="workingMode.Md">
+												<option value='0'>Performance mode</option>
+												<option value='1'>Low power mode</option>
+											</select>
+										</div>
+									</div><!--./form-group-->
+								</div><!--./col-lg-10-->
+								<div class='col-lg-10'>
+									<div class='form-group'>
+										<label class='col-sm-4 control-label'>Working Mode for RF</label>
+										<div class='col-sm-4'>
+											<select class='form-control' ng-model="workingMode.BMd">
+												<option value='0'>Performance mode</option>
+												<option value='1'>Low power mode</option>
+											</select>
+										</div>
+									</div><!--./form-group-->
+								</div><!--./col-lg-10-->
+							</form><!--./form-->
+						</div><!--./panel-body-->
+						<div class="panel-footer clearfix">
+							<div class="pull-right">
+								<button class='btn btn-success' ng-click="btnWorkingModeClick()">
+									<i class="fa fa-check"></i> Submit
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane" id="tabNetwork">
+					<!-- NetworkConfigPanel -->
+					<div class='panel panel-default' id='NetworkConfigPanel'>
+						<div class='panel-heading'>
+							<h3>Network</h3>
+						</div>
+						<div class='panel-body'>
+							<form class='form-horizontal' id='frmNetworkConfig'>
+								<div class='form-group'>
+									<label class='col-sm-2 control-label'>Mac</label>
+									<div class='col-sm-10'>
+										<input id='inpMAC' type='text' class='form-control' disabled='disabled'>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-2 control-label'>IP</label>
+									<div class='col-sm-4'>
+										<input id='inpIP' type='text' class='form-control txtIp' maxlength="15">
+									</div>
+									<label class='col-sm-2 control-label'>Subnet</label>
+									<div class='col-sm-4'>
+										<input id='inpMsk' type='text' class='form-control txtIp' maxlength="15">
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-2 control-label'>Gateway</label>
+									<div class='col-sm-4'>
+										<input id='inpGW' type='text' class='form-control txtIp' maxlength="15">
+									</div>
+									<label class='col-sm-2 control-label'>IP Mode</label>
+									<div class='col-sm-4 radio'>
+										<label>
+											<input name='IpType' type='radio'  id="RadioIpStatic" value='0'>
+											Static
+										</label>
+										<label>
+											<input name='IpType' type='radio'  id="RadioIpDHCP" value='1'>
+											DHCP
+										</label>
+									</div>
+								</div>
+								<!-- <div class='dIPIpAddressNote' align ='center'>
+									<h5><i class='fa fw-fa  fa-info-circle'> </i> Note:The last 3 digits of IP Address will be determined by DIP switch
+									</h5>
+								</div> -->
+							</form><!--form-horizontal-->
+						</div><!--panel-body-->
+						<div class="panel-footer clearfix">
+							<div class="pull-right">
+								<button class='btn btn-success' id='btnNetworkConfig'>
+									<i class="fa fa-check"></i> Submit
+								</button>
+							</div>
+						</div>
+					</div><!--panel-->
+				</div>
+				<div class="tab-pane" id="tabCellular">
+					<!-- <div class='panel panel-default'> -->
+						<ul class="nav nav-tabs nav-justified" role="tablist">
+						    <li ng-class="{'active': activeTab === 'CellularInfo'}">
+						        <a href data-toggle="tab" ng-click="switchTabTo('CellularInfo')">Cellular Information</a>
+						    </li>
+							<li ng-class="{'active': activeTab === 'CellularConfig'}"  ng-hide="!LoginSuccess">
+						        <a href data-toggle="tab" ng-click="switchTabTo('CellularConfig')">Cellular Config</a>
+						    </li>
+							<!-- <li ng-class="{'active': activeTab === 'SMSConfig'}"  ng-hide="!LoginSuccess">
+						        <a href data-toggle="tab" ng-click="switchTabTo('SMSConfig')">SMS Config</a>
+						    </li> -->
+						</ul>
+						<div class='tab-content'>
+							<div ng-show="isTabShow('CellularConfig')" class="tab-pane active">
+								<div class='panel panel-default' ng-hide="!LoginSuccess">
+<!-- 									<div class='panel-heading'>
+										<h4 class='modbusAddrModeTitle'>Cellular Setting</h4>
+									</div> -->
+									<div class='panel-body'>
+										<p/><p/>
+										<ul class="nav nav-tabs nav-justified" role="tablist">
+											<li ng-class="{'active': activeConfigTab === 'basic_setting'}">
+												<a href data-toggle="tab" ng-click="switchSettingTab('basic_setting')">Basic Setting</a>
+											</li>
+											<li ng-show="isSupportRegisteredServiceDomain || isSupportNetwork2G || isSupportNetwork3G || isSupportNetworkTdScdma || isSupportNetworkCdmaAndEvdo" ng-class="{'active': activeConfigTab === 'advance_setting'}">
+												<a href data-toggle="tab" ng-click="switchSettingTab('advance_setting')">Advanced Setting</a>
+											</li>
+										</ul>
+										<div class="tab-content">
+											<div ng-show="isConfigTabShow('basic_setting')" class="tab-pane active">
+												<p/>
+												<div class='form-horizontal'>
+													<div class="form-group">
+														<label class="col-sm-3 control-label">Auto Write PIN Code</label>
+														<div class='col-sm-6'>
+															<div class='input-group'>
+																<div class='SliderSwitch'>
+																	<input type='checkbox' class='SliderSwitch-checkbox' ng-model='CellularObj.En' ng-checked='CellularObj.En' id='PINAuth' ng-click='SetAutoWrite(CellularObj.En)'>
+																	<label class='SliderSwitch-label' for='PINAuth'>
+																		<span class='SliderSwitch-inner'></span>
+																		<span class='SliderSwitch-switch'></span>
+																	</label>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-3 control-label">PIN Code</label>
+														<div class="col-sm-6">
+															<div class='input-group'>
+																<span class="input-group-addon"><span class="fa fa-wrench"></span>
+																</span>
+																<input type="password" ng-model='CellularObj.Code' class="form-control" maxlength="8" value={{CellularObj.Code}} disabled>
+																<span class='input-group-btn'>
+																	<button class='btn btn-default' id='btnChangePIN' ng-click="PINSettingVisable()">
+																		<i class='fa fa-fw fa-pencil-square-o'> </i>
+																	</button>
+																</span>
+															</div>
+														</div>
+													</div>
+													<div class='well'  ng-show="IsPINChange">
+														<div class="form-group">
+															<label class="col-sm-3 control-label">Old PIN Code</label>
+															<div class='col-sm-6'>
+																<input class='form-control' type='text' ng-model='CellularObj.OPw' maxlength="8">
+															</div>
+														</div>
+														<div class="form-group">
+															<label class="col-sm-3 control-label">New PIN Code</label>
+															<div class='col-sm-6'>
+																<input class='form-control' type='text' ng-model='CellularObj.Pw' maxlength="8">
+															</div>
+														</div>
+														<div class="form-group">
+															<div class="pull-right">
+																<button class='btn btn-success' ng-click='btnPINCodeSubmit()'>
+																	Apply
+																</button>
+															</div>
+														</div>
+													</div>
+													<!--Remove Connection Mode in 2017/04/07-->
+													<!--<div class="form-group">
+														<label class="col-sm-3 control-label">Connection Mode</label>
+														<div class="col-sm-6">
+															<select class='form-control' ng-model="CellularObj.Md">
+																<option value='0'>Offline Mode</option>
+																<option value='1'>Online Mode</option>
+															</select>
+														</div>
+													</div>-->
+													<!--<div class='col-sm-6'>
+														<div class='input-group' >
+															<span class="input-group-addon"><span class="fa fa-wrench"></span>
+															</span>
+															<input type='text' class="form-control" id='inpRPw' value="Reset" disabled>
+															<span class='input-group-btn'>
+																<button class='btn btn-default' id='btnRPw'>
+																	<i class='fa fa-fw fa-pencil-square-o'> </i>
+																</button>
+															</span>
+														</div>
+													</div>-->
+													<!--<div class="form-group">
+														<label class="col-sm-3 control-label">Redial Interval (3~600 sec)</label>
+														<div class='col-sm-6'>
+															<input class='form-control' type='text' ng-model='CellularObj.Inv'  max='600' min='3'>
+														</div>
+													</div>-->
+													<div class="form-group">
+														<label class="col-sm-3 control-label">Access Point Name</label>
+														<div class='col-sm-6'>
+															<input class='form-control' ng-model='CellularObj.Nm' type='text' maxlength="99" value={{CellularObj.Nm}}>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-3 control-label">SMS Password</label>
+														<div class='col-sm-6'>
+															<input class='form-control' type='text' ng-model='CellularObj.SVal' maxlength="8">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-3 control-label">SMS Center</label>
+														<div class='col-sm-6'>
+															<input class='form-control' type='text' ng-model='CellularObj.SMSC' maxlength="16">
+														</div>
+													</div>
+												</div><!-- form-horizontal -->
+												<div class="panel-footer clearfix">
+													<div class="pull-right">
+														<button class='btn btn-success' ng-click='btnCellularBasicSubmit()'>
+															<i class="fa fa-check"></i> Submit
+														</button>
+													</div>
+												</div>
+											</div><!-- ng-show -->
+											<div ng-show="isConfigTabShow('advance_setting')" class="tab-pane active">
+												<form name="configCommonForm">
+													<div class='form-horizontal'>
+														<p/><p/>
+														<div class='form-group'>
+															<label class='col-sm-3 control-label'>Network Scan Mode</label>
+															<div class='col-sm-6'>
+																<select ng-model='CellularObj.Nm' class='form-control'>
+																	<option ng-if="isSupportNetwork2G || isSupportNetwork3G || isSupportNetworkTdScdma || isSupportNetworkCdmaAndEvdo" value='0'>Automatic</option>
+																	<option ng-if="isSupportNetwork2G" value='1'>GSM only</option>
+																	<option ng-if="isSupportNetwork3G" value='2'>WCDMA only</option>
+																	<option ng-if="isSupportNetworkTdScdma" value='4'>TD-SCDMA only</option>
+																	<option ng-if="isSupportNetworkCdmaAndEvdo" value='5'>CDMA and EVDO only</option>
+																	<option value='3'>LTE only</option>
+																</select>
+															</div>
+														</div>
+														<div ng-if="isSupportRegisteredServiceDomain" class='form-group'>
+															<label class='col-sm-3 control-label'>Registered Service Domain</label>
+															<div class="col-sm-6 radio">
+																<label>
+																	<input type="radio" ng-model="CellularObj.Res" value="0">PS only&nbsp;&nbsp;
+																</label>
+																<label>
+																	<input type="radio" ng-model="CellularObj.Res" value="1">CS & PS
+																</label>
+															</div>
+														</div>
+														<!-- <div class='form-group'>
+															<label class='col-sm-3 control-label'>Network Type</label>
+															<div class='col-sm-3'>
+																<select ng-model='CellularObj.Md' class='form-control'>
+																	<option value='0'>Automatic</option>
+																	<option value='1'>GSM</option>
+																	<option value='2'>CDMA</option>
+																	<option value='3'>TD_SCDMA</option>
+																	<option value='4'>WCDMA</option>
+																	<option value='5'>HSPA+</option>
+																	<option value='6'>UMTS</option>
+																	<option value='7'>LTE</option>
+																</select>
+															</div>
+														</div>
+														<div class='form-group'>
+															<label class='col-sm-3 control-label'>PPP Authentication</label>
+															<div class='col-sm-3'>
+																<select ng-model='CellularObj.Pauth' class='form-control'>
+																	<option value='0'>No authentication</option>
+																	<option value='1'>PAP authentication</option>
+																	<option value='2'>CHAP authentication</option>
+																</select>
+															</div>
+														</div>
+														<span ng-show="CellularObj.Pauth!=0">
+															<div class='form-group'>
+																<label class='col-sm-3 control-label'>User Name</label>
+																<div class='col-sm-3'>
+																	<input type='text' class='form-control' ng-model='CellularObj.Pu' maxlength="31">
+																</div>
+																<label class='col-sm-1 control-label'>Password</label>
+																<div class='col-sm-3'>
+																	<input type='text' class='form-control' ng-model='CellularObj.Pw' maxlength="31">
+																</div>
+															</div>
+														</span>
+														<div class='form-group'>
+														</div>
+														<div class='form-group'>
+															<label class='col-sm-3 control-label'>HostIdle (Timeout Sec)</label>
+															<div class='col-sm-6'>
+																<input type='number' max='4095' min='0' class='form-control' ng-model='CellularObj.Idl' required>
+															</div>
+														</div>
+														<div class='form-group'>
+															<label class='col-sm-3 control-label'>Communication WDT Mode</label>
+															<div class='col-sm-6'>
+																<select ng-model='CellularObj.CWDT' class='form-control'>
+																	<option value='0'>Disabled</option>
+																	<option value='1'>Communication WDT</option>
+																</select>
+															</div>
+														</div>
+														<div class='form-group'>
+															<label class='col-sm-3 control-label'>Reboot Interval (Min)</label>
+															<div class='col-sm-6'>
+																<input type='number' max='1440' min='10' class='form-control' ng-model='CellularObj.Tm' required>
+															</div>
+														</div>
+														<div class='form-group'>
+															<label class='col-sm-3 control-label'>RF Reset Interval (Min)</label>
+															<div class='col-sm-6'>
+																<input type='number' max='1440' min='5' class='form-control' ng-model='CellularObj.Rst' required>
+															</div>
+														</div> -->
+													</div>
+													<p/><p/>
+													<div class="panel-footer clearfix">
+														<div class="pull-right">
+															<button class='btn btn-success' ng-click='btnCellularAdvanceSubmit()' ng-disabled="configCommonForm.$error.required || !configCommonForm.$valid">
+																<i class="fa fa-check"></i> Submit
+															</button>
+														</div>
+													</div>
+												</form>
+											</div><!-- ng-show -->
+										</div><!--Panel body-->
+									</div><!-- panel-body -->
+								</div><!--Panel default-->
+							</div><!--CellularConfigPanel-->
+							<div ng-show="isTabShow('CellularInfo')" class="tab-pane active">
+							<!--<div class='tab-pane' id='APNConfigPage'>-->
+								<div class='panel panel-default'>
+									<div class='panel-heading'>
+										<h4 class='modbusAddrModeTitle'>Cellular Information</h4>
+									</div>
+									<div class='panel-body'>
+										<div class='form-horizontal'>
+											<div class="form-group">
+												<label class="col-sm-3 control-label">PIN Status</label>
+												<div class='col-sm-3'>
+													<input class='form-control txtIp' type='text' value={{CellularValue.Stat}} disabled>
+												</div>
+												<label class="col-sm-3 control-label">Register Status</label>
+												<div class='col-sm-3'>
+													<input class='form-control txtIp' type='text' value={{RegString}} disabled>
+												</div>
+											</div>
+											<div class='form-group'>
+												<label class='col-sm-3 control-label'>PUK Remaining Attempt Times</label>
+												<div class='col-sm-3'>
+													<input type='text' class='form-control txtIp' value={{CellularValue.PUKR}} disabled>
+												</div>
+												<label class='col-sm-3 control-label'>PIN Remaining Attempt Times</label>
+												<div class='col-sm-3'>
+													<input type='text' class='form-control txtIp' value={{CellularValue.PINR}} disabled>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-3 control-label">Current Service Mode</label>
+												<div class='col-sm-3'>
+													<input class='form-control txtIp' type='text' value={{CMString}} disabled>
+												</div>
+												<label class="col-sm-3 control-label">Signal Strength</label>
+												<div class='col-sm-3'>
+													<input class='form-control txtIp' type='text' value={{Strength}} disabled>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-3 control-label">Operator Name</label>
+												<div class='col-sm-3'>
+													<input class='form-control txtIp' type='text' value={{CellularValue.Nm}} disabled>
+												</div>
+												<label class="col-sm-3 control-label">IP Address</label>
+												<div class='col-sm-3'>
+													<input class='form-control txtIp' type='text' value={{CellularValue.IP}} disabled>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-3 control-label">IMEI Code</label>
+												<div class='col-sm-3'>
+													<input class='form-control txtIp' type='text' value={{CellularValue.Id}} disabled>
+												</div>
+												<label class="col-sm-3 control-label">IMSI Code</label>
+												<div class='col-sm-3'>
+													<input class='form-control txtIp' type='text' value={{CellularValue.Sn}} disabled>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-3 control-label">Modem Manufacturer</label>
+												<div class='col-sm-9'>
+													<input class='form-control txtIp' type='text' value={{CellularValue.Des}} disabled>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div><!--CellularInfo-->
+<!-- 							<div ng-show="isTabShow('SMSConfig')" class="tab-pane active">
+								<div class='panel panel-default'>
+									<div class='panel-heading'>
+										<h4 class='modbusAddrModeTitle'>SMS Setting</h4>
+									</div>
+									<div class='panel-body'>
+										<div class='form-horizontal'>
+											<div class="form-group">
+												<label class="col-sm-4 control-label">SMS Password</label>
+												<div class='col-sm-3'>
+													<input class='form-control txtIp' type='text' ng-model='SmsConfig.Pw' maxlength="8">
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-4 control-label">SMS Center</label>
+												<div class='col-sm-3'>
+													<input class='form-control txtIp' type='text' ng-model='SmsConfig.SMSC' maxlength="16">
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="panel-footer clearfix">
+									<div class="pull-right">
+										<button class='btn btn-success' ng-click='btnSMSSumitClick()'>
+											<i class="fa fa-check"></i> Submit
+										</button>
+									</div>
+								</div>
+							</div> -->
+						</div>	<!--Tab Content-->
+					<!-- </div> -->
+				</div><!--tabCellular-->
+				<div class="tab-pane" id="tabNetworkApp">
+					<div class='panel panel-default' id='networkAppConfigPanel'>
+						<div class='panel-heading'>
+							<h3>Network Application</h3>
+						</div>
+						<form class='form-horizontal' name='frmAppNetworkConfig'>
+						<div class='panel-body'>
+							<div class='col-lg-10'>
+								<div class='form-group'>
+									<label class='col-sm-4 control-label'>Communication WDT trigger FSV</label>
+									<div class='col-sm-6'>
+										<!-- <div class='input-group'> -->
+											<select ng-model='generalConfig.EnWF' class='form-control'>
+												<option value='0'>Disabled</option>
+												<option value='1'>Enabled</option>
+											</select>
+											<!-- <span class='input-group-btn'>
+												<button class='btn btn-default' id='btnEnWF'>
+														<i class='fa fa-fw fa-save'></i>
+												</button>
+											</span>
+										</div> -->
+									</div>
+								</div><!--./form-group-->
+								<div class='form-group'>
+									<label class='col-sm-4 control-label'>HostIdle (Timeout Sec)</label>
+									<div class='col-sm-6'>
+										<input type='number' max='4095' min='0' class='form-control' ng-model='CellularObj.Idl' required>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-4 control-label'>Communication WDT Mode</label>
+									<div class='col-sm-6'>
+										<select ng-model='CellularObj.CWDT' class='form-control'>
+											<option value='0'>Disabled</option>
+											<option value='1'>Communication WDT</option>
+										</select>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-4 control-label'>Reboot Interval (Min)</label>
+									<div class='col-sm-6'>
+										<input type='number' max='1440' min='10' class='form-control' ng-model='CellularObj.Tm' required>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-4 control-label'>RF Reset Interval (Min)</label>
+									<div class='col-sm-6'>
+										<input type='number' max='1440' min='5' class='form-control' ng-model='CellularObj.Rst' required>
+									</div>
+								</div>
+							</div><!--./col-lg-6-->
+						</div><!--./panel-body-->
+						<div class="panel-footer clearfix">
+							<div class="pull-right">
+								<button class='btn btn-success' ng-click='btnNetworkAppSubmit()' ng-disabled="frmAppNetworkConfig.$error.required || !frmAppNetworkConfig.$valid">
+									<i class="fa fa-check"></i> Submit
+								</button>
+							</div>
+						</div>
+						</form><!--./form-->
+					</div><!--./panel-->
+				</div>
+				<!--./tab-pane-->
+				<div class="tab-pane" id="tabTimeInfo">
+					<div class='panel panel-default' id='TimeSettingPanel'>
+						<div class='panel-heading'>
+							<h3>Local Time</h3>
+						</div>
+						<div class='panel-body'>
+							<div class='form-horizontal' id='frmTimeConfig'>
+								<div class='col-lg-12'>
+									<div class='form-group'>
+										<label class='col-sm-3 control-label'>Current Time</label>
+										<div class='col-sm-6'>
+											<div class='input-group'>
+												<input id='inpTm' type='text' class='form-control' maxlength='64' disabled>
+												<span class='input-group-btn'>
+													<button class='btn btn-default' id='btnRefreshTm'>
+														<i class='fa fa-fw fa-refresh'></i>
+													</button>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class='col-lg-12 timeSettings'>
+									<div class='form-group'>
+										<label class='col-sm-3 control-label'>Time Zone</label>
+										<div class='col-sm-6'>
+											<!-- <div class='input-group'> -->
+												<select id='selTZ'class='form-control'>
+													<option value='24' >(GMT-12:00) International Date Line West</option>
+													<option value='65' >(GMT-11:00) Midway Island, Samoa</option>
+													<option value='39' >(GMT-10:00) Hawaii</option>
+													<option value='2'  >(GMT-09:00) Alaska</option>
+													<option value='58' >(GMT-08:00) Pacific Time (US/Canada)</option>
+													<option value='59' >(GMT-08:00) Tijuana, Baja California</option>
+													<option value='75' >(GMT-07:00) Arizona</option>
+													<option value='47' >(GMT-07:00) Mountain Time (US/Canada)</option>
+													<option value='48' >(GMT-07:00) Chihuahua, La Paz, Mazatlan</option>
+													<option value='15' >(GMT-06:00) Central America</option>
+													<option value='21' >(GMT-06:00) Central Time (US/Canada)</option>
+													<option value='22' >(GMT-06:00) Guadalajara, Mexico City, Monterrey</option>
+													<option value='11' >(GMT-06:00) Saskatchewan</option>
+													<option value='63' >(GMT-05:00) Bogota, Lima, Quito, Rio Branco</option>
+													<option value='29' >(GMT-05:00) Eastern Time (US/Canada)</option>
+													<option value='74' >(GMT-05:00) Indiana (East)</option>
+													<option value='6'  >(GMT-04:00) Atlantic Time (Canada)</option>
+													<option value='64' >(GMT-04:00) La Paz</option>
+													<option value='17' >(GMT-04:00) Manaus</option>
+													<option value='57' >(GMT-04:00) Santiago</option>
+													<option value='85' >(GMT-04:30) Caracas</option>
+													<option value='54' >(GMT-03:30) Newfoundland</option>
+													<option value='28' >(GMT-03:00) Brasilia</option>
+													<option value='62' >(GMT-03:00) Buenos Aires, Georgetown</option>
+													<option value='36' >(GMT-03:00) Greenland</option>
+													<option value='83' >(GMT-03:00) Montevideo</option>
+													<option value='45' >(GMT-02:00) Mid-Atlantic</option>
+													<option value='10' >(GMT-01:00) Azores</option>
+													<option value='12' >(GMT-01:00) Cape Verde Is.</option>
+													<option value='37' >(GMT) Casablanca, Monrovia, Reykjavik</option>
+													<option value='35' >(GMT) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London</option>
+													<option value='79' >(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna</option>
+													<option value='18' >(GMT+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague</option>
+													<option value='60' >(GMT+01:00) Brussels, Copenhagen, Madrid, Paris</option>
+													<option value='19' >(GMT+01:00) Sarajevo, Skopje, Warsaw, Zagreb</option>
+													<option value='78' >(GMT+01:00) West Central Africa</option>
+													<option value='43' >(GMT+02:00) Amman</option>
+													<option value='38' >(GMT+02:00) Athens, Bucharest, Istanbul</option>
+													<option value='46' >(GMT+02:00) Beirut</option>
+													<option value='27' >(GMT+02:00) Minsk</option>
+													<option value='30' >(GMT+02:00) Cairo</option>
+													<option value='68' >(GMT+02:00) Harare, Pretoria</option>
+													<option value='33' >(GMT+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius</option>
+													<option value='42' >(GMT+02:00) Jerusalem</option>
+													<option value='51' >(GMT+02:00) Windhoek</option>
+													<option value='5' >(GMT+03:00) Baghdad</option>
+													<option value='3' >(GMT+03:00) Kuwait, Riyadh</option>
+													<option value='61' >(GMT+03:00) Moscow, St. Petersburg, Volgograd</option>
+													<option value='25' >(GMT+03:00) Nairobi</option>
+													<option value='34' >(GMT+03:00) Tbilisi</option>
+													<option value='41' >(GMT+03:30) Tehran</option>
+													<option value='4' >(GMT+04:00) Abu Dhabi, Muscat</option>
+													<option value='9' >(GMT+04:00) Baku</option>
+													<option value='84' >(GMT+04:00) Caucasus Standard Time</option>
+													<option value='13' >(GMT+04:00) Yerevan</option>
+													<option value='1' >(GMT+04:30) Kabul</option>
+													<option value='31' >(GMT+05:00) Ekaterinburg</option>
+													<option value='80' >(GMT+05:00) Islamabad, Karachi, Tashkent</option>
+													<option value='40' >(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi</option>
+													<option value='69' >(GMT+05:30) Sri Jayawardenepura</option>
+													<option value='52' >(GMT+05:45) Kathmandu</option>
+													<option value='50' >(GMT+06:00) Almaty, Novosibirsk</option>
+													<option value='16' >(GMT+06:00) Astana, Dhaka</option>
+													<option value='49' >(GMT+06:30) Yangon (Rangoon)</option>
+													<option value='66' >(GMT+07:00) Bangkok, Hanoi, Jakarta</option>
+													<option value='56' >(GMT+07:00) Krasnoyarsk</option>
+													<option value='23' >(GMT+08:00) Beijing, Chongqing, Hong Kong, Urumqi</option>
+													<option value='55' >(GMT+08:00) Irkutsk, Ulaan Bataar</option>
+													<option value='67' >(GMT+08:00) Kuala Lumpur, Singapore</option>
+													<option value='77' >(GMT+08:00) Perth</option>
+													<option value='70' selected='selected'>(GMT+08:00) Taipei</option>
+													<option value='72' >(GMT+09:00) Osaka, Sapporo, Tokyo</option>
+													<option value='44' >(GMT+09:00) Seoul</option>
+													<option value='82' >(GMT+09:00) Yakutsk</option>
+													<option value='14' >(GMT+09:30) Adelaide</option>
+													<option value='7' >(GMT+09:30) Darwin</option>
+													<option value='26' >(GMT+10:00) Brisbane</option>
+													<option value='8' >(GMT+10:00) Canberra, Melbourne, Sydney</option>
+													<option value='81' >(GMT+10:00) Guam, Port Moresby</option>
+													<option value='71' >(GMT+10:00) Hobart</option>
+													<option value='76' >(GMT+10:00) Vladivostok</option>
+													<option value='20' >(GMT+11:00) Magadan, Solomon Is., New Caledonia</option>
+													<option value='53' >(GMT+12:00) Auckland, Wellington</option>
+													<option value='32' >(GMT+12:00) Fiji, Kamchatka, Marshall Is.</option>
+													<option value='73' >(GMT+13:00) Nuku'alofa</option>
+												</select>
+												<!-- <span class='input-group-btn '>
+													<button class='btn btn-default' id='btnTZ'>
+														<i class='fa fa-fw fa-save'> </i>
+													</button>
+												</span> -->
+											<!-- </div> -->
+										</div>
+									</div>
+								</div><!--./col-lg-12-->
+								<div class='col-lg-12 timeSettings'>
+									<div class='form-group'>
+										<label class='col-sm-3 control-label'>Time Calibration</label>
+										<div class='col-sm-6'>
+											<div class='input-group' >
+												<span class="input-group-addon"><span class="fa fa-wrench"></span>
+												</span>
+												<input type='text' class="form-control" id='inpDatetimepicker' placeholder="Click Me..." data-date-format="YYYY-MM-DDTHH:mm:ss">
+												<span class='input-group-btn'>
+													<button class='btn btn-default' id='btnTm'>
+														<i class='fa fa-fw fa-save'> </i>
+													</button>
+												</span>
+											</div>
+										</div>
+									</div><!--./form-group-->
+								</div><!--./col-lg-12-->
+							</div><!--./form-->
+						</div>
+					</div>
+				</div>
+					<div class="tab-pane" id="tabSNTP">
+						<div class='panel panel-default' id='SNTPPanel'>
+							<div class='panel-heading'>
+								<h3>SNTP</h3>
+							</div>
+							<div class='panel-body'>
+								<form class='form-horizontal' id='frmSNTPConfig'>
+									<div class='col-lg-6'>
+										<div class='form-group'>
+											<label class='col-sm-6 control-label'> Enable SNTP Client</label>
+											<div class='col-sm-6'>
+												<div class='input-group'>
+													<span class='input-group-addon'>
+														<input id='inpEnSNTP' type='checkbox'>
+													</span>
+													<input type='text' class='form-control' id='inpEnSNTPStatus' value='Enabled/Disabled' disabled>
+												</div>
+											</div>
+										</div><!--./form-group-->
+
+									</div><!--./col-lg-6-->
+									<div class='col-lg-6'>
+										<div class='form-group'>
+											<label class='col-sm-6 control-label' for='inpSNTPI'> SNTP Time Polling Interval</label>
+											<div class='col-sm-6'>
+												<div class='input-group'>
+													<input id='inpSNTPI' type='number' max='999999999' min='0' class='isNumericType form-control' value='0' data-default='3600'>
+													<span class='input-group-addon' style='min-width: 5px'>sec</span>
+												</div>
+											</div>
+										</div><!--./form-group-->
+									</div>
+									<div class='col-lg-6'>
+										<div class='form-group'>
+											<label class='col-sm-6 control-label'> Primary SNTP Server</label>
+											<div class='col-sm-6'>
+												<input id='inpSNTP1' type='text' class='form-control' maxlength='64'>
+											</div>
+										</div><!--./form-group-->
+									</div><!--./col-lg-6-->
+									<div class='col-lg-6'>
+										<div class='form-group'>
+											<label class='col-sm-6 control-label'> Secondary SNTP Server</label>
+											<div class='col-sm-6'>
+												<input id='inpSNTP2' type='text' class='form-control' maxlength='64'>
+											</div>
+										</div><!--./form-group-->
+									</div><!--./col-lg-6-->
+								</form><!--./form-->
+							</div><!--./panel-body-->
+							<div class="panel-footer clearfix">
+								<div class="pull-right">
+									<button class='btn btn-success' id='btnAll'>
+										<i class="fa fa-check"></i> Submit
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane" id="tabModbusInfo">
+					<!--Modbus address config  area-->
+					<div id='modbusAddressCommonConfigCotainer'>
+						<ul class='nav nav-tabs nav-justified' role='tablist'>
+							<li class='active'  >
+								<a id='modbusAddrCoilConfig'  href='#modbusCoilPage' role='tab' data-toggle='tab'>Coils Status(0X)</a>
+							</li>
+							<li>
+								<a id='modbusAddrRegConfig'  href='#modbusRegPage' role='tab' data-toggle='tab'>Holding Registers(4X)</a>
+							</li>
+						</ul><!-- Tab panes -->
+						<div class='tab-content'>
+							<div class='tab-pane active' id='modbusCoilPage'>
+								<div class='panel panel-default' id ="modbusCoilPanel">
+									<div class='panel-heading'>
+										<h4 class='modbusAddrModeTitle'>Setting Address</h4>
+									</div>
+									<div class='panel-body' id ="modbusCoilContext">
+									</div>
+									<div class="panel-footer clearfix">
+										<div class="pull-right">
+											<button class='btn btn-success' id='btnModbusCoilSubmit'>
+												<i class="fa fa-check"></i> Submit
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class='tab-pane' id='modbusRegPage'>
+								<div class='panel panel-default' >
+									<div class='panel-heading'>
+										<h4 class='modbusAddrModeTitle'>Setting Address</h4>
+									</div>
+									<div class='panel-body' id ="modbusRegContext">
+									</div>
+									<div class="panel-footer clearfix">
+										<div class="pull-right">
+											<button class='btn btn-success' id='btnModbusRegSubmit'>
+												<i class="fa fa-check"></i> Submit
+											</button>
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+					</div>
+
+				<!--./tab-pane-->
+				<div class="tab-pane" id="tabFileUpgrade">
+						<div class="panel panel-default" id='panelFileUpgrade'>
+							<div class="panel-heading">
+								<h3> Files</h3>
+								<a href='/config/config.html' data-config='FileUpgrade' class='ajax-link' stlye='display:none;'></a><!-- for refresh -->
+							</div>
+							<div class="panel-body">
+								<div class="col-lg-10">
+									<div class="form-horizontal">
+										<div class="form-group">
+											<label class="col-lg-4 control-label"> Firmware Upload</label>
+											<div class="col-lg-8">
+												<div class="fileinput fileinput-new input-group" data-provides="fileinput">
+													<div class="form-control" data-trigger="fileinput">
+														<i class="fa fa-fw fa-file-text fileinput-exists"></i><span class="fileinput-filename"></span>
+													</div>
+													<span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new"><i class="fa fa-fw fa-folder-open"></i></span><span class="fileinput-exists"><i class="fa fa-fw fa-folder-open"></i></span>
+														<input type="file" data-toggle="tooltip" data-title="Choose Firmware File" id='inpFirmware' accept=".bin">
+													</span>
+													<a data-toggle="tooltip" data-title="Cancel" href="#btnFirmware" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput"><i class="fa fa-fw fa-times"></i></a>
+													<a data-toggle="tooltip" data-title="Upload Firmware" class="input-group-addon btn btn-default fileinput-submit" id="btnFirmware"><i class="fa fa-fw fa-download"></i></a>
+												</div>
+											</div>
+										</div>
+										<div class="form-group" style='display:none;'>
+											<label class="col-lg-4 control-label"> User Web Page</label>
+											<div class="col-lg-8">
+												<div class="fileinput fileinput-new input-group" data-provides="fileinput">
+													<div class="form-control" data-trigger="fileinput">
+														<i class="fa fa-fw fa-th-list fileinput-exists"></i><span class="fileinput-filename"></span>
+													</div>
+													<span class="input-group-addon btn btn-default btn-file"> <span class="fileinput-new"><i class="fa fa-fw fa-folder-open"></i> </span> <span class="fileinput-exists"><i class="fa fa-fw fa-folder-open"></i> </span>
+														<input type="file" id='inpHtml'>
+													</span>
+													<a href="#btnHtml" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput"><i class="fa fa-fw fa-times"></i></a>
+													<a class="input-group-addon btn btn-default fileinput-submit" id="btnHtml"><i class="fa fa-fw fa-download"></i></a>
+												</div>
+											</div>
+										</div>
+										<!--./form-group-->
+										<div class="form-group" style='display:none;'>
+											<label class="col-lg-4 control-label"> Configure Web Page</label>
+											<div class="col-lg-8">
+												<div class="fileinput fileinput-new input-group" data-provides="fileinput">
+													<div class="form-control" data-trigger="fileinput">
+														<i class="fa fa-fw fa-th-list fileinput-exists"></i><span class="fileinput-filename"></span>
+													</div>
+													<span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new"><i class="fa fa-fw fa-folder-open"></i></span><span class="fileinput-exists"><i class="fa fa-fw fa-folder-open"></i></span>
+														<input type="file" id='inpEmbedHTML'>
+													</span>
+													<a href="#btnEmbedHTML" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput"><i class="fa fa-fw fa-times"></i></a>
+													<a class="input-group-addon btn btn-default fileinput-submit" id="btnEmbedHTML"><i class="fa fa-fw fa-download"></i></a>
+												</div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="col-lg-4 control-label">Configuration File Upload</label>
+											<div class="col-lg-8">
+												<div class="fileinput fileinput-new input-group" data-provides="fileinput">
+													<!-- <div class="input-group-btn">
+												        <button type="button" id="groupConfigIpSettingBtn" class="btn btn-default dropdown-toggle" data-toggle="dropdown">With IP Settings(Default) <span class="caret"></span></button>
+												        <ul id="groupConfigIpSetting" class="dropdown-menu" role="menu">
+												          <li><a href="#">With IP Settings </a></li>
+												          <li><a href="#">Without IP Settings </a></li>
+												        </ul>
+											        </div> --><!-- input-group-btn -->
+													<div class="form-control" data-trigger="fileinput">
+														<i class="fa fa-fw fa-copy fileinput-exists"></i><span class="fileinput-filename"></span>
+													</div>
+													<span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new"><i class="fa fa-fw fa-folder-open"></i></span><span class="fileinput-exists"><i class="fa fa-fw fa-folder-open"></i></span>
+														<input type="file" data-toggle="tooltip" data-title="Choose Configuration File" id='inpGroupConfig' accept=".cfg" />
+													</span>
+													<a data-toggle="tooltip" data-title="Cancel" href="#btnGroupConfig" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput"><i class="fa fa-fw fa-times"></i></a>
+													<a data-toggle="tooltip" data-title="Upload Configuration File" class="input-group-addon btn btn-default fileinput-submit" id="btnGroupConfig"><i class="fa fa-fw fa-download"></i></a>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-lg-4 control-label">Configuration File Export</label>
+											<div class="col-lg-8">
+												<!-- <button class="btn btn-default" type="button" id="btnDldGroupConfig">Export Configuration File</button> -->
+												<a href="/config_file.cfg" class="btn btn-default"> Export Configuration File</a>
+											</div>
+										</div>
+										<div class="form-group" style='display:none;'>
+											<label class="col-lg-4 control-label"> Module Profile</label>
+											<div class="col-lg-8">
+												<div class="fileinput fileinput-new input-group" data-provides="fileinput">
+													<div class="form-control" data-trigger="fileinput">
+														<i class="fa fa-fw  fa-list-alt fileinput-exists"></i><span class="fileinput-filename"></span>
+													</div>
+													<span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new"><i class="fa fa-fw fa-folder-open"></i></span><span class="fileinput-exists"><i class="fa fa-fw fa-folder-open"></i></span>
+														<input type="file" id='inpModuleProfile'>
+													</span>
+													<a href="#btnModuleProfile" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput"><i class="fa fa-fw fa-times"></i></a>
+													<a class="input-group-addon btn btn-default fileinput-submit" id="btnModuleProfile"><i class="fa fa-fw fa-download"></i></a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!--/.col-lg-12-->
+							</div>
+							<!--/.panel-body-->
+						</div>
+						<!--/.panel-->
+				</div>
+					<!--/.tab-pane-->
+				<div class="tab-pane" id="tabControl">
+						<div class="panel panel-default" id='panelControlCommand'>
+							<div class="panel-heading">
+								<h3> Control</h3>
+							</div>
+							<div class="panel-body">
+								<div class="form-horizontal">
+									<!-- <div class='form-group'>
+										<label class="col-sm-4 control-label"> Locate</label>
+										<div class='col-sm-6'>
+											<div class='input-group' >
+												<span class="input-group-addon"><span class="fa fa-wrench"></span>
+												</span>
+												<input type='text' class="form-control" id='inpLc' value="Disabled" disabled>
+												<span class='input-group-btn'>
+													<button class='btn btn-default' id='btnLc'>
+														<i class='fa fa-fw fa-toggle-off'> </i>
+													</button>
+												</span>
+											</div>
+										</div>
+									</div> --><!--./form-group-->
+									<div class='form-group'>
+										<label class="col-sm-4 control-label"> Restore to Default</label>
+										<div class='col-sm-6'>
+											<div class='input-group' >
+												<span class="input-group-addon"><span class="fa fa-wrench"></span>
+												</span>
+												<input type='text' class="form-control" id='inpRFD' value="Restore" disabled>
+												<span class='input-group-btn'>
+													<button class='btn btn-default' id='btnRFD'>
+														<i class='fa fa-fw fa-truck'> </i>
+													</button>
+												</span>
+											</div>
+										</div>
+									</div><!--./form-group-->
+									<div class='form-group'>
+										<label class="col-sm-4 control-label"> System Restart</label>
+										<div class='col-sm-6'>
+											<div class='input-group' >
+												<span class="input-group-addon"><span class="fa fa-wrench"></span>
+											    </span>
+												<input type='text' class="form-control" id='inpRst' value="Restart" disabled>
+												<span class='input-group-btn'>
+													<button class='btn btn-default' id='btnRst'>
+														<i class='fa fa-fw fa-power-off'></i>
+													</button>
+												</span>
+											</div>
+										</div>
+									</div><!--./form-group-->
+								</div>
+							</div>
+						</div>
+				</div>
+					<!--/.tab-pane-->
+				<div class="tab-pane" id="tabGeneral">
+						<div class="panel panel-default" id='panelGeneralConfig'>
+							<div class="panel-heading">
+								<h3> General Configuration</h3>
+							</div>
+							<div class="panel-body">
+								<form class="form-horizontal">
+									<div class='form-group'>
+										<label class="col-sm-4 control-label">
+											Scan Interval
+										</label>
+										<div class='col-sm-6'>
+											<div class='input-group'>
+												<input id='inpPollingRate' type='number' class='isSWType isNumericType form-control' value='1000' min='250' max='9999999'>
+												<span class='input-group-addon'>
+													ms
+												</span>
+												<span class='input-group-btn'>
+													<button class='btn btn-default isSWType' id='btnPollingRate'>
+														<i class='fa fa-fw fa-save'></i>
+													</button>
+												</span>
+											</div>
+										</div>
+									</div><!--./form-group-->
+									<!-- <div class='form-group'>
+										<label class="col-sm-4 control-label"> FSV by Communication WDT</label>
+										<div class='col-sm-6'>
+											<div class='input-group'>
+												<span class='input-group-addon'>
+													<input id='inpEnWF' type='checkbox'>
+												</span>
+												<input type='text' class='form-control' id='inpEnWFStatus' value='Enabled/Disabled' disabled>
+												<span class='input-group-btn'>
+													<button class='btn btn-default' id='btnEnWF'>
+														<i class='fa fa-fw fa-save'></i>
+													</button>
+												</span>
+											</div>
+										</div>
+									</div> --><!--./form-group-->
+									<!-- <div class='dIPIpAddressNote' align ='center'>
+										<h5>
+											<i class='fa fw-fa fa-info-circle'></i>
+											Note: Each IO will switch to its FSV if the module's WDT is enabled and triggerd.
+										</h5>
+									</div> -->
+								</form>
+							</div><!--/.panel-body-->
+						</div><!--/.panel-->
+				</div><!--/.tab-pane-->
+					<div class="tab-pane" id="tabCloud">
+						<div class='panel panel-default' id='CloudConfigPanel'>
+							<div class='panel-heading'>
+								<h3>Cloud Configuration</h3>
+							</div>
+							<div class='panel-body'>
+								<div class='form-horizontal'>
+									<div class='form-group'>
+										<div class='form-inline'>
+											<label class='col-sm-3 control-label'>Select Service</label>
+											<div class='col-sm-6'>
+												<select id='selCloud' class='form-control' style="font-family:'FontAwesome';">
+													<option value='0'>&#xf108;&#8194; Disable</option>
+												</select>
+											    <!--
+												<button class='btn btn-default' id='btnDeleteCloudSetting' data-toggle="tooltip" title="Delete Setting" style="display:none">
+													<i class='fa fa-fw fa-times'></i>
+												</button>
+												-->
+											</div>
+										</div><!-- form-inline-->
+									</div><!--./form-group-->
+									<div id='panelCloudDisable' class="cloudPanel">
+										<div class="panel-footer clearfix">
+											<div class="pull-right">
+												<button class='btn btn-success' id='btnCloudDisableSubmit'>
+													<i class="fa fa-check"></i> Submit
+												</button>
+											</div>
+										</div>
+									</div>
+									<div id='panelCloudStatus'>
+										<h4 class='page-header'>Current Status</h4>
+										<div class='form-group' id="dropBoxStatus">
+											<label class='col-sm-3 control-label'>Setting Status</label>
+											<div class='col-sm-4'>
+												<!-- <div class='input-group'> -->
+													<input id='inpCRdy' type='text' class='form-control' disabled>
+													<!-- <span class='input-group-btn'>
+														<button class='btn btn-default' id='btnRefreshCloudStatus' data-toggle="tooltip" title="Refresh Status">
+															<i class='fa fa-fw fa-refresh'></i>
+														</button>
+													</span> -->
+												<!-- </div> -->
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-3 control-label'>Connection Status</label>
+											<div class='col-sm-4'>
+												<input id='inpStat' type='text' class='form-control' disabled>
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-3 control-label'>Error Code</label>
+											<div class='col-sm-4'>
+												<input id='inpCode' type='text' class='form-control' disabled>
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-3 control-label'></label>
+											<div class='col-sm-4'>
+												<button class='btn btn-info' id='btnRefreshCloudStatus' data-toggle="tooltip" title="Refresh Status">
+													<i class='fa fa-fw fa-refresh'></i>Refresh
+												</button>
+											</div>
+										</div>
+									</div>
+									<div id='panelDropBox' class="cloudPanel">
+										<!-- <h4 class='page-header'>DropBox Server</h4>
+										<div class='form-group'>
+											<label class='col-sm-3 control-label'>Link Status</label>
+											<div class='col-sm-6'>
+												<div class='input-group'>
+													<input id='inpCloudStatus' type='text' class='form-control' maxlength='64' disabled>
+													<span class='input-group-btn'>
+														<button class='btn btn-default' id='btnRefreshCloudStatus' data-toggle="tooltip" title="Refresh Status">
+															<i class='fa fa-fw fa-refresh'></i>
+														</button>
+													</span>
+													<input id='cloudStatusValue' type='hidden' value=''>
+												</div>
+											</div>
+										</div> -->
+										<div class="panel-footer clearfix">
+											<div class="pull-right">
+												<button class='btn btn-success' id='btnDropBoxAuthenticate'>
+													<i class="fa fa-unlock-alt"></i> DropBox Authentication
+												</button>
+											</div>
+										</div>
+									</div> 	<!-- panelDropBox -->
+									<div id='panelPrivateServer' class="cloudPanel">
+										<h4 class='page-header'>Setting</h4>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>IP/Domain Name</label>
+											<div class='col-sm-4'>
+												<input id='logIP' type='text' class='form-control' maxlength="128">
+											</div>
+											<label class='col-sm-2 control-label'>Server Port</label>
+											<div class='col-sm-4'>
+												<input id='logPWeb' type='number' data-default='8000' class='isNumericType form-control' max='65535' min='1' value='8000'>
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>Data File Upload URL</label>
+											<div class='col-sm-4'>
+												<input id='logUurl' type='text' class='form-control' maxlength="128">
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>IO Data Push URL</label>
+											<div class='col-sm-4'>
+												<input id='logDurl' type='text' class='form-control' maxlength="128">
+											</div>
+											<label class='col-sm-2 control-label'>System Event Push URL</label>
+											<div class='col-sm-4'>
+												<input id='logSurl' type='text' class='form-control' maxlength="128">
+											</div>
+										</div>
+										<div class='form-group row'>
+											<div class='col-lg-12'>
+												<label class='col-sm-2 control-label'>SSL secure</label>
+												<div class='col-sm-10'>
+													<div class='radio'>
+													    <label>
+													    	<!-- radio name must be unique -->
+													        <input name='IpSslType' type='radio' id="RadioSslDisable" value='0'>
+													         Disable
+													    </label>
+													    <label>
+													    	<!-- radio name must be unique -->
+													        <input name='IpSslType' type='radio' id="RadioSslEnable" value='1'>
+													         Enable
+													    </label>
+													</div>
+												</div>
+											</div>
+										</div>
+										<h4 class='page-header'>Authentication</h4>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>Type</label>
+											<div class='col-sm-10'>
+												<select id='selLogPauth' class='form-control'>
+													<option value='0' data-target='#authenticateUser' data-isShow='0'>Disable</option>
+													<option value='1' data-target='#authenticateUser' data-isShow='1'>Basic Authorization</option>
+												</select>
+											</div>
+										</div>
+										<div id='authenticateUser'>
+											<div class='form-group'>
+												<label class='col-sm-2 control-label'>User Name</label>
+												<div class='col-sm-4'>
+													<input id='logPu' type='text' class='form-control' maxlength="64">
+												</div>
+												<label class='col-sm-2 control-label'>Password</label>
+												<div class='col-sm-4'>
+													<input id='logPw' type='text' class='form-control' maxlength="16">
+												</div>
+											</div>
+										</div>
+										<div class="panel-footer clearfix">
+											<div class="pull-right">
+												<button class='btn btn-success' id='btnPrivateServerSubmit'>
+													<i class="fa fa-check"></i> Submit
+												</button>
+											</div>
+									 	</div>
+									</div> <!-- panelPrivateServer -->
+									<div id='panelWebAccess' class="cloudPanel">
+										<h4 class='page-header'>Setting</h4>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>Domain Name/IP</label>
+											<div class='col-sm-4'>
+												<input id='Nm' type='text' class='form-control' maxlength="64">(ex: wavm.cloudapp.net)
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>Project Node</label>
+											<div class='col-sm-4'>
+												<input id='PNm' type='text' class='form-control' maxlength="32">
+											</div>
+											<label class='col-sm-2 control-label'>SCADA Node</label>
+											<div class='col-sm-4'>
+												<input id='NNm' type='text' class='form-control' maxlength="32">
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>Heartbeat Frequency (sec)</label>
+											<div class='col-sm-4'>
+												<div class='input-group'>
+													<input id='HbF' type='number' class='form-control isNumericType'  max='65535' min='1'>
+													<span class='input-group-addon'>
+														sec
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class='form-group row'>
+											<div class='col-lg-12'>
+												<label class='col-sm-2 control-label'>SSL secure</label>
+												<div class='col-sm-4'>
+													<div class='radio'>
+													    <label>
+													    	<!-- radio name must be unique -->
+													        <input name="waSslType" type='radio' id="waSslDisable">
+													         Disable
+													    </label>
+													    <label>
+													    	<!-- radio name must be unique -->
+													        <input  name="waSslType" type='radio' id="waSslEnable">
+													         Enable
+													    </label>
+													</div>
+												</div>
+												<label class='col-sm-2 control-label'>Port Number</label>
+												<div class='col-sm-4'>
+													<input id='PWeb' type='number' data-default='80' class='isNumericType form-control' max='65535' min='1' value='80'>
+												</div>
+											</div>
+										</div>
+										<div class='form-group row'>
+											<div class='col-lg-12'>
+												<label class='col-sm-2 control-label'>WebSocket</label>
+												<div class='col-sm-4'>
+													<div class='radio'>
+													    <label>
+													    	<!-- radio name must be unique -->
+													        <input name="waWsType" type='radio' id="waWsDisable">
+													         Disable
+													    </label>
+													    <label>
+													    	<!-- radio name must be unique -->
+													        <input  name="waWsType" type='radio' id="waWsEnable">
+													         Enable
+													    </label>
+													</div>
+												</div>
+											</div>
+										</div>
+										<h4 class='page-header'>Authentication</h4>
+										<div id='authenticateUser'>
+											<div class='form-group'>
+												<label class='col-sm-2 control-label'>User Name</label>
+												<div class='col-sm-4'>
+													<input id='Pu' type='text' class='form-control' maxlength="32">
+												</div>
+												<label class='col-sm-2 control-label'>Password</label>
+												<div class='col-sm-4'>
+													<input id='Pw' type='text' class='form-control' maxlength="32">
+												</div>
+											</div>
+										</div>
+										<div class="panel-footer clearfix">
+											<div class="pull-right">
+												<button class='btn btn-success' id='btnWebAccessSubmit'>
+													<i class="fa fa-check"></i> Submit
+												</button>
+											</div>
+									 	</div>
+									</div> <!-- panelWebAccess -->
+									<div id='panelAliyun' class="cloudPanel">
+										<h4 class='page-header'>Setting</h4>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>Bucket Name</label>
+											<div class='col-sm-4'>
+												<input id='logNm' type='text' class='form-control' maxlength="64">
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>Endpoint</label>
+											<div class='col-sm-4'>
+												<input id='logEn' type='text' class='form-control' maxlength="64">
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>Access ID</label>
+											<div class='col-sm-4'>
+												<input id='logId' type='text' class='form-control' maxlength="64">
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>Access Key</label>
+											<div class='col-sm-4'>
+												<input id='logAKey' type='text' class='form-control' maxlength="64">
+											</div>
+										</div>
+										<div class="panel-footer clearfix">
+											<div class="pull-right">
+												<button class='btn btn-success' id='btnAliyunSubmit'>
+													<i class="fa fa-check"></i> Submit
+												</button>
+											</div>
+									 	</div>
+									</div> <!-- panelAliyun -->
+									<div id='panelMQTT' class="cloudPanel">
+										<h4 class='page-header'>Setting</h4>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>MQTT Host Name</label>
+											<div class='col-sm-4'>
+												<input id='logNm' type='text' class='form-control' maxlength="64">
+											</div>
+											<label class='col-sm-2 control-label'>Port Number</label>
+											<div class='col-sm-4'>
+												<input id='logPWeb' type='number' data-default='8000' class='isNumericType form-control' max='65535' min='1' value='8000'>
+											</div>
+										</div>
+										<div class='form-group row'>
+											<label class='col-sm-2 control-label'>SSL/TLS</label>
+											<div class='col-sm-4'>
+												<div class='radio'>
+													<label>
+														<!-- radio name must be unique -->
+														<input name='mqttSslType' type='radio' id="mqttSslDisable" value='0'>
+															Disable
+													</label>
+													<label>
+														<!-- radio name must be unique -->
+														<input name='mqttSslType' type='radio' id="mqttSslEnable" value='1'>
+															Enable
+													</label>
+												</div>
+											</div>
+											<label class='col-sm-2 control-label'>SSL Certificate Type</label>
+											<div class='col-sm-4'>
+												<select class='form-control' id="logCtS">
+													<option value="0">CA Signed Server Certificate</option>
+													<option value="1">Selfed Signed Certificate</option>
+												</select>
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>WebSocket</label>
+											<div class='col-sm-4'>
+												<div class='radio'>
+													<label>
+														<!-- radio name must be unique -->
+														<input name='mqttWsType' type='radio' id="mqttWsDisable" value='0'>
+															Disable
+													</label>
+													<label>
+														<!-- radio name must be unique -->
+														<input name='mqttWsType' type='radio' id="mqttWsEnable" value='1'>
+															Enable
+													</label>
+												</div>
+											</div>
+											<label class='col-sm-2 control-label'>WebSocket Path</label>
+											<div class='col-sm-4'>
+												<input id='logSurl' type='text' class='form-control' maxlength="64">
+											</div>
+										</div>
+										<div id='authenticateUser'>
+											<div class='form-group'>
+												<label class='col-sm-2 control-label'>User Name</label>
+												<div class='col-sm-4'>
+													<input id='logPu' type='text' class='form-control' maxlength="128">
+												</div>
+												<label class='col-sm-2 control-label'>Password</label>
+												<div class='col-sm-4'>
+													<input id='logPw' type='text' class='form-control' maxlength="128">
+												</div>
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>Heartbeat Frequency (sec)</label>
+											<div class='col-sm-4'>
+												<input id='logHbF' type='number' data-default='10' class='isNumericType form-control' max='65535' min='0' value='10'>
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>Publish QoS</label>
+											<div class='col-sm-4'>
+												<input id='logPubQ' type='number' data-default='0' class='isNumericType form-control' max='2' min='0' value='0'>
+											</div>
+											<label class='col-sm-2 control-label'>Subscribe QoS</label>
+											<div class='col-sm-4'>
+												<input id='logSubQ' type='number' data-default='0' class='isNumericType form-control' max='2' min='0' value='0'>
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>Publish Retain</label>
+											<div class='col-sm-4'>
+												<div class='radio'>
+													<label>
+														<!-- radio name must be unique -->
+														<input name='mqttPubRetain' type='radio' id="mqttPubRetainDisable" value='0'>
+															Disable
+													</label>
+													<label>
+														<!-- radio name must be unique -->
+														<input name='mqttPubRetain' type='radio' id="mqttPubRetainEnable" value='1'>
+															Enable
+													</label>
+												</div>
+											</div>
+											<label class='col-sm-2 control-label'>Will Retain</label>
+											<div class='col-sm-4'>
+												<div class='radio'>
+													<label>
+														<!-- radio name must be unique -->
+														<input name='mqttWillRetain' type='radio' id="mqttWillRetainDisable" value='0'>
+															Disable
+													</label>
+													<label>
+														<!-- radio name must be unique -->
+														<input name='mqttWillRetain' type='radio' id="mqttWillRetainEnable" value='1'>
+															Enable
+													</label>
+												</div>
+											</div>
+										</div>
+										<div class='form-group caFile'>
+											<label class='col-sm-2 control-label'>CA File</label>
+											<div class='col-sm-4'>
+												<div class="fileinput fileinput-new input-group" data-provides="fileinput">
+													<div class="form-control" data-trigger="fileinput">
+														<i class="fa fa-fw fa-copy fileinput-exists"></i><span class="fileinput-filename"></span>
+													</div>
+													<span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new"><i class="fa fa-fw fa-folder-open"></i></span><span class="fileinput-exists"><i class="fa fa-fw fa-folder-open"></i></span>
+														<input type="file" data-toggle="tooltip" title="Choose CA File" id='inpMqttCaFile' accept=".pem" />
+													</span>
+													<a data-toggle="tooltip" title="Cancel" href="#btnMqttCaFile" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput"><i class="fa fa-fw fa-times"></i></a>
+													<a data-toggle="tooltip" title="Upload CA File" class="input-group-addon btn btn-default fileinput-submit" id="btnMqttCaFile"><i class="fa fa-fw fa-download"></i></a>
+												</div>
+											</div>
+											<label class='col-sm-2 control-label'>Client Certification File</label>
+											<div class='col-sm-4'>
+												<div class="fileinput fileinput-new input-group" data-provides="fileinput">
+													<div class="form-control" data-trigger="fileinput">
+														<i class="fa fa-fw fa-copy fileinput-exists"></i><span class="fileinput-filename"></span>
+													</div>
+													<span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new"><i class="fa fa-fw fa-folder-open"></i></span><span class="fileinput-exists"><i class="fa fa-fw fa-folder-open"></i></span>
+														<input type="file" data-toggle="tooltip" title="Choose Client Certification File" id='inpMqttClientCertFile' accept=".crt" />
+													</span>
+													<a data-toggle="tooltip" title="Cancel" href="#btnMqttClientCertFile" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput"><i class="fa fa-fw fa-times"></i></a>
+													<a data-toggle="tooltip" title="Upload Client Certification File" class="input-group-addon btn btn-default fileinput-submit" id="btnMqttClientCertFile"><i class="fa fa-fw fa-download"></i></a>
+												</div>
+											</div>
+										</div>
+										<div class='form-group caFile'>
+											<label class='col-sm-2 control-label'>Client Key File</label>
+											<div class='col-sm-4'>
+												<div class="fileinput fileinput-new input-group" data-provides="fileinput">
+													<div class="form-control" data-trigger="fileinput">
+														<i class="fa fa-fw fa-copy fileinput-exists"></i><span class="fileinput-filename"></span>
+													</div>
+													<span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new"><i class="fa fa-fw fa-folder-open"></i></span><span class="fileinput-exists"><i class="fa fa-fw fa-folder-open"></i></span>
+														<input type="file" data-toggle="tooltip" title="Choose Client Key File" id='inpMqttClientKeyFile' accept=".key" />
+													</span>
+													<a data-toggle="tooltip" title="Cancel" href="#btnMqttClientKeyFile" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput"><i class="fa fa-fw fa-times"></i></a>
+													<a data-toggle="tooltip" title="Upload Client Key File" class="input-group-addon btn btn-default fileinput-submit" id="btnMqttClientKeyFile"><i class="fa fa-fw fa-download"></i></a>
+												</div>
+											</div>
+										</div>
+										<div class="panel-footer clearfix">
+											<div class="pull-right">
+												<button class='btn btn-success' id='btnMqttSubmit'>
+													<i class="fa fa-check"></i> Submit
+												</button>
+											</div>
+									 	</div>
+									</div> <!-- panelMQTT -->
+									<div id='panelChungHwaIot' class="cloudPanel">
+										<h4 class='page-header'>Setting</h4>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>CHT Device Id</label>
+											<div class='col-sm-4'>
+												<input id='logId' type='text' class='form-control' maxlength="64">
+											</div>
+											<label class='col-sm-2 control-label'>Heartbeat Frequency (sec)</label>
+											<div class='col-sm-4'>
+												<input id='logHbF' type='number' data-default='10' class='isNumericType form-control' max='65535' min='0' value='10'>
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>CHT Device Key</label>
+											<div class='col-sm-4'>
+												<input id='logAKey' type='text' class='form-control' maxlength="64">
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>Publish QoS</label>
+											<div class='col-sm-4'>
+												<input id='logPubQ' type='number' data-default='0' class='isNumericType form-control' max='2' min='0' value='0'>
+											</div>
+											<!-- <label class='col-sm-2 control-label'>Subscribe QoS</label>
+											<div class='col-sm-4'>
+												<input id='logSubQ' type='number' data-default='0' class='isNumericType form-control' max='2' min='0' value='0'>
+											</div> -->
+										</div>
+										<div class="well clearfix">
+											<div class="pull-right">
+												<button class='btn btn-success' id='btnChungHwaIotSubmit'>
+													<i class="fa fa-check"></i> Submit
+												</button>
+											</div>
+									 	</div>
+									</div> <!-- panelChungHwaIot -->
+									<div id='panelAzure' class="cloudPanel">
+										<h4 class='page-header'>Setting</h4>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>UUID</label>
+											<div class='col-sm-4'>
+												<input id='logUID' type='text' class='form-control' maxlength="31" disabled>
+											</div>
+										</div>
+										<div class='form-group'>
+											<label class='col-sm-2 control-label'>Connection String</label>
+											<div class='col-sm-10'>
+												<input id='logSAS' type='text' class='form-control' maxlength="192">
+											</div>
+										</div>
+										<div class="panel-footer clearfix">
+											<div class="pull-right">
+												<button class='btn btn-success' id='btnAzureSubmit'>
+													<i class="fa fa-check"></i> Submit
+												</button>
+											</div>
+									 	</div>
+									</div> <!-- panelAzure -->
+								</div><!--./form-->
+							</div>
+						</div>
+					</div>
+
+				<div class="tab-pane" id="tabPosition">
+					<ul class="nav nav-tabs nav-justified" role="tablist">
+						<li ng-class="{'active': activePositionTab === 'status'}">
+					        <a href data-toggle="tab" ng-click="switchPositionTabTo('status')">Position</a>
+					    </li>
+					    <li ng-class="{'active': activePositionTab === 'config'}">
+					        <a href data-toggle="tab" ng-click="switchPositionTabTo('config')">Configuration</a>
+					    </li>
+					</ul>
+					<div class="tab-content">
+						<div ng-show="isPositionTabShow('status')" class="tab-pane active">
+							<div class='panel panel-default'>
+								<div class='panel-heading'>
+									<h4>Status</h4>
+								</div>
+								<form class="panel panel-default form-horizontal">
+									<div class='panel-body'>
+										<div class='col-lg-12'>
+											<div class='form-group'>
+												<label class='col-lg-3 control-label'>Latitude</label>
+									            <div class='col-lg-6'>
+										            <div class='input-group'>
+									                 	<input type='text' class='form-control' ng-model="positionStatus.Lat" disabled>
+										            </div>
+									            </div>
+											</div>
+						                </div>
+						                <div class='col-lg-12'>
+											<div class='form-group'>
+												<label class='col-lg-3 control-label'>Longitude</label>
+									            <div class='col-lg-6'>
+										            <div class='input-group'>
+									                 	<input type='text' class='form-control' ng-model="positionStatus.Lng" disabled>
+										            </div>
+									            </div>
+											</div>
+						                </div>
+						                <div class='col-lg-12'>
+											<div class='form-group'>
+												<label class='col-lg-3 control-label'>Altitude</label>
+									            <div class='col-lg-6'>
+										            <div class='input-group'>
+									                 	<input type='text' class='form-control' ng-model="positionStatus.Alt" disabled>
+										            </div>
+									            </div>
+											</div>
+						                </div>
+						                <div class='col-lg-12'>
+											<div class='form-group'>
+												<label class='col-lg-3 control-label'>Speed</label>
+									            <div class='col-lg-6'>
+										            <div class='input-group'>
+									                 	<input type='text' class='form-control' ng-model="positionStatus.RT" disabled>
+										            </div>
+									            </div>
+											</div>
+						                </div>
+						                <div class='col-lg-12'>
+											<div class='form-group'>
+												<label class='col-lg-3 control-label'>Number of Satellites</label>
+									            <div class='col-lg-6'>
+										            <div class='input-group'>
+									                 	<input type='text' class='form-control' ng-model="positionStatus.Cntn" disabled>
+										            </div>
+									            </div>
+											</div>
+						                </div>
+									</div><!-- panel-body -->
+				                </form><!-- panel-default -->
+							</div>
+						</div><!-- tab-pane -->
+						<div ng-show="isPositionTabShow('config')" class="tab-pane active">
+							<div class='panel panel-default'>
+								<div class='panel-heading'>
+									<h4>Configuration</h4>
+								</div>
+								<div class="panel panel-default form-horizontal">
+									<div class='panel-body'>
+										<div class='form-group'>
+											<label class='col-lg-3 control-label'>Positioning Enable</label>
+								            <div class='col-lg-3'>
+									            <input type='checkbox' ng-model="positionConfig.En" ng-true-value="1" ng-false-value="0" ng-checked="positionConfig.En == 1">
+								            </div>
+										</div>
+										<div class='form-group'>
+					                       	<label class='col-lg-3 control-label'>Update Interval(sec)</label>
+							                <div class='col-lg-3'>
+									            <div class='input-group'>
+								                 	<input type='number' class='form-control' ng-model="positionConfig.Intv" min='15' max='86400'>
+								                 </div>
+								            </div>
+					                    </div>
+					                    <div class='form-group'>
+											<label class='col-lg-3 control-label'>GNSS System</label>
+								            <div class='col-lg-3'>
+									            <select class='form-control' ng-model="positionConfig.Md">
+													<option ng-repeat="data in positionSystemSelectList" value="{{$index+1}}" ng-if="[1,2,4,7].indexOf($index+1) > -1">{{data}}</option>
+												</select>
+								            </div>
+										</div>
+					            	</div><!-- panel-body -->
+					            	<div class="panel-footer clearfix">
+										<div class="pull-right">
+											<button class="btn btn-success" ng-click="onBtnPositionConfigClick()"><i class="fa fa-check"></i> Submit</button>
+										</div>
+									</div>
+								</div><!-- panel -->
+					        </div><!-- panel -->
+						</div><!-- tab-pane -->
+					</div><!-- tab-content -->
+				</div>
+
+				<div class="tab-pane" id="tabAccount">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3> Account</h3>
+							</div>
+							<div class="panel-body">
+								<div class="table-responsive">
+							        <table class="table table-bordered table-hover table-striped" id="tbUsersTable">
+							            <thead>
+							                <tr>
+							                    <th>
+							                        Type
+							                    </th>
+							                    <th>
+							                        Password
+							                    </th>
+							                    <!-- <th>
+							                        Authority
+							                    </th> -->
+							                </tr>
+							            </thead>
+							            <tbody>
+							                <tr>
+							                    <td>
+							                        Root
+							                    </td>
+							                    <td>
+							                        <button class='btn btn-link' id='btnPasswordChange_Id0' data-toggle="modal" data-target="#changePasswordModal" data-user="H">
+							                            <i class='fa fa-fw fa-lock'></i>Change Password
+							                        </button>
+							                    </td>
+							                    <!-- <td>
+							                        Read/Write
+							                    </td> -->
+							                </tr>
+							                <tr>
+							                    <td>
+							                        Admin
+							                    </td>
+							                    <td>
+							                        <button class='btn btn-link' id='btnPasswordChange_Id2' data-toggle="modal" data-target="#changePasswordModal" data-user="M">
+							                            <i class='fa fa-fw fa-lock'></i>Change Password
+							                        </button>
+							                    </td>
+							                    <!-- <td>
+							                        Read/Write
+							                    </td> -->
+							                </tr>
+							                <tr>
+							                    <td>
+							                        User
+							                    </td>
+							                    <td>
+							                        <button class='btn btn-link' id='btnPasswordChange_Id1' data-toggle="modal" data-target="#changePasswordModal" data-user="L">
+							                            <i class='fa fa-fw fa-lock'></i>Change Password
+							                        </button>
+							                    </td>
+							                    <!-- <td>
+							                        Read
+							                    </td> -->
+							                </tr>
+							                </tbody>
+							            </table>
+							        </div>
+							        <!-- /.table-responsive -->
+							    </div>
+							</div>
+				</div><!--/.tab-pane-->
+			</div>
+			</div><!--/.tab-content-->
+	</div><!-- /.row -->
+</div><!-- container-fluid -->
+	<div class="modal fade" id="PINVerify" tabindex="-1" role="dialog" aria-labelledby="passwordChangeTitle" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal">
+	                    <span aria-hidden="true">&times;</span>
+	                    <span class="sr-only">Close</span>
+	                </button>
+	                <h4 class="modal-title" id="TitlePINAuthentication">PIN Authentication</h4>
+	            </div>
+	            <div class="modal-body">
+	            	<form role="form">
+	            		<div class="form-group" id="EnterPIN">
+			            	<label class="control-label" id="TitlePINCode">Please Enter PIN Code:</label>
+			            	<input type="password" class="form-control" ng-model="PINCode" maxlength="8">
+			          	</div>
+			          	<div class="form-group" ng-hide="!HavePUK">
+			            	<label class="control-label">Please Enter PUK Code:</label>
+			            	<input type="password" class="form-control" ng-model="PUKCode" maxlength="8">
+			          	</div>
+			          	<div class='input-group'>
+			          		<input type="checkbox" ng-checked="CellularObj.En" ng-model="CellularObj.En">
+			            	<label class="control-label"> Auto Write PIN Code</label>
+			          	</div>
+			        </form>
+	            </div> <!--/.modal-body-->
+	            <div class="modal-footer">
+	                <button type="button" ng-click="StartAuth()" class="btn btn-success">
+	                    <i class="fa fa-check"></i> Apply
+	                </button>
+	                <button type="button" ng-click="CloseDialog()" class="btn btn-danger" data-dismiss="modal">
+	                    <i class="fa fa-times"></i> Close
+	                </button>
+	             </div>
+	        </div><!--/.modal-content-->
+	    </div><!--/.modal-dialog-->
+	</div><!--/.modal-->
+
+	<!-- /.container-fluid -->
+	<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="passwordChangeTitle" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal">
+	                    <span aria-hidden="true">&times;</span>
+	                    <span class="sr-only">Close</span>
+	                </button>
+	                <h4 class="modal-title" id="passwordChangeTitle">Change Password</h4>
+	            </div>
+	            <div class="modal-body">
+	            	<form role="form">
+	            		<div class="form-group">
+			            	<label for="inpOldPassword" class="control-label">Old:</label>
+			            	<input type="password" class="form-control" id="inpOldPassword" maxlength="8">
+			          	</div>
+			          	<div class="form-group">
+			            	<label for="inpNewPassword" class="control-label">New:</label>
+			            	<input type="password" class="form-control" id="inpNewPassword" maxlength="8">
+			          	</div>
+			          	<div class="form-group">
+			            	<label for="inpConfirm" class="control-label">Confirm:</label>
+			            	<input type="password" class="form-control" id="inpConfirm" maxlength="8">
+			          	</div>
+			        </form>
+	            </div> <!--/.modal-body-->
+	            <div class="modal-footer">
+	                <button type="button" id="btnPw" class="btn btn-success">
+	                    <i class="fa fa-check"></i> Change
+	                </button>
+	                <button type="button" class="btn btn-danger" data-dismiss="modal">
+	                    <i class="fa fa-times"></i> Close
+	                </button>
+	             </div>
+	        </div><!--/.modal-content-->
+	    </div><!--/.modal-dialog-->
+	</div><!--/.modal-->
+	<!--Confirm Modal -->
+	<div class="modal fade" id="cloudConfirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h4 class="modal-title" id="cloudConfirmModalLabel"></h4>
+				</div>
+
+				<div class="modal-body" id="cloudConfirmContext"></div>
+				<div class="modal-footer">
+					<button id="btnCloudNewSetting" class="btn btn-success">
+						Start New Setting
+					</button>
+					<button id="btnCloudOldSetting" class="btn btn-warning" data-dismiss="modal">
+						Start with Previous Setting
+					</button>
+					<button id="btnCommonCancel" class="btn btn-danger" data-dismiss="modal">
+						Cancel
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><!-- ng-controller -->
+<script type="text/javascript">
+		$('[data-toggle=tooltip]').tooltip({container: 'body'});//for tool-tip
+		$('#groupConfigIpSetting li').on('click', function(){ // handle groupConfig ip setting select
+    		$('#groupConfigIpSettingBtn').html($(this).text() + '<span class="caret"></span>'); //change text and add arrow
+		});
+		var recordObj = Advantech.Utility.RecordContextPageIdSingleton.getInstance();
+		var AP_MODE_DEFAULT_URL = "192.168.1.1";
+		var tag = recordObj.getTag();
+		//var infraNetworkConfig = new Advantech.Form.ConfigForm.NetworkPanel("InfraNetworkConfigPanel", false);
+		//var apNetworkConfig = new Advantech.Form.ConfigForm.NetworkPanel("APNetworkConfigPanel", false);
+		var modbusConfigTabView = new Advantech.Form.SystemForm.ModbusAddressConfigTab("tabModbusInfo");
+		var localTimeConfig = new Advantech.Form.SystemForm.LocalTimeConfigPanel("TimeSettingPanel");
+		var sntpConfig = new Advantech.Form.SystemForm.SNTPConfigPanel("SNTPPanel");
+		var couplerInfo = new Advantech.Form.SystemForm.CouplerInfoPanel("couplerInformationPanel");
+		var fileUpgradePanel = new Advantech.Form.SystemForm.FileUpgradePanel("panelFileUpgrade");
+		var controlCommandPanel = new Advantech.Form.SystemForm.ControlCommanPanel("panelControlCommand");
+		var networkAppConfig = new Advantech.Form.ConfigForm.NetworkAppConfigPanel("networkAppConfigPanel");
+		var generalConfig = new Advantech.Form.ConfigForm.GeneralConfigPanel("panelGeneralConfig");
+		var passwordChange = new Advantech.Form.ConfigForm.PasswordChangeModal("changePasswordModal");
+		var fileUpdatePrgressForm = new Advantech.Form.ProgressForm.getInstance();
+		//var wlanConfigPanel = new Advantech.Form.ConfigForm.WLanConfigPanel("WLanConfigPanel");
+		var networkConfig = new Advantech.Form.ConfigForm.NetworkPanel("NetworkConfigPanel", false);
+		var cloudConfigPanel = new Advantech.Form.ConfigForm.CloudConfigPanel("CloudConfigPanel");
+		var privateServerConfigPanel = new Advantech.Form.ConfigForm.PrivateServerConfigPanel("panelPrivateServer");
+		var aliyunConfigPanel = new Advantech.Form.ConfigForm.AliyunOssConfigPanel("panelAliyun");
+        var webAccessConfigPanel = new Advantech.Form.ConfigForm.WebAccessConfigPanel("panelWebAccess");
+		var mqttConfigPanel = new Advantech.Form.ConfigForm.MqttConfigPanel("panelMQTT");
+		var chungHwaIotPanel = new Advantech.Form.ConfigForm.ChungHwaIotConfigPanel("panelChungHwaIot");
+		var azureConfigPanel = new Advantech.Form.ConfigForm.AzureConfigPanel("panelAzure");
+/*
+		var moduleMode = Advantech.Data.ModuleData.getInstance().getMode();
+		var wLanMode = Advantech.Data.NetworkData.WlanData.getInstance().getMode();
+		if(moduleMode!=undefined &&	wLanMode!=undefined){
+			if(wLanMode == WLAN_AP_OPERATION_MODE_NUM){
+				$('#configMainForm #tabSNTP .panel-body').html('<label class="control-label">Setting is not available in AP Mode.</label>');//hide SNTP setting in AP mode
+				$('#configMainForm #tabCloud .panel-body').html('<label class="control-label">Setting is not available in AP Mode.</label>');//hide Cloud setting in AP mode
+			}
+			//for cloud setting
+			if(moduleMode == MODULE_INITIAL_WORKING_MODE_NUM){//append private server
+				$('#configMainForm #tabCloud #selCloud').append("<option value='1' data-target='#panelCloudLinkStatus' data-server='https://www.dropbox.com/1/oauth2/authorize?client_id=sw4axiv3szis1ap&response_type=code'>&#xf16b;&#8194; Dropbox</option>");
+				$('#configMainForm #tabCloud #selCloud').append("<option value='4' data-target='#panelPrivateServer'>&#xf108;&#8194; Private Server</option>");
+			}
+		}*/
+		//$('#configMainForm #tabCloud #selCloud').append("<option value='1' data-target='#panelCloudLinkStatus' data-server='https://www.dropbox.com/1/oauth2/authorize?client_id=sw4axiv3szis1ap&response_type=code'>&#xf16b;&#8194; Dropbox</option>");
+		//$('#configMainForm #tabCloud #selCloud').append("<option value='2' data-target='#panelAliyun'>&#xf1be;&#8194; Aliyun OSS</option>");
+		// $('#configMainForm #tabCloud #selCloud').append("<option value='4' data-target='#panelPrivateServer'>&#xf108;&#8194; Private Server</option>");
+		//$('#configMainForm #tabCloud #selCloud').append("<option value='8' data-target='#panelWebAccess'>&#xf0c2;&#8194; WebAccess</option>");
+		// $('#configMainForm #tabCloud #selCloud').append("<option value='16' data-target='#panelMQTT'>&#xf143;&#8194; iSensing MQTT</option>");
+		// $('#configMainForm #tabCloud #selCloud').append("<option value='64' data-target='#panelWebAccess'>&#xf17a;&#8194; Azure</option>");
+
+		cloudConfigPanel.initialPanel();
+		cloudConfigPanel.setOtherPanelId(privateServerConfigPanel, webAccessConfigPanel, aliyunConfigPanel, mqttConfigPanel, chungHwaIotPanel, azureConfigPanel);
+		privateServerConfigPanel.initialPanel();
+        webAccessConfigPanel.initialPanel();
+		aliyunConfigPanel.initialPanel();
+		mqttConfigPanel.initialPanel();
+		chungHwaIotPanel.initialPanel();
+		azureConfigPanel.initialPanel();
+
+		passwordChange.initialModal();
+		localTimeConfig.initialPanel();
+		couplerInfo.initialPanel(false);
+		sntpConfig.initialPanel();
+		modbusConfigTabView.createTab("modbusCoilContext", "modbusRegContext");
+		controlCommandPanel.initialPanel();
+		fileUpgradePanel.initialPanel();
+		//infraNetworkConfig.initialPanel();
+		//apNetworkConfig.initialPanel();
+		//wlanConfigPanel.initialPanel();
+		networkConfig.initialPanel();
+		networkAppConfig.initialPanel();
+		generalConfig.initialPanel();
+
+		function onGetGeneralConfigData(jsonObj) {
+				generalConfig.setGeneralConfig(jsonObj);
+				Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		};
+/*		function onGetWLanData(jsonObj) {
+			infraNetworkConfig.setNetworkConfig(jsonObj);
+			apNetworkConfig.setNetworkConfig(jsonObj);
+			wlanConfigPanel.setPanel(jsonObj);
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		};*/
+		function onGetNetworkData(jsonObj, isInitial) {
+			networkConfig.setNetworkConfig(jsonObj);
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+/*
+			if(isInitial){
+				httpGetOperation(HTTP_GET,
+								URL_WLAN_CONFIG,
+								onGetWLanData,
+								configErrorCallback);
+			}
+			else{
+				Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+			}*/
+		};
+		function onGetNetworkAppData(jsonObj, isInitial) {
+			networkAppConfig.setNetWorkAppConfig(jsonObj);
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+
+			/*if(isInitial){
+				httpGetOperation(HTTP_GET,
+					URL_NETWROK,
+					function(jsonObj){
+						onGetNetworkData(jsonObj);
+					},
+					configErrorCallback);
+			}
+			else{
+				Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+			}*/
+		};
+		function onGetCoilSlotBas(jsonObj, isInitial, isRecursive) {
+			httpGetOperation(HTTP_GET,
+				URL_MODBUS_COIL_LENGTH,
+				function(data){
+					onGetCoilSlotLen(data, isInitial, jsonObj, isRecursive);
+				},
+				configErrorCallback);
+		};
+		function onGetCoilSlotLen(jsonObj, isInitial, coilSlotBasObj, isRecursive) {
+			httpGetOperation(HTTP_GET, URL_MODBUS_COIL_CONFIG,
+				function(data){
+					onGetCoilConfig(data, isInitial, coilSlotBasObj, jsonObj, isRecursive);
+				},
+				configErrorCallback);
+		};
+		function onGetCoilConfig(jsonObj, isInitial, coilSlotBasObj, coilSlotLenObj, isRecursive) {
+			if (isInitial === true) {
+				modbusConfigTabView.initialCoilPage(jsonObj, coilSlotBasObj, coilSlotLenObj);
+				if(isRecursive === true){
+					httpGetOperation(HTTP_GET,
+						URL_MODBUS_REGISTER_VAL_BASE,
+						function(data){
+							onGetRegSlotBas(data, true);
+						},
+						configErrorCallback);
+				}
+				else{
+					Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+				}
+			}
+			else {
+				modbusConfigTabView.setCoilPage(jsonObj, coilSlotBasObj, coilSlotLenObj);
+				if(isRecursive === true){
+					httpGetOperation(HTTP_GET,
+						URL_MODBUS_REGISTER_VAL_BASE,
+						function(data){
+							onGetRegSlotBas(data, false);
+						},
+						configErrorCallback);
+				}
+				else{
+					Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+				}
+			}
+		};
+
+		function onGetRegSlotBas(jsonObj , isInitial) {
+			httpGetOperation(HTTP_GET,
+				URL_MODBUS_REGISTER_LENGTH,
+				function(data){
+					onGetRegSlotLen(data, isInitial, jsonObj);
+				},
+				configErrorCallback);
+		};
+		function onGetRegSlotLen(jsonObj, isInitial, regSlotBasObj) {
+			httpGetOperation(HTTP_GET,
+					URL_MODBUS_REGISTER_CONFIG,
+					function(data){
+						onGetRegConfig(data, isInitial, regSlotBasObj, jsonObj);
+					},
+					configErrorCallback);
+		};
+		function onGetRegConfig(jsonObj, isInitial, regSlotBasObj, regSlotLenObj) {
+			if (isInitial === true) {
+				modbusConfigTabView.initialRegPage(jsonObj, regSlotBasObj, regSlotLenObj);
+			}
+			else {
+				modbusConfigTabView.setRegPage(jsonObj, regSlotBasObj, regSlotLenObj);
+			}
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		};
+		function onGetCloudValueData(cloudValueJsonObj, isInitial) {
+            if(isInitial){
+                httpGetOperation(HTTP_GET,
+                    URL_CLOUD_CONFIG,
+                    function(jsonObj){
+						initCloudSelectList(jsonObj.FCS);
+                    	cloudConfigPanel.setPanel(jsonObj.Sel, cloudValueJsonObj);
+                    	//set panels for cloud service which has no independent RESTful API
+						aliyunConfigPanel.setPanel(jsonObj);
+						chungHwaIotPanel.setPanel(jsonObj);
+                        onGetLogPrivateServerConfig(jsonObj);
+                    }, configErrorCallback);
+            }else{
+                httpGetOperation(HTTP_GET,
+                    URL_CLOUD_CONFIG,
+                    function(jsonObj){
+                        cloudConfigPanel.setPanel(jsonObj.Sel, cloudValueJsonObj);
+                    }, configErrorCallback);
+                Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+            }
+		};
+		function onGetLogPrivateServerConfig(jsonObj) {
+			privateServerConfigPanel.setPanel(jsonObj);
+			//getCloudServiceStatus();
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		};
+		function onGetLogAzureConfig(jsonObj) {
+			azureConfigPanel.setPanel(jsonObj);
+			//getCloudServiceStatus();
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		};
+		function onGetLogMqttConfig(jsonObj, cloudValueJsonObj) {
+			if(cloudValueJsonObj){
+				cloudConfigPanel.setPanel(jsonObj.Sel, cloudValueJsonObj);
+			}
+			mqttConfigPanel.setPanel(jsonObj);
+			//getCloudServiceStatus();
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		};
+		function getCloudServiceStatus(){
+			httpGetOperation(HTTP_GET, URL_CLOUD_STATUS,
+				function(cloudValueJsonObj){
+                    cloudConfigPanel.refreshPanelData(cloudValueJsonObj);
+				}, configErrorCallback
+			);
+		}
+		cloudConfigPanel.onCloudStatusRefreshSubmitted(function(obj, e) {
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_GET, URL_CLOUD_STATUS,
+				function(cloudValueJsonObj){
+                    //onGetCloudStatusRefreshData(cloudValueJsonObj);
+                    cloudConfigPanel.refreshPanelData(cloudValueJsonObj);
+                    Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+				}, configErrorCallback);
+		});
+/*        function onGetCloudStatusRefreshData(cloudValueJsonObj){
+            httpGetOperation(HTTP_GET,
+                    URL_CLOUD_CONFIG,
+                    function(jsonObj){
+                        cloudConfigPanel.refreshPanelData(jsonObj.Sel, cloudValueJsonObj);
+                    }, configErrorCallback);
+                Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+        }*/
+		cloudConfigPanel.onCloudSettingDeleteSubmitted(function(obj, e) {
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH, URL_CLOUD_CONFIG,
+				function(){
+					setTimeout(null, 3000);//wait for device connect to cloud
+					httpGetOperation(HTTP_GET, URL_CLOUD_STATUS, onGetCloudValueData, configErrorCallback);
+				},
+				configErrorCallback, JSON.stringify(e));
+		});
+		cloudConfigPanel.onCloudSettingDisableSubmitted(function(obj, e) {
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH, URL_CLOUD_CONFIG,
+					function(jsonObj){
+						httpGetOperation(HTTP_GET, URL_CLOUD_CONFIG,
+		 					 function(jsonObj){
+		 						//onGetCloudConfigData(jsonObj, true);
+								cloudConfigPanel.setPanel(jsonObj.Sel);
+		 						Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		 					},
+		 					 configErrorCallback);
+				 	},
+					configErrorCallback, JSON.stringify(e));
+		});
+		privateServerConfigPanel.onDataLogPrivateServerSubmitted(function(obj, e){
+			var logDurl = $('#panelPrivateServer #logDurl').val();
+			var logUurl = $('#panelPrivateServer #logUurl').val();
+			var logSurl = $('#panelPrivateServer #logSurl').val();
+			var desc = '';
+			if(logUurl.substring(0,1)!='/')
+				desc += "Please start URL with / for Data File Upload URL";
+			else if(logDurl.substring(0,1)!='/')
+				desc += "Please start URL with / for IO Data Push URL";
+			else if(logSurl.substring(0,1)!='/')
+				desc += "Please start URL with / for System Event Push URL";
+			if(desc !=''){
+				Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<h5>"+desc+"</h5>");
+				return;
+			}
+
+			desc = '';
+			if(logUurl.substring(logUurl.length-1, logUurl.length) == '/')
+				desc += "Data File Upload URL can not end with /";
+			else if(logDurl.substring(logDurl.length-1, logDurl.length) == '/')
+				desc += "IO Data Push URL can not end with /";
+			else if(logSurl.substring(logSurl.length-1, logSurl.length) == '/')
+				desc += "System Event Push URL can not end with /";
+			if(desc !=''){
+				Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<h5>"+desc+"</h5>");
+				return;
+			}
+
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH,
+				 URL_CLOUD_CONFIG,
+				 function() {
+				 	httpGetOperation(HTTP_GET,
+		 					 URL_CLOUD_CONFIG,
+		 					 function(jsonObj){
+		 					 	onGetLogPrivateServerConfig(jsonObj);
+		 					 },
+		 					 configErrorCallback);
+				},
+				configErrorCallback,
+				JSON.stringify(e)
+			);
+		});
+		azureConfigPanel.refreshStatus(function(){
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_GET,
+				URL_AZURE_CONFIG,
+				function(jsonObj){
+                    azureConfigPanel.setPanel(jsonObj);
+                    Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+				},
+                configErrorCallback);
+		});
+		azureConfigPanel.onDataLogAzureSubmitted(function(obj, e){
+			var logUuid = $('#panelAzure #logUID').val();
+			var logSasToken = $('#panelAzure #logSAS').val();
+			var desc = '';
+
+			if(logUuid == '')
+				desc += "Please enter Device UUID";
+			else if(logSasToken == '')
+				desc += "Please enter Azure Connection String";
+			if(desc !=''){
+				Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<h5>"+desc+"</h5>");
+				return;
+			}
+
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH,
+				 URL_AZURE_CONFIG,
+				 function() {
+				 	cloudConfigPanel.setSelectedCloudIndex(Advantech.Profile.CloudServiceVenderEmun.Azure);
+				 	httpGetOperation(HTTP_GET,
+		 					 URL_AZURE_CONFIG,
+		 					 function(jsonObj){
+		 					 	onGetLogAzureConfig(jsonObj);
+		 					 },
+		 					 configErrorCallback);
+				},
+				function(obj){
+					configErrorCallback(400, "Connection String Error");
+				},
+				JSON.stringify(e)
+			);
+		});
+        webAccessConfigPanel.refreshWebAccessStatus(function(){
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_GET, URL_WEBACCESS_CLOUD_CONFIG,
+				function(jsonObj){
+                    webAccessConfigPanel.setPanel(jsonObj);
+                    Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+				},
+                configErrorCallback);
+		});
+		webAccessConfigPanel.onWebAccessSubmitted(function(obj, e){
+			var hostName = $('#panelWebAccess #Nm').val();
+			var portNumber = $('#panelWebAccess #PWeb').val();
+			var projectName = $('#panelWebAccess #PNm').val();
+			var nodeName = $('#panelWebAccess #NNm').val();
+			var heartBeat = $('#panelWebAccess #HbF').val();
+			var desc = '';
+			if(hostName.length ==0 || hostName.substring(0,1)=='/')
+				desc += "Please input correct Host Name";
+			else if(portNumber < 1 || portNumber > 65535)
+				desc += "Please input correct Port Number";
+			else if(projectName.length ==0 || projectName.substring(0,1)=='/')
+				desc += "Please input correct Project Name";
+			else if(nodeName.length ==0 || nodeName.substring(0,1)=='/')
+				desc += "Please input correct Node Name";
+			else if(heartBeat < 1 || heartBeat > 65535)
+				desc += "Please input correct Heart Beat Number";
+			if(desc !=''){
+				Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<h5>"+desc+"</h5>");
+				return;
+			}
+
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH,
+				 URL_WEBACCESS_CLOUD_CONFIG,
+				 function() {
+				 	webAccessConfigPanel.refreshWebAccessStatus()();
+				},
+				configErrorCallback,
+				JSON.stringify(e)
+			);
+		});
+
+        aliyunConfigPanel.refreshAliyunStatus(function(){
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_GET, URL_CLOUD_CONFIG,
+				function(jsonObj){
+                    aliyunConfigPanel.setPanel(jsonObj);
+                    Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+				},
+                configErrorCallback);
+		});
+		aliyunConfigPanel.onAliyunOssSubmitted(function(obj, e){
+			var bucketName = $('#panelAliyun #logNm').val();
+			var endPoint = $('#panelAliyun #logEn').val();
+			var accessId = $('#panelAliyun #logId').val();
+			var accessKey = $('#panelAliyun #logAKey').val();
+			var desc = '';
+
+			if(bucketName.length ==0)
+				desc += "Please input correct Bucket Name";
+			else if(endPoint.length ==0)
+				desc += "Please input correct EndPoint";
+			else if(accessId.length ==0)
+				desc += "Please input correct Access ID";
+			else if(accessKey.length ==0)
+				desc += "Please input correct Access Key";
+			if(desc !=''){
+				Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<h5>"+desc+"</h5>");
+				return;
+			}
+
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH,
+				 URL_CLOUD_CONFIG,
+				 function() {
+				 	cloudConfigPanel.setSelectedCloudIndex(Advantech.Profile.CloudServiceVenderEmun.AliyunOSS);
+				 	//getCloudServiceStatus();
+				 	aliyunConfigPanel.refreshAliyunStatus()();
+				},
+				configErrorCallback,
+				JSON.stringify(e)
+			);
+		});
+
+		chungHwaIotPanel.refreshConfigStatus(function(){
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_GET, URL_CLOUD_CONFIG,
+				function(jsonObj){
+                    chungHwaIotPanel.setPanel(jsonObj);
+                    Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+				},
+                configErrorCallback);
+		});
+		chungHwaIotPanel.onConfigSubmitted(function(obj, e){
+			var devId = $('#panelChungHwaIot #logId').val();
+			var devKey = $('#panelChungHwaIot #logAKey').val();
+			var logHbF = $('#panelChungHwaIot #logHbF').val();
+			var logSubQ = $('#panelChungHwaIot #logSubQ').val();
+			var logPubQ = $('#panelChungHwaIot #logPubQ').val();
+			var desc = '';
+
+			if(devId.length ==0 || devId.substring(0,1)=='/')
+				desc += "Please input correct Device ID";
+			else if(devKey.length ==0 || devKey.substring(0,1)=='/')
+				desc += "Please input correct Device Key";
+			else if(logHbF=="" || int(logHbF) > 65535 || int(logHbF) < 0 || (int(logHbF) < 10 && int(logHbF) > 0))
+				desc += "Heartbeat Frequency must be 0 or 10~65535";
+			else if(logPubQ=="" || int(logPubQ) > 2 || int(logPubQ) < 0)
+				Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<h5>Publish QoS must be 0~2</h5>");
+			else if(logSubQ=="" || int(logSubQ) > 2 || int(logSubQ) < 0)
+				Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<h5>Subscribe QoS must be 0~2</h5>");
+
+			if(desc !=''){
+				Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<h5>"+desc+"</h5>");
+				return;
+			}
+
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH,
+				 URL_CLOUD_CONFIG,
+				 function() {
+				 	cloudConfigPanel.setSelectedCloudIndex(Advantech.Profile.CloudServiceSelectIndex.ChungHwaTelecomIoT);
+				 	chungHwaIotPanel.refreshConfigStatus()();
+				},
+				configErrorCallback,
+				JSON.stringify(e)
+			);
+		});
+
+		mqttConfigPanel.onUpgradeSubmitted(function(obj, e) {
+			if( !Advantech.Utility.isIE() || Advantech.Utility.isIE() > 9){
+				fileUpdatePrgressForm.showProgressForm(e.file.name);
+			}
+			var formDataObj = new FormData();//for file upload
+			formDataObj.append("length", e.length);
+			formDataObj.append("type", e.type);
+			formDataObj.append("file", e.file);
+
+			multiPartTransfer(URL_FILE_TRANSFER,
+				function(type){ //success: onFileUpgradeDone()
+					fileUpdatePrgressForm.updateProgressForm(100);
+					fileUpdatePrgressForm.hideProgressForm();
+					Advantech.Form.MessageForm.getInstance().showMessageBox("Notification",	"<h5>Uploaded successfully.</h5>");
+				},
+				function(xhr, thrownError, file, apiErrorCode, apiErrorMsg){ //fail: onFileUpgradeFail()
+					var returnMsg = "<i class='fa fa-fw fa-exclamation-triangle'></i>File upload fail.<p/>";
+					returnMsg += apiErrorCode!=undefined && apiErrorCode!="" ? "Reason: " + Advantech.Profile.API_ERROR_CODE_NAME[apiErrorCode] : "";
+					returnMsg += apiErrorMsg!=undefined && apiErrorMsg!=""? "<p/>(Detail: " + apiErrorMsg + " error, Error number:" +apiErrorCode+")" : "";
+					Advantech.Form.MessageForm.getInstance().showMessageBox("Error code:" + xhr.status, returnMsg);
+					fileUpdatePrgressForm.hideProgressForm();
+					mqttConfigPanel.refreshPanel();
+				},
+				//onFileUpgradeUpdateProgress, e.file, e.length, e.type, e.form);
+				onFileUpgradeUpdateProgress, e.file, e.length, e.type, null, formDataObj);
+		});
+		mqttConfigPanel.refreshConfigStatus(function(){
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_GET, URL_MQTT_CONFIG,
+				function(jsonObj){
+                    mqttConfigPanel.setPanel(jsonObj);
+                    Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+				},
+                configErrorCallback);
+		});
+		mqttConfigPanel.onDataLogMqttSubmitted(function(obj, e){
+			var logNm = $('#panelMQTT #logNm').val();
+			var logPWeb = $('#panelMQTT #logPWeb').val();
+			var logHbF = $('#panelMQTT #logHbF').val();
+			var logPubQ = $('#panelMQTT #logPubQ').val();
+			var logSubQ = $('#panelMQTT #logSubQ').val();
+			var desc = '';
+
+			if(logNm.length == 0)
+				desc += "Please enter host name";
+			if(desc !=''){
+				Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<h5>"+desc+"</h5>");
+				return;
+			}
+
+			if(logPWeb=="" || int(logPWeb) > 65535 || int(logPWeb) < 1){
+				Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<h5>Port Number must be 1~65535</h5>");
+				return;
+			}
+			if(logHbF=="" || int(logHbF) > 65535 || int(logHbF) < 0){
+				Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<h5>Heartbeat Frequency must be 0~65535</h5>");
+				return;
+			}
+			if(logPubQ=="" || int(logPubQ) > 2 || int(logPubQ) < 0){
+				Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<h5>Publish QoS must be 0~2</h5>");
+				return;
+			}
+			if(logSubQ=="" || int(logSubQ) > 2 || int(logSubQ) < 0){
+				Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<h5>Subscribe QoS must be 0~2</h5>");
+				return;
+			}
+
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH,
+				 URL_MQTT_CONFIG,
+				 function() {
+				 	cloudConfigPanel.setSelectedCloudIndex(Advantech.Profile.CloudServiceVenderEmun.MQTT);
+				 	httpGetOperation(HTTP_GET,
+		 					 URL_MQTT_CONFIG,
+		 					 function(jsonObj){
+		 					 	onGetLogMqttConfig(jsonObj);
+		 					 },
+		 					 configErrorCallback);
+				},
+				configErrorCallback,
+				JSON.stringify(e)
+			);
+		});
+
+		function fillWlanConfigDataForDotNetUtility(jsonObj){
+			jsonObj.IKey = $("#tabWLan #inpIKey").val();
+			jsonObj.ASSID = $("#tabWLan #inpASSID").val();
+			jsonObj.AHid = $("#tabWLan #inpAHid").prop("checked")?1:0;
+			jsonObj.ACnty = $("#tabWLan #selACnty").val();
+			jsonObj.ACh = $("#tabWLan #inpACh").val();
+			jsonObj.ASec = $("#tabWLan #selASec").val();
+			jsonObj.AKey = $("#tabWLan #inpAKey").val();
+
+			jsonObj.IP = $("#tabWLan #inpIP").val();
+			jsonObj.Msk = $("#tabWLan #inpMsk").val();
+			jsonObj.GW = $("#tabWLan #inpGW").val();
+			jsonObj.AIP = $("#tabWLan #inpAIP").val();
+			jsonObj.AMsk = $("#tabWLan #inpAMsk").val();
+			jsonObj.AGW = $("#tabWLan #inpAGW").val();
+			jsonObj.DHCP = $("#tabWLan #inpIpDHCP").prop('checked')?1:0;
+			return jsonObj;
+		}
+/*		wlanConfigPanel.onWLanConfigSubmitted(function(obj, e){
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH,
+				URL_WLAN_CONFIG,
+				function() {
+					Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+					var utilityData = fillWlanConfigDataForDotNetUtility(e);//prepare data for .Net Utility
+					Advantech.Utility.dotNetUtilityCallBack(ADVANTECH_WLAN_CONFIG, utilityData);
+					var moduleMode = Advantech.Data.ModuleData.getInstance().getMode();
+					if(moduleMode != undefined && moduleMode == MODULE_INITIAL_WORKING_MODE_NUM){//Initial Mode: module don't need restart
+						httpGetOperation(HTTP_GET,
+								URL_WLAN_CONFIG,
+								function(jsonObj){
+									onGetWLanData(jsonObj);
+								},
+								configErrorCallback);
+					}else{ //Normal Mode: module restart
+						if(e.Md == 2 //AP Mode){
+							Advantech.Utility.SettingAPMdSuccessPage(AP_MODE_DEFAULT_URL, e.ASSID);
+						}
+						else if(e.Md == 0){//Infrastructure Mode
+							var networkObj = infraNetworkConfig.toJson();
+							if(networkObj.DHCP == 0){
+								var url = "http://"+networkObj.IP+"/config";
+								Advantech.Utility.restartPage(url);
+							}
+							else{
+								Advantech.Utility.informationPage();
+							}
+						}
+					}
+				},
+				configErrorCallback,
+				JSON.stringify(e));
+		});*/
+		modbusConfigTabView.onModbusCoilConfigSubmitted(function(obj, e) {
+			if(jQuery.isEmptyObject(e)){
+				Advantech.Form.MessageForm.getInstance().showMessageBox("Warning", "<h5>No Data Changed!</h5>");
+				return;
+			}
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH,
+				URL_MODBUS_COIL_CONFIG,
+				function() {
+					httpGetOperation(HTTP_GET, URL_MODBUS_COIL_VAL_BASE,
+						function(jsonObj){
+							onGetCoilSlotBas(jsonObj, false, false);
+						});
+				},
+				configErrorCallback,
+				JSON.stringify(e));
+		});
+		modbusConfigTabView.onModbusRegConfigSubmitted(function(obj, e) {
+			if(jQuery.isEmptyObject(e)){
+				Advantech.Form.MessageForm.getInstance().showMessageBox("Warning", "<h5>No Data Changed!</h5>");
+				return;
+			}
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH,
+				URL_MODBUS_REGISTER_CONFIG,
+				function() {
+					httpGetOperation(HTTP_GET,
+						URL_MODBUS_REGISTER_VAL_BASE,
+						function(jsonObj){
+							onGetRegSlotBas(jsonObj, false);
+						},
+						configErrorCallback);
+				},
+				configErrorCallback,
+				JSON.stringify(e));
+		});
+		networkAppConfig.onNetworkAppConfigSubmitted(function(obj, e) {
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH,
+				URL_GENERAL_CONFIG,
+				function() {
+					Advantech.Utility.dotNetUtilityCallBack(ADVANTECH_NETWROK_APP, e);
+					if(e.PWeb != undefined){
+						Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+						//var wirelessObj = wlanConfigPanel.toJson(true);
+						var netObj = networkConfig.toJson();
+						/*var netObj;
+						if(wirelessObj.Md == 0){
+							netObj = infraNetworkConfig.toJson();
+						}
+						else{
+							netObj = apNetworkConfig.toJson();
+						}*/
+						if(Advantech.Utility.isValidIp(netObj.IP) && $.isNumeric(e.PWeb)){
+							var moduleMode = Advantech.Data.ModuleData.getInstance().getMode();
+							if(moduleMode != undefined && moduleMode == MODULE_INITIAL_WORKING_MODE_NUM){//Initial Mode: module don't restart
+								httpGetOperation(HTTP_GET, URL_NETWROK_APP,
+									function(jsonObj){
+										onGetNetworkAppData(jsonObj, true);
+									},
+									configErrorCallback);
+							}else{//Normal Mode: module restart
+								var url = "http://"+netObj.IP+":"+e.PWeb+"/config";
+								Advantech.Utility.restartPage(url);
+							}
+						}
+						else{
+							$("form #inpPweb").trigger("focusout");
+						}
+					}
+					else if(e.Idl != undefined){
+						var moduleMode = Advantech.Data.ModuleData.getInstance().getMode();
+						if(moduleMode != undefined && moduleMode == MODULE_INITIAL_WORKING_MODE_NUM){//Initial Mode: module don't restart
+							httpGetOperation(HTTP_GET, URL_NETWROK_APP,
+								function(jsonObj){
+									onGetNetworkAppData(jsonObj, true);
+								},
+								configErrorCallback);
+						}else{//Normal Mode: module restart
+							Advantech.Utility.restartPage();
+						}
+					}
+					else{
+						httpGetOperation(HTTP_GET, URL_GENERAL_CONFIG, onGetNetworkAppData, configErrorCallback);
+					}
+				},
+				configErrorCallback,
+				JSON.stringify(e));
+		});
+/*
+		infraNetworkConfig.onNetworkConfigSubmitted(function(obj, e) {
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH, URL_NETWROK, function() {
+				Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+				Advantech.Utility.dotNetUtilityCallBack(ADVANTECH_NETWROK, e);
+				var moduleMode = Advantech.Data.ModuleData.getInstance().getMode();
+				if(moduleMode != undefined && moduleMode == MODULE_INITIAL_WORKING_MODE_NUM){//Initial Mode: module don't restart
+					httpGetOperation(HTTP_GET,
+								URL_WLAN_CONFIG,
+								function(jsonObj){
+									onGetWLanData(jsonObj);
+								},
+								configErrorCallback);
+				}else{//Normal Mode: module restart
+					if(e.DHCP == 0){
+						var url = "http://"+e.IP+"/config";
+						Advantech.Utility.restartPage(url);
+					}
+					else{
+						Advantech.Utility.informationPage();
+					}
+				}
+			}, configErrorCallback, JSON.stringify(e));
+		});*/
+
+		networkConfig.onNetworkConfigSubmitted(function(obj, e) {
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH, URL_NETWROK, function() {
+				Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+				Advantech.Utility.dotNetUtilityCallBack(ADVANTECH_NETWROK, e);
+				if(e.DHCP == 0){
+					var url = "http://"+e.IP+"/config";
+					Advantech.Utility.restartPage(url);
+				}
+				else{
+					Advantech.Utility.informationPage();
+				}
+			}, configErrorCallback, JSON.stringify(e));
+		});
+
+		couplerInfo.onCouplerSubmitted(function(obj, e) {
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH, URL_SYS_INFO, function() {
+				httpGetOperation(HTTP_GET,
+					URL_SYS_INFO,
+					function(jsonObj){
+						onGetSysCouplerInfo(jsonObj);
+						Advantech.Utility.dotNetUtilityCallBack(ADVANTECH_SYS_INFO, jsonObj);
+					});
+			}, configErrorCallback, JSON.stringify(e));
+		});
+		localTimeConfig.onCurrentTimeRefreshedSubmitted(function(obj, e) {
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_GET, URL_SYS_INFO, onGetSysCouplerInfo, configErrorCallback);
+		});
+
+		localTimeConfig.onLocalTimeSubmitted(function(obj, e) {
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH, URL_SYS_INFO, function() {
+				httpGetOperation(HTTP_GET, URL_SYS_INFO, onUpdatedSysLocalTime, configErrorCallback);
+			}, configErrorCallback, JSON.stringify(e));
+		});
+
+		localTimeConfig.onTimeZoneSubmitted(function(obj, e) {
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			/*httpGetOperation(HTTP_PATCH, URL_NETWROK_APP, function() {
+				httpGetOperation(HTTP_GET, URL_NETWROK_APP, onGetSNTPData, configErrorCallback);
+			}, configErrorCallback, JSON.stringify(e));*/
+			//httpGetOperation(HTTP_GET, URL_NETWROK_APP, onGetSNTPData, configErrorCallback, JSON.stringify(e));
+			onGetSNTPData();
+		});
+/*
+		sntpConfig.onSNTPConfigSubmitted(function(obj, e) {
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			var moduleMode = Advantech.Data.ModuleData.getInstance().getMode();
+			Advantech.Utility.dotNetUtilityCallBack(ADVANTECH_NETWROK_APP, e);
+			if(moduleMode != undefined && moduleMode == MODULE_INITIAL_WORKING_MODE_NUM){//Initial Mode: module don't restart
+				//Disable Network app for VCOM
+				onGetSNTPData();
+			}else{//Normal Mode: module restart
+				httpGetOperation(HTTP_PATCH, URL_NETWROK_APP, null, configErrorCallback, JSON.stringify(e));
+				Advantech.Utility.restartPage();
+			}
+		});
+*/
+		generalConfig.onGeneralConfigSubmitted(function(obj, e) {
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_PATCH,
+				URL_GENERAL_CONFIG, function() {
+					httpGetOperation(HTTP_GET,
+						URL_GENERAL_CONFIG,
+						onGetGeneralConfigData,
+						configErrorCallback);
+			}, null, JSON.stringify(e));
+		});
+
+		function onGetSysCouplerInfo(jsonObj) {
+			couplerInfo.setCouplerInfoPanel(jsonObj);
+			localTimeConfig.setCurrentTime(jsonObj);
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		};
+
+		function onUpdatedSysLocalTime(jsonObj) {
+			couplerInfo.setCouplerInfoPanel(jsonObj);
+			localTimeConfig.setCurrentTime(jsonObj);
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+			//no net_app api
+			//$("#"+localTimeConfig.getPanelId()+" #btnTZ").trigger("click");
+		};
+/*
+		function onGetSNTPData(jsonObj, isRecursive) {
+			if(isRecursive === true){
+				httpGetOperation(HTTP_GET, URL_SYS_INFO, onGetSysCouplerInfo);
+			}
+			else{
+				Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+			}
+		};
+*/
+		function onFileUpgradeDone(type) {
+			fileUpdatePrgressForm.updateProgressForm(100);
+			setTimeout(function() {
+				fileUpdatePrgressForm.hideProgressForm();
+				if(type === 0 || type == 4 || type == 10){
+					Advantech.Utility.retryAndRestartPage(23, function(){
+						if (Advantech.Utility.checkExternalFunExist()) {
+							Advantech.Utility.callExternalFun('control', '');
+						} else {
+							Advantech.Utility.reConnectPage();
+						}
+					});//wait for FW
+				}
+				else if(type === 1){
+					Advantech.Utility.switchToTagetHtml("index","/config");
+				}
+				else{
+					Advantech.Form.MessageForm.getInstance().showMessageBox("Notification",
+					"<h5>Uploaded successfully.</h5>");
+				}
+			}, 1000);
+		};
+		var onFileUpgradeFail = function(xhr, thrownError, file, apiErrorCode, apiErrorMsg) {
+	        var fileName = file.name || "file";
+	        var returnMsg = "<i class='fa fa-fw fa-exclamation-triangle'></i>The " + fileName + " upload fail. Cause upload has occurred " + thrownError + "<p/>";
+            returnMsg += apiErrorCode!=undefined && apiErrorCode!="" ? "Reason: " + Advantech.Profile.API_ERROR_CODE_NAME[apiErrorCode] : "";
+            returnMsg += apiErrorMsg!=undefined && apiErrorMsg!="" ? "<p/>(Detail: " + apiErrorMsg + " error, Error number:" +apiErrorCode+")" : "";
+	        Advantech.Form.MessageForm.getInstance().showMessageBox("Error code:" + xhr.status, returnMsg,
+	            function(){
+	                fileUpgradePanel.refreshPanel();
+	            });
+	        //if( !Advantech.Utility.isIE()){
+	            fileUpdatePrgressForm.hideProgressForm();
+	        //}
+	    };
+		function onFileUpgradeUpdateProgress(evt) {
+			if (evt.lengthComputable) {
+				var percentComplete = (evt.loaded / evt.total)*100;
+				percentComplete =(percentComplete > 99)?99:percentComplete;
+				fileUpdatePrgressForm.updateProgressForm(int(percentComplete), evt.total);
+			}
+		};
+		fileUpgradePanel.onUpgradeSubmitted(function(obj, e) {
+			if( !Advantech.Utility.isIE() || Advantech.Utility.isIE() > 9){
+				fileUpdatePrgressForm.showProgressForm(e.file.name);
+			}
+			//debugger;
+			multiPartTransfer(URL_FILE_TRANSFER, function(){onFileUpgradeDone(e.type)}, onFileUpgradeFail, onFileUpgradeUpdateProgress, e.file, e.length, e.type, e.form);
+		});
+/*		fileUpgradePanel.onGroupConfigDownloadSubmitted(function(obj, e) {
+			var ifrm = $("<iframe id='downLoadIframe'/>");
+            ifrm.attr("src", URL_GROUP_CONFIG_FILE);
+            ifrm.appendTo("body");
+            ifrm.load(function () {
+                //if download link return a page, error msg will be displayed
+                try{
+                	var jsonObj = JSON.parse($("#downLoadIframe").contents().find("body").text()); //find returned json text
+                	configErrorCallback("400", "IP Access Control or User Permission Failed", jsonObj.Err, jsonObj.Msg);
+                }catch (e) {
+                	Advantech.Form.MessageForm.getInstance().showMessageBox("Error code: 400", "<i class='fa fa-fw fa-exclamation-triangle'></i> IP Access Control or User Permission Failed" , null);
+                }
+            });
+		});
+		function startDownloadGroupConfigFile(){
+			var ifrm = $("<iframe style='display:none' />");
+            ifrm.attr("src", URL_GROUP_CONFIG_FILE);
+            ifrm.appendTo("body");
+            ifrm.load(function () {
+                //if download link return a page, error msg will be displayed
+                $("body").append("<div>Error: Failed to download Configuration File!");
+
+            });
+		}*/
+		controlCommandPanel.onSystemRestartClick(function(obj, e) {
+			$("#CommonConfirmModal #confirmModalLabel").text("Restart Module Confirm");
+			$("#CommonConfirmModal #confirmContext").html("<i class='fa fa-fw fa-warning'></i>Module will be restarted! Are you sure keep going?");
+			$("#CommonConfirmModal").modal("show");
+			$("#CommonConfirmModal #btnCommonConfirm").click(function(){
+				httpGetOperation(HTTP_PATCH,
+					URL_DEVICE_CONTROL,
+					function(stream){
+						Advantech.Utility.dotNetUtilityCallBack(ADVANTECH_DEVICE_CONTROL, e);
+						Advantech.Utility.restartPage();
+					},
+	                configErrorCallback,
+	                JSON.stringify(e));
+				$("#CommonConfirmModal #btnCommonConfirm").unbind( "click" );
+				$("#CommonConfirmModal").modal("hide");
+			});
+		});
+		controlCommandPanel.onModuleLocateClick(function(obj, e) {
+			httpGetOperation(HTTP_PATCH,
+							URL_DEVICE_CONTROL,
+							null,
+	                        null,
+	                        JSON.stringify(e));
+		});
+
+		passwordChange.onPasswordChangedSuccess(function(obj, e){
+			httpGetOperation(HTTP_PATCH,
+							URL_DEVICE_CONTROL,
+							function(){
+								Advantech.Utility.dotNetUtilityCallBack(ADVANTECH_DEVICE_CONTROL, e);
+							},
+	                        configErrorCallback,
+	                        JSON.stringify(e));
+		});
+
+		controlCommandPanel.onRestoreDefaultsClick(function(obj, e) {
+			$("#CommonConfirmModal #confirmModalLabel").text("Restore to Factory Default Confirm");
+			$("#CommonConfirmModal #confirmContext").html("<i class='fa fa-fw fa-warning'></i>All configurations will be restored to default! Are you sure keep going?");
+			$("#CommonConfirmModal").modal("show");
+			$("#CommonConfirmModal #btnCommonConfirm").click(function(){
+				httpGetOperation(HTTP_PATCH,
+					URL_DEVICE_CONTROL,
+					function(stream){
+						/*Advantech.Utility.researchPage(function(){
+							Advantech.Utility.dotNetUtilityCallBack(ADVANTECH_DEVICE_CONTROL, e);
+						});*/
+						Advantech.Utility.dotNetUtilityCallBack(ADVANTECH_DEVICE_CONTROL, e);
+						Advantech.Utility.restartPage();
+					},
+	                configErrorCallback,
+	                JSON.stringify(e));
+				$("#CommonConfirmModal #btnCommonConfirm").unbind( "click" );
+				$("#CommonConfirmModal").modal("hide");
+			});
+		});
+		controlCommandPanel.onRestPasswordClick(function(obj, e) {
+			$("#CommonConfirmModal #confirmModalLabel").text("Reset Password to Default Confirm");
+	        $("#CommonConfirmModal #confirmContext").html("<i class='fa fa-fw fa-warning'></i>The password will be restored to default! Are you sure keep going?");
+	        $("#CommonConfirmModal").modal("show");
+	        $("#CommonConfirmModal #btnCommonConfirm").click(function(){
+	        	httpGetOperation(HTTP_PATCH,
+							URL_DEVICE_CONTROL,
+							function(){
+								Advantech.Utility.dotNetUtilityCallBack(ADVANTECH_DEVICE_CONTROL, e);
+								Advantech.Utility.poweroffPage();
+							},
+	                        configErrorCallback,
+	                        JSON.stringify(e));
+		        $("#CommonConfirmModal #btnCommonConfirm").unbind( "click" );
+		        $("#CommonConfirmModal").modal("hide");
+	        });
+		});
+
+		$('#configMainForm a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+			//close timer(ex: cellular info)
+			Advantech.Utility.TimerDispatchSingleton.getInstance().ClearTimer();
+			var type = e.target.hash.slice(4);
+			Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			if(type === "ModuleInfo"){
+				httpGetOperation(HTTP_GET,
+					URL_SYS_INFO,
+					onGetSysCouplerInfo,
+					configErrorCallback);
+			}
+			else if(type === "Network"){
+				httpGetOperation(HTTP_GET,
+								URL_NETWROK,
+								function(jsonObj){
+									onGetNetworkData(jsonObj, true);
+								},
+								configErrorCallback);
+			}
+			else if(type === "NetworkApp"){
+				//do not hide wait form
+				/* httpGetOperation(HTTP_GET,
+								URL_GENERAL_CONFIG,
+								function(jsonObj){
+									onGetNetworkAppData(jsonObj, true);
+								},
+								configErrorCallback); */
+			}
+			else if(type === "TimeInfo"){
+				//httpGetOperation(HTTP_GET, URL_NETWROK_APP, function(jsonObj){onGetSNTPData(jsonObj, true);}, configErrorCallback);
+				httpGetOperation(HTTP_GET, URL_SYS_INFO, onGetSysCouplerInfo);
+			}
+			/*else if(type === "SNTP"){
+				httpGetOperation(HTTP_GET, URL_NETWROK_APP, function(jsonObj){onGetSNTPData(jsonObj, true);}, configErrorCallback);
+			}*/
+			else if(type === "ModbusInfo"){
+				if( $(this).hasClass('isUpdated') === true){
+					httpGetOperation(HTTP_GET,
+						URL_MODBUS_COIL_VAL_BASE,
+						function(jsonObj){
+							onGetCoilSlotBas(jsonObj, false, true);
+						},
+						configErrorCallback);
+				}
+				else{
+					$(this).addClass("isUpdated");
+					httpGetOperation(HTTP_GET,
+						URL_MODBUS_COIL_VAL_BASE,
+						function(jsonObj){
+							onGetCoilSlotBas(jsonObj, true, true);
+						},
+						configErrorCallback);
+				}
+			}
+			else if(type === "Cloud"){
+				httpGetOperation(HTTP_GET, URL_CLOUD_STATUS,
+					//onGetCloudConfigData,
+					function(jsonObj){
+				 		onGetCloudValueData(jsonObj, true);
+				 	},
+					configErrorCallback);
+			}
+			else if(type === "General"){
+				httpGetOperation(HTTP_GET, URL_GENERAL_CONFIG, onGetGeneralConfigData, configErrorCallback);
+			}
+			else if(type === "Position"){
+				//do not hide wait form
+			}
+			else{
+				Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+			}
+		});
+
+		function configErrorCallback(code, commonMsg, apiErrorCode, apiErrorMsg) {
+            Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+            var returnMsg;
+            returnMsg = apiErrorCode!=undefined && apiErrorCode!="" ? Advantech.Profile.API_ERROR_CODE_NAME[apiErrorCode] : "";
+            returnMsg += apiErrorMsg!=undefined && apiErrorMsg!="" ? "<p/>(Reason:" + apiErrorMsg + " error, Error number:" +apiErrorCode+")" : "";
+			if(returnMsg == ""){
+				returnMsg = commonMsg;
+			}
+            Advantech.Form.MessageForm.getInstance().showMessageBox("Error code: " + code, "<i class='fa fa-fw fa-exclamation-triangle'></i>" + returnMsg , null);
+            if(apiErrorCode == 4000){ //if Cloud setting error, get device current setting
+            	//httpGetOperation(HTTP_GET, URL_CLOUD_STATUS, onGetCloudConfigData, configErrorCallback);
+				httpGetOperation(HTTP_GET, URL_CLOUD_STATUS,
+					function(jsonObj){
+				 		onGetCloudValueData(jsonObj, true);
+				 	},
+					configErrorCallback);
+            }
+		};
+
+		if(tag === null){
+			$('#configMainForm .nav-pills a[href="#tabModuleInfo"]').trigger("click");
+		}
+		else{
+			if( tag.getAttribute("data-config") === undefined || tag.getAttribute("data-config") === null){
+				$('#configMainForm .nav-pills a[href="#tabModuleInfo"]').trigger("click");
+			}
+			else{
+				var tabId = "tab"+tag.getAttribute("data-config");
+				$('#configMainForm .nav-pills a[href="#'+tabId+'"]').trigger("click");
+			}
+		}
+
+		function isValid($element, $parent, bSkipValueReplace){
+	        if($element[0].type == "number" || $element.hasClass("isNumericType")){
+                //var val = Number($element.val());
+                var val = $element.val();
+                var max = Number($element.attr("max"));
+                var min = Number($element.attr("min"));
+                if(!$.isNumeric(val) || Number(val) < min || Number(val) > max){
+					if(!bSkipValueReplace){
+	                	$element.val($element.data("temp"));
+	                }
+	                //$element.val($element.data("temp"));
+	                $parent.addClass("has-error");
+                    Advantech.Form.MessageForm.getInstance().showMessageBox("<h4>Parameter Invalid<h4>", "<h5><i class='fa fa-fw fafrown-o'></i>The parameter "+$element[0].id.slice(3)+" out of range "+min+" ~ "+max+".<h5>");
+	            }
+	        }
+	        else if($element[0].type == "text"){
+	        	if($element.hasClass("txtIp") && !$element.is(":disabled")){
+	        		var id = $element[0].id;
+	        		if (!Advantech.Utility.isValidIp($element.val())) {
+	        			$element.val($element.data("temp"));
+	                	$parent.addClass("has-error");
+	        			Advantech.Form.MessageForm.getInstance().showMessageBox("<h4>Format Error<h4>", "<h5><i class='fa fa-fw fafrown-o'></i>Invalid IP format in " + id.slice(3)+"!<h5>");
+	        		}
+	        	}
+	        	else if($element.hasClass("txtSubnet") && !$element.is(":disabled")){
+	        		var id = $element[0].id;
+	        		if (!Advantech.Utility.isValidSubnet($element.val())) {
+	        			$element.val($element.data("temp"));
+	                	$parent.addClass("has-error");
+	        			Advantech.Form.MessageForm.getInstance().showMessageBox("<h4>Format Error<h4>", "<h5><i class='fa fa-fw fafrown-o'></i>Invalid Subnet format in " + id.slice(3)+"!<h5>");
+	        		}
+	        	}
+	        	else if($element.hasClass("minLengthConstraint")){
+	        		var id = $element[0].id;
+	        		if(id == "inpIKey2") //skip backup setting check
+	        			return;
+	        		if($element.val().length < $element.attr('minlength')){
+	        			$element.val($element.data("temp"));
+	                	$parent.addClass("has-error");
+	        			Advantech.Form.MessageForm.getInstance().showMessageBox("<h4>Format Error<h4>", "<h5><i class='fa fa-fw fafrown-o'></i>The parameter " + id.slice(3)+" length out of range "+$element.attr("minlength")+" ~ "+$element.attr("maxlength")+".<h5>");
+	        		}
+	        	}
+	        }
+	    };
+	    $("#configMainForm form input").keypress(function(event){
+			var bSkipValueReplace = false;
+			if($(this).hasClass("ng-valid-number"))
+				bSkipValueReplace = true;
+	        if(event.which == 13){
+	            event.preventDefault();
+	            var $parent = $(this).closest(".form-group");
+	            isValid($(this), $parent, bSkipValueReplace);
+	        }
+	    }).focusout(function() {
+			var bSkipValueReplace = false;
+	    	if($(this).hasClass("ng-valid-number"))
+				bSkipValueReplace = true;//return;
+	        var $parent = $(this).closest(".form-group");
+	        isValid($(this), $parent, bSkipValueReplace);
+	    }).focus(function() {
+	        $(this).data( 'temp', $(this).val());
+	        $(".form-group").removeClass("has-error");
+		});
+		function initCloudSelectList(cloudSupportMask){
+			$('#configMainForm #tabCloud #selCloud').find('option').remove();
+			$('#configMainForm #tabCloud #selCloud').append("<option value='" + Advantech.Profile.CloudServiceSelectIndex.Disabled +
+						"'>&#xf056;&#8194; Disable</option>");
+			if(cloudSupportMask & Advantech.Profile.CloudServiceVenderEmun.Dropbox){
+				$('#configMainForm #tabCloud #selCloud').append("<option value='"+ Advantech.Profile.CloudServiceSelectIndex.Dropbox +
+						"' data-target='#panelDropBox' data-server='https://www.dropbox.com/oauth2/authorize?client_id=sw4axiv3szis1ap&response_type=code'>&#xf16b;&#8194; Dropbox</option>");
+			}
+			if(cloudSupportMask & Advantech.Profile.CloudServiceVenderEmun.AliyunOSS){
+				$('#configMainForm #tabCloud #selCloud').append("<option value='"+ Advantech.Profile.CloudServiceSelectIndex.AliyunOSS +
+						"' data-target='#panelAliyun'>&#xf1be;&#8194; Aliyun OSS</option>");
+			}
+			if(cloudSupportMask & Advantech.Profile.CloudServiceVenderEmun.PrivateServer){
+				$('#configMainForm #tabCloud #selCloud').append("<option value='"+ Advantech.Profile.CloudServiceSelectIndex.PrivateServer +
+						"' data-target='#panelPrivateServer'>&#xf108;&#8194; Private Server</option>");
+			}
+			if(cloudSupportMask & Advantech.Profile.CloudServiceVenderEmun.WebAccess){
+				$('#configMainForm #tabCloud #selCloud').append("<option value='"+ Advantech.Profile.CloudServiceSelectIndex.WebAccess +
+						"' data-target='#panelWebAccess'>&#xf0c2;&#8194; WebAccess/SCADA</option>");
+	        }
+	        if(cloudSupportMask & Advantech.Profile.CloudServiceVenderEmun.MQTT){
+				$('#configMainForm #tabCloud #selCloud').append("<option value='"+ Advantech.Profile.CloudServiceSelectIndex.MQTT +
+						"' data-target='#panelMQTT'>&#xf143;&#8194; iSensing MQTT</option>");
+			}
+			if(cloudSupportMask & Advantech.Profile.CloudServiceVenderEmun.IFTTT){
+				$('#configMainForm #tabCloud #selCloud').append("<option value='"+ Advantech.Profile.CloudServiceSelectIndex.IFTTT +
+						"' data-target='#panelIFTTT'>&#xf064;&#8194; IFTTT</option>");
+			}
+			if(cloudSupportMask & Advantech.Profile.CloudServiceVenderEmun.Azure){
+				$('#configMainForm #tabCloud #selCloud').append("<option value='"+ Advantech.Profile.CloudServiceSelectIndex.Azure +
+						"' data-target='#panelAzure'>&#xf17a;&#8194; Azure</option>");
+			}
+			if(cloudSupportMask & Advantech.Profile.CloudServiceVenderEmun.ChungHwaTelecomIoT){
+				$('#configMainForm #tabCloud #selCloud').append("<option value='"+ Advantech.Profile.CloudServiceSelectIndex.ChungHwaTelecomIoT +
+						"' data-target='#panelChungHwaIot'>&#xf108;&#8194 ChungHwa Telecom IoT</option>");
+			}
+			if(cloudSupportMask & Advantech.Profile.CloudServiceVenderEmun.AWS){
+				$('#configMainForm #tabCloud #selCloud').append("<option value='"+ Advantech.Profile.CloudServiceSelectIndex.AWS +
+						"' data-target='#panelAws'>&#xf031;&#8194; AWS</option>");
+			}
+	    }
+</script>

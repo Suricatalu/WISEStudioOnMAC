@@ -1,0 +1,78 @@
+<div class="container-fluid">
+	<!-- Page Heading -->
+	<div class="row">
+		<div class="col-lg-12">
+			<h2 class="page-header"> <i class="fa fa-fw  fa-cogs"></i> Advanced Function</h2>
+		</div>
+	</div>
+
+	<div class="row" id='advancedList'>
+<!-- 	  <div class="col-lg-6">
+	    <div class="thumbnail">
+	      	<div class="text-center">
+	      		<h1><i class='fa fa-key fa-5x'></i></h1>
+	      	</div>
+	      <div class="caption">
+	        <h3>Access Control</h3>
+	        <p style='height:80px;'>For avoiding from unauthorized access, this function provided manage which host PC or device has been permitted to remotely control module by IP or MAC Address.</p>
+	        <div class='text-right'>
+				<a href='/config/access_ctrl.html' class='ajax-link' > Go to <i class='fa fa-arrow-circle-right'></i></a>
+			  </div>
+	      </div>
+	    </div>
+		</div>
+		 -->
+	  <div class="col-lg-6">
+	    <div class="thumbnail">
+	      <div class="text-center">
+	      		<h1><i class='fa fa-save fa-5x'></i></h1>
+	      </div>
+	      <div class="caption">
+	        <h3>Data Logger</h3>
+	        <p style='height:80px;'>For easy retrieving history of data form device, this function provided data logging and recording without programming.</p>
+	        <div class='text-right'>
+				<a href='/config/data_log.html'  class='ajax-link' > Go to <i class='fa fa-arrow-circle-right'></i></a>
+			</div>
+	      </div>
+	    </div>
+		</div>
+	  <div class="col-lg-6">
+	    <div class="thumbnail">
+	      <div class="text-center">
+	      		<h1><i class='fa fa-stethoscope fa-5x'></i></h1>
+	      </div>
+	      <div class="caption">
+	        <h3>Diagnostician</h3>
+	        <p style='height:80px;'>For diagnose the device, this function provided organization status for specific function in device.</p>
+	        <div class='text-right'>
+				<a href='/config/diagnostic.html'  class='ajax-link' > Go to <i class='fa fa-arrow-circle-right'></i></a>
+			</div>
+	      </div>
+	    </div>
+	  </div>
+<!-- 	  <div class="col-lg-6">
+	    <div class="thumbnail">
+	      <div class="text-center">
+	      		<h1><i class='fa fa-external-link fa-5x'></i></h1>
+	      </div>
+	      <div class="caption">
+	        <h3>Peer to Peer</h3>
+	        <p style='height:80px;'>For sending signals from one device to other devices, this function provided signal transmission mechanism for devices.</p>
+	        <div class='text-right'>
+				<a href='/config/p2p.html'  class='ajax-link' > Go to <i class='fa fa-arrow-circle-right'></i></a>
+			</div>
+	      </div>
+	    </div>
+	  </div> -->
+	</div>
+</div>
+<script>
+	$('.container-fluid #advancedList').on('click', 'a', function (e) {
+		if ($(this).hasClass('ajax-link')) {
+			e.preventDefault();
+			var url = $(this).attr('href');
+			var id = $(this).attr('id');
+			Advantech.Utility.loadAjaxContent(id, url, this);
+		}
+	});
+</script>

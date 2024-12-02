@@ -1,0 +1,616 @@
+<style>
+/* table, th, td {
+	border: 1px solid black;
+  } */
+  .btn-default.active{
+	  background-color: white;
+  }
+  .padding-right-10 {
+	padding-right: 10px;
+  }
+  #sensor_detection_tooltip {
+	position: absolute;
+    background-color: white;
+    top: 50px;
+    left: 195px;
+    z-index: 999;
+    border: 1px solid;
+    padding-right: 30px;
+    padding-bottom: 8px;
+	display: none;
+  }
+</style>
+<div ng-controller="SensorCtrl"><!-- ng-controller -->
+	<div class="col-lg-12">
+		<div class="row">
+			<div class="tab-pane">
+				<ul class="nav nav-tabs nav-justified" role="tablist">
+					<li ng-class="{'active': activeTab === 'status'}">
+						<a href data-toggle="tab" ng-click="switchTabTo('status')">Status</a>
+					</li>
+					<li ng-class="{'active': activeTab === 'config'}">
+						<a href data-toggle="tab" ng-click="switchTabTo('config')">Configuration</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div ng-show="isTabShow('status')" class="tab-pane active">
+						<div class='panel panel-default'>
+							<div class='panel-heading'>
+								<h4>Status</h4>
+							</div>
+							<div class='panel-body'>
+								<!-- <ul class="nav nav-tabs nav-justified" role="tablist">
+									<li ng-class="{'active': statusActiveTab === 'status_current'}">
+										<a href data-toggle="tab" ng-click="switchStatusTab('status_current')">Current</a>
+									</li>
+									<li ng-class="{'active': statusActiveTab === 'status_max'}">
+										<a href data-toggle="tab" ng-click="switchStatusTab('status_max')">Max</a>
+									</li>
+									<li ng-class="{'active': statusActiveTab === 'status_min'}">
+										<a href data-toggle="tab" ng-click="switchStatusTab('status_min')">Min</a>
+									</li>
+								</ul> -->
+								<div class="tab-content">
+									<p></p>
+									<div class='panel panel-default'>
+										<div class='panel-body'>
+											<div class='table-responsive'>
+												<center>
+													<!-- temperature sensor -->
+													<table class='table-control' ng-show="isTemperatureSensor(channelObj.RangeId)">
+														<tbody>
+															<tr>
+																<td><div style="min-height: 25px;"></div></td>
+																<td><div style="min-height: 25px;"></div></td>
+																<td><div style="min-height: 25px;"></div></td>
+															</tr>
+															<tr>
+																<td rowspan='8' style="min-width: 510px">
+																	<div class="col-md-11">
+																		<div class="panel panel-primary">
+																			<div class="panel-heading">
+																				<h2 class="panel-title"><i class="fa fa-fw fa-dashboard"></i>&nbsp;{{channelObj.RangeName}}</h2>
+																			</div>
+																			<div class="panel-body">
+																				<div id="Temperature" class="text-center" style="font-size:45px;">{{channelObj.value}}&nbsp;{{channelObj.UnitName}}</div>
+																			</div>
+																		</div>
+																	</div>
+																</td>
+															</tr>
+															<tr>
+																<td class='td-label' style="min-width: 126px;"><label style="margin-bottom: 0px;">Channel:</label></td>
+																<td>
+																	<select style="margin-left:10px;" class='form-control' ng-model="selectedChannel.ch" ng-change="onValueChannelChange(selectedChannel.ch)">
+																		<option ng-repeat="(key, data) in channelSelectList" value="{{key}}">{{data}}</option>
+																	</select>
+																</td>
+															</tr>
+															<tr>
+																<td><div style="min-height: 34px;"></div></td>
+																<td><div style="min-height: 34px;"></div></td>
+															</tr>
+															<tr>
+																<td class='td-label' style="min-width: 126px; height: 34px;"><label>Range:</label></td>
+																<td><p style='margin: 0px 10px 5px;'>{{channelObj.RangeName}}</p></td>
+															</tr>
+															<tr>
+																<td class='td-label' style="min-width: 126px; height: 34px;"><label>Status:</label></td>
+																<td><p style='margin: 0px 10px 5px;'>{{channelObj.EventName}}</p></td>
+															</tr>
+															<tr>
+																<td class='td-label' style="min-width: 126px; height: 34px;"><label>Quality Check:</label></td>
+																<td><p style='margin: 0px 10px 5px;'>{{channelObj.quality}}</p></td>
+															</tr>
+															<tr>
+																<td class='td-label' style="min-width: 126px; height: 34px;"><label>Time:</label></td>
+																<td><p class="text-nowrap" style='margin: 0px 10px 5px;'>{{channelObj.Time}}</p></td>
+															</tr>
+															<tr>
+																<td class='td-label' style="min-width: 126px; height: 34px;"><label>Value:</label></td>
+																<td><p style='margin: 0px 10px 5px;'>{{channelObj.value}}</p></td>
+															</tr>
+														</tbody>
+													</table>
+
+													<!-- vibration sensor -->
+													<table class='table-control' ng-hide="isTemperatureSensor(channelObj.RangeId)">
+														<tbody>
+															<tr>
+																<td style="min-width: 585px">
+																	<label class="text-center" style="width:265px;">Name</label>
+																	<label class="text-center" style="width:160px;">Value</label>
+																	<label class="text-center" style="width:160px;">Status</label>
+																</td>
+																<td>&nbsp;</td>
+																<td>&nbsp;</td>
+															</tr>
+															<tr ng-repeat="featureData in channelObj.value track by $index" ng-if="$index <= 13 || $index >= 20">
+																<td>
+																	<div class="btn-group" data-toggle="buttons">
+																		<label
+																			class="btn"
+																			style="width:265px"
+																			ng-class="{
+																				'btn-warning': featureData.Idx === 0,
+																				'btn-info': featureData.Idx >=1 && featureData.Idx <=3,
+																				'btn-primary': featureData.Idx >= 4 && featureData.Idx <= 13,
+																				'btn-success': (featureData.Idx >= 20 && featureData.Idx <= 23) ||
+																								(featureData.Idx == 24 && channelObj.DEn[0] != 0) ||
+																								(featureData.Idx == 25 && channelObj.DEn[1] != 0),
+																				'btn-dark': (featureData.Idx == 24 && channelObj.DEn[0] == 0) ||
+																							(featureData.Idx == 25 && channelObj.DEn[1] == 0)}"
+																			ng-disabled="(featureData.Idx == 24 && channelObj.DEn[0] == 0) ||
+																						(featureData.Idx == 25 && channelObj.DEn[1] == 0)"
+																		>
+																			<input type="radio" name="options" id="option1" autocomplete="off" checked> {{featureData.name}}
+																			<span ng-show="featureData.unit != ''">
+																				<span ng-if="featureData.Idx <= 3 || featureData.Idx >= 14">(</span>
+																				<span ng-bind-html="featureData.unit"></span>
+																				<span ng-if="featureData.Idx <= 3 || featureData.Idx >= 14">)</span>
+																			</span>
+																		</label>
+																		<label class="btn btn-default" style="width:160px" ng-disabled="(featureData.Idx == 24 && channelObj.DEn[0] == 0) || (featureData.Idx == 25 && channelObj.DEn[1] == 0)">
+																			<input type="radio" name="options" id="option2" autocomplete="off"> {{((featureData.Idx == 24 && channelObj.DEn[0] == 0) || (featureData.Idx == 25 && channelObj.DEn[1] == 0)) ? "-" : featureData.Val}}
+																		</label>
+																		<label class="btn btn-default" style="width:160px" ng-disabled="(featureData.Idx == 24 && channelObj.DEn[0] == 0) || (featureData.Idx == 25 && channelObj.DEn[1] == 0)">
+																			<input type="radio" name="options" id="option3" autocomplete="off"> {{((featureData.Idx == 24 && channelObj.DEn[0] == 0) || (featureData.Idx == 25 && channelObj.DEn[1] == 0)) ? "-" : featureData.quality}}
+																		</label>
+																	</div>
+																</td>
+																<td class='td-label' style="min-width: 135px;">
+																	<!-- <label ng-if="$index === 0" style="margin-bottom: 0px;">Channel:</label>
+																	<label ng-if="$index == 2">Range:</label> -->
+																	<label ng-if="$index == 0">Status:</label>
+																	<label ng-if="$index == 1">RPM:</label>
+																	<label ng-if="$index == 2">Time:</label>
+																	<!-- <label ng-if="$index == 6">Gear Mesh Defect:</label>
+																	<label ng-if="$index == 7">Vane Pass Defect:</label> -->
+																</td>
+																<td>
+																	<!-- <select ng-if="$index === 0" style="margin-left:10px;" class='form-control' ng-model="selectedChannel.ch" ng-change="onValueChannelChange(selectedChannel.ch)">
+																		<option ng-repeat="(key, data) in channelSelectList" value="{{key}}">{{data}}</option>
+																	</select>
+																	<p ng-if="$index == 2" style='margin: 0px 10px 5px;'>{{channelObj.RangeName}}</p> -->
+																	<p ng-if="$index == 0" style='margin: 0px 10px 5px;'>{{channelObj.EventName}}</p>
+																	<p ng-if="$index == 1" style='margin: 0px 10px 5px;'>{{channelObj.Rpm}}</p>
+																	<p ng-if="$index == 2" class="text-nowrap" style='margin: 0px 10px 5px;'>{{channelObj.Time}}</p>
+																	<!-- <p ng-if="$index == 6" class="text-nowrap" style='margin: 0px 10px 5px;'>{{channelObj.DEn[0]==0?"Disable":"Enable"}}</p>
+																	<p ng-if="$index == 7" class="text-nowrap" style='margin: 0px 10px 5px;'>{{channelObj.DEn[1]==0?"Disable":"Enable"}}</p> -->
+																</td>
+															</tr>
+															<tr>
+																<td>
+																	<div class="btn-group" data-toggle="buttons">
+																		<label class="btn ng-binding btn-secondary"style="width:265px">
+																			<input type="radio" name="options" id="option1" autocomplete="off" checked=""> {{sensorValues[1].RangeName}}
+																		</label>
+																		<label class="btn btn-default ng-binding" style="width:160px">
+																			<input type="radio" name="options" id="option2" autocomplete="off"> {{sensorValues[1].value}}
+																		</label>
+																		<label class="btn btn-default ng-binding" style="width:160px">
+																			<input type="radio" name="options" id="option3" autocomplete="off"> {{sensorValues[1].quality}}
+																		</label>
+																	</div>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</center>
+											</div>
+											<!-- <div class='table-responsive' style='display:block;'>
+												<table id='"+this.getTableId()+"_overview' class ='table table-bordered table-hover table-striped'>
+													<thead>
+														<tr>
+															<th>Channel</th>
+															<th>Status</th>
+															<th>Range</th>
+															<th>Time</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr ng-repeat="channel in sensorValues" ng-click="onTableRowClick(channel.Ch)">
+															<td>{{channel.Ch}}</td>
+															<td class="text-nowrap">{{channel.EventName}}</td>
+															<td>{{channel.RangeName}}</td>
+															<td class="text-nowrap">{{channel.Time}}</td>
+														</tr>
+													</tbody>
+												</table>
+											</div> -->
+										</div><!-- panel-body -->
+									</div><!-- panel -->
+								</div><!-- tab-content -->
+								<div class='dataType' style="display:none">
+									<h4 class='page-header'>
+										Chart
+										<a data-toggle='collapse' data-target='#collapseaChartVibration'>
+											<i class='fa fa-fw fa-caret-down'></i>
+										</a>
+									</h4>
+									<div class='col-md-12 collapse' id='collapseaChartVibration'>
+										<div class="col-md-2"></div>
+										<div class="col-md-8 chartType">
+											<div class="panel panel-green">
+												<div class="panel-heading">
+													<h3 class='panel-title'><i class="fa fa-fw fa-bar-chart-o"></i> Vibration Diagnosis</h3>
+												</div>
+												<div class="panel-body" style='height:600px;'>
+													<div class="row">
+														<center><h3>Vibration Diagnosis Bar Chart</h3></center>
+													</div>
+													<div class="row" id='barVibration' style='height:500px;'></div>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-2"></div>
+									</div>
+								</div>
+							</div><!-- panel-body -->
+						</div>
+					</div><!-- tab-pane -->
+					<div ng-show="isTabShow('config')" class="tab-pane active">
+						<div class='panel panel-default'>
+							<div class='panel-heading'>
+								<h4>Configuration</h4>
+							</div>
+							<div class='panel-body'>
+								<div class="col-lg-12">
+									<!-- <ul class='nav nav-tabs nav-justified' role='tablist'>
+										<li>
+											<a href="#tabCommConfig" data-toggle="tab">Common Settings</a>
+										</li>
+										<li class="active">
+											<a href="#tabChConfig" data-toggle="tab">Channel Settings</a>
+										</li>
+									</ul> -->
+									<div class="tab-content">
+										<div class="tab-pane" id="tabCommConfig">
+											<div class="panel panel-default form-horizontal">
+												<div class='panel-body'>
+													<div class='form-group' ng-show="isSupportFeatureAvgMode">
+														<label class='col-sm-3 control-label'>Feature Average Mode</label>
+														<div class='col-sm-8'>
+															<div class="radio">
+																<label>
+																	<input type="radio" ng-model="commonObj.Avg" value="0">Disable&nbsp;&nbsp;
+																</label>
+																<label>
+																	<input type="radio" ng-model="commonObj.Avg" value="1">Enable<br/>
+																</label>
+															</div>
+														</div>
+													</div>
+													<div class='form-group'>
+														<label class='col-sm-3 control-label'>Default Sensitivity</label>
+														<div class='col-sm-8'>
+															<div class='input-group' style='min-width: 20px; max-width: 182px;'>
+																<input type='number' class='form-control' min="-99999.999" max="99999.999" step="0.001" ng-model="commonObj.HiA" disabled='disabled'>
+																<span class="input-group-addon" style="width: 5px">mV/g</span>
+															</div>
+														</div>
+													</div>
+													<div class='form-group'>
+														<label class='col-sm-3 control-label'>User Sensitivity</label>
+														<div class='col-sm-8'>
+															<div class='input-group' style='min-width: 20px; max-width: 182px;'>
+																<input type='number' class='form-control' min="-99999.999" max="99999.999" step="0.001" ng-model="commonObj.ReA">
+																<span class="input-group-addon" style="width: 5px">mV/g</span>
+															</div>
+														</div>
+													</div>
+													<div class='form-group'>
+														<label class='col-sm-3 control-label'></label>
+														<div class='col-sm-8'>
+															<button class="btn btn-success privilege root admin" ng-click="onSensorCommonConfigClick()"><i class="fa fa-check"></i> Submit</button>
+															<button class="btn btn-warning privilege root admin" ng-click="onSensorResetSensitivityClick()"><i class="fa fa-refresh "></i> Reset Sensitivity</button>
+														</div>
+													</div>
+													<div class='form-group' ng-if="externalFunExist">
+														<label class='col-sm-3 control-label'>Calibration</label>
+														<div class='col-sm-8'>
+															<button class="btn btn-success privilege root admin" ng-click="onSensorStartCalibrationClick()"><i class="fa fa-play "></i> Start Calibration</button>
+														</div>
+													</div>
+													<div class='form-group' ng-if="externalFunExist">
+														<label class='col-sm-3 control-label'>Average Sensitivity</label>
+														<div class='col-sm-8'>
+															<div class='input-group' style='min-width: 20px; max-width: 182px;'>
+																<input type='number' class='form-control' min="-99999.999" max="99999.999" step="0.001" ng-model="commonObj.Val" disabled='disabled'>
+																<span class="input-group-addon" style="width: 5px">mV/g</span>
+															</div>
+														</div>
+													</div>
+													<div class='form-group' ng-if="externalFunExist">
+														<label class='col-sm-3 control-label'>Maximum Sensitivity</label>
+														<div class='col-sm-8'>
+															<div class='input-group' style='min-width: 20px; max-width: 182px;'>
+																<input type='number' class='form-control' min="-99999.999" max="99999.999" step="0.001" ng-model="commonObj.Max" disabled='disabled'>
+																<span class="input-group-addon" style="width: 5px">mV/g</span>
+															</div>
+														</div>
+													</div>
+													<div class='form-group' ng-if="externalFunExist">
+														<label class='col-sm-3 control-label'>Minimum Sensitivity</label>
+														<div class='col-sm-8'>
+															<div class='input-group' style='min-width: 20px; max-width: 182px;'>
+																<input type='number' class='form-control' min="-99999.999" max="99999.999" step="0.001" ng-model="commonObj.Min" disabled='disabled'>
+																<span class="input-group-addon" style="width: 5px">mV/g</span>
+															</div>
+														</div>
+													</div>
+												</div><!-- panel-body -->
+												<!--<div class="panel-footer clearfix">
+													<div class="pull-right">
+														<button class="btn btn-success privilege root admin" ng-click="onSensorCommonConfigClick()"><i class="fa fa-check"></i> Submit</button>
+													</div>
+												</div>-->
+											</div><!-- panel -->
+										</div>
+										<div class="tab-pane active" id="tabChConfig">
+											<p></p>
+											<div class="panel panel-default form-horizontal">
+												<div class='panel-body'>
+													<!-- <div class='form-group'>
+														<label class='col-lg-3 control-label'>Channel</label>
+														<div class='col-lg-3'>
+															<div class='input-group'>
+																<select class='form-control' ng-model="selectedChannel.ch" ng-change="onConfigChannelChange(selectedChannel.ch)">
+																	<option ng-repeat="(key, data) in channelSelectList" value="{{key}}">{{data}}</option>
+																</select>
+															</div>
+														</div>
+													</div>
+													<div class='form-group'>
+														<label class='col-lg-3 control-label'>Range</label>
+														<div class='col-lg-6'>
+															<div class='input-group'>
+																<select class='form-control' ng-model="channelObj.Rng" ng-change="onRangeChange(channelObj.Rng)">
+																	<option ng-repeat="(key, data) in channelObj.CurrentList" ng-selected="{{key==channelObj.Rng}}" value="{{key}}" ng-bind-html="data.name"></option>
+																</select>
+															</div>
+														</div>
+													</div> -->
+													<!--<div class='form-group' ng-show="!isTemperatureSensor(channelObj.Rng)">
+														<label class='col-sm-3 control-label'>Sensitivity</label>
+														<div class='col-sm-8'>
+															<div class='input-group' style='min-width: 20px; max-width: 182px;'>
+																<input type='number' class='form-control' min="-99999.999" max="99999.999" step="0.001" ng-model="channelObj.Sn">
+																<span class="input-group-addon" style="width: 5px">mV/g</span>
+															</div>
+														</div>
+													</div>-->
+													<div class="well">
+														<div class='form-group' ng-show="!isTemperatureSensor(channelObj.Rng)">
+															<label class="col-sm-2 control-label">Machine Profile</label>
+															<div class="col-sm-10">
+																<label class='col-sm-2 control-label'>RPM Range</label>
+																<div class='col-sm-8 form-inline'>
+																	<div class='input-group' style='min-width: 20px; max-width: 182px;'>
+																		<input type='number' class='form-control' min="300" max="{{max_rpm}}" ng-model="channelObj.St">
+																		<span class="input-group-addon" style="width: 5px">rpm</span>
+																	</div>
+																	-
+																	<div class='input-group' style='min-width: 20px; max-width: 182px;'>
+																		<input type='number' class='form-control' min="300" max="{{max_rpm}}" ng-model="channelObj.End">
+																		<span class="input-group-addon" style="width: 5px">rpm</span>
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class='form-group' ng-show="!isTemperatureSensor(channelObj.Rng)">
+															<label class="col-sm-2 control-label"></label>
+															<div class="col-sm-10">
+																<label class='col-sm-2 control-label' style="padding-top:30px;">Overall Instrument Type</label>
+																<div class='col-sm-8 form-inline'>
+																	<div class="input-group padding-right-10">
+																		<select class='form-control' ng-model="channelObj.Id" style="margin-top:20px" ng-change="onOverallChange(channelObj.Id)">
+																			<option ng-repeat="(key, data) in InstrumentTypeList" value="{{key}}">{{data}}</option>
+																		</select>
+																	</div>
+																	<div class="input-group padding-right-10">
+																		<div style="margin-bottom:5px;font-weight:700;">Upper Limit Level Of Warning</div>
+																		<div class="input-group">
+																			<input type="number" id="overall_warning" class="form-control" min="0" max="99999.999" step="0.001" ng-model="channelObj.Arr[0].SB" ng-disabled="channelObj.Id != '0'">
+																			<span class="input-group-addon" style="width: 5px">{{channelObj.Arr[0].unit}}</span>
+																		</div>
+																	</div>
+																	<div class="input-group">
+																		<div style="margin-bottom:5px;font-weight:700;">Upper Limit Level Of Error</div>
+																		<div class="input-group">
+																			<input type="number" id="overall_err" class="form-control" min="0" max="99999.999" step="0.001" ng-model="channelObj.Arr[0].Err" ng-disabled="channelObj.Id != '0'">
+																			<span class="input-group-addon" style="width: 5px">{{channelObj.Arr[0].unit}}</span>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class='form-group' ng-show="!isTemperatureSensor(channelObj.Rng)">
+														<label class="col-sm-2 control-label"></label>
+														<div class="col-sm-10">
+															<label class='col-sm-2 control-label' style="padding-top:30px;">
+																Sensor Detection
+																<i class="fa fa-fw fa-info-circle" onmouseover="$('#sensor_detection_tooltip').show()" onmouseout="$('#sensor_detection_tooltip').hide()"></i>
+																<div id='sensor_detection_tooltip'><img src='/config/sensor_detection.png'/></div>
+															</label>
+															<div class='col-sm-8 form-inline'>
+																<div class="input-group padding-right-10">
+																	<div style="margin-bottom:5px;font-weight:700;">
+																		Trigger Level
+																	</div>
+																	<div class="input-group">
+																		<input type='number' class='form-control' min="0.001" max="50.000" step="0.001" ng-model="channelObj.Tg">
+																		<span class="input-group-addon" style="width: 5px">g</span>
+																	</div>
+																</div>
+																<div class="input-group padding-right-10">
+																	<div style="margin-bottom:5px;font-weight:700;">
+																		Delay Counts
+																	</div>
+																	<div class="input-group">
+																		<input type='number' class='form-control' min="0" max="255" ng-model="channelObj.De">
+																	</div>
+																</div>
+																<div class="input-group">
+																	<div style="margin-bottom:5px;font-weight:700;">
+																		Analyzed Counts
+																	</div>
+																	<div class="input-group">
+																		<input type='number' class='form-control' min="1" max="255" ng-model="channelObj.Alt">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class='form-group' ng-show="!isTemperatureSensor(channelObj.Rng)">
+														<label class="col-sm-2 control-label"></label>
+														<div class="col-sm-10">
+															<label class='col-sm-2 control-label' style="padding-top:30px;">Gear Mesh Defect</label>
+															<div class='col-sm-8 form-inline'>
+																<div class="radio padding-right-10" style="padding-top:22px;">
+																	<label style="margin-left:20px;">
+																		<input type="radio" ng-model="channelObj.DEn[0]" ng-change="changeRpmMax()" value="0" style="position:absolute;margin-left:-20px;">Disable&nbsp;&nbsp;
+																	</label>
+																	<label style="margin-left:20px;">
+																		<input type="radio" ng-model="channelObj.DEn[0]" ng-change="changeRpmMax()" value="1" style="position:absolute;margin-left:-20px;">Enable<br/>
+																	</label>
+																</div>
+																<div class="input-group">
+																	<div style="margin-bottom:5px;font-weight:700;">Gear Ratio</div>
+																	<div class="input-group">
+																		<input type='number' class='form-control' min="5" max="255" ng-model="channelObj.Rst" ng-disabled="channelObj.DEn[0]=='0'">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class='form-group' ng-show="!isTemperatureSensor(channelObj.Rng)">
+														<label class="col-sm-2 control-label"></label>
+														<div class="col-sm-10">
+															<label class='col-sm-2 control-label' style="padding-top:30px;">Vane Pass Defect</label>
+															<div class='col-sm-8 form-inline'>
+																<div class="radio padding-right-10" style="padding-top:22px;">
+																	<label style="margin-left:20px;">
+																		<input type="radio" ng-model="channelObj.DEn[1]" ng-change="changeRpmMax()" value="0" style="position:absolute;margin-left:-20px;">Disable&nbsp;&nbsp;
+																	</label>
+																	<label style="margin-left:20px;">
+																		<input type="radio" ng-model="channelObj.DEn[1]" ng-change="changeRpmMax()" value="1" style="position:absolute;margin-left:-20px;">Enable<br/>
+																	</label>
+																</div>
+																<div class="input-group">
+																	<div style="margin-bottom:5px;font-weight:700;">Number of Vane</div>
+																	<div class="input-group">
+																		<input type='number' class='form-control' min="3" max="255" ng-model="channelObj.Prot" ng-disabled="channelObj.DEn[1]=='0'">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="well">
+														<div class='form-group'>
+															<label class="col-sm-2 control-label">Vibration Alarm And Range</label>
+															<div class='col-sm-9'>
+																<div class='table-responsive' style="margin-left:25px;">
+																	<table class="table" >
+																		<thead>
+																			<tr class="text-nowrap">
+																				<th class="text-center">Name</th>
+																				<th class="text-center">Upper Limit Level Of Warning</th>
+																				<th class="text-center">Upper Limit Level Of Error</th>
+																				<th class="text-center">Mode</th>
+																				<th class="text-center">Magnification</th>
+																				<th class="text-center">Orders/Start Freq.</th>
+																				<th class="text-center">Bandwidth/Stop Freq.</th>
+																			</tr>
+																		</thead>
+																		<tbody>
+																			<tr ng-repeat="featureConfig in channelObj.Arr track by $index" class="text-nowrap" ng-if="$index > 0 && $index <= 13">
+																				<td style="vertical-align: middle;">{{featureConfig.name}}</td>
+																				<td>
+																					<div ng-if="featureConfig.unit != ''" class='input-group'>
+																						<input type='number' class='form-control' min="0" max="99999.999" step="0.001" ng-model="featureConfig.SB">
+																						<span class="input-group-addon" ng-bind-html="featureConfig.unit"></span>
+																					</div>
+																					<input ng-if="featureConfig.unit == ''" type='number' class='form-control' min="0" max="99999.999" step="0.001" ng-model="featureConfig.SB">
+																				</td>
+																				<td>
+																					<div ng-if="featureConfig.unit != ''" class='input-group'>
+																						<input type='number' class='form-control' min="0" max="99999.999" step="0.001" ng-model="featureConfig.Err">
+																						<span class="input-group-addon" ng-bind-html="featureConfig.unit"></span>
+																					</div>
+																					<input ng-if="featureConfig.unit == ''" type='number' class='form-control' min="0" max="99999.999" step="0.001" ng-model="featureConfig.Err">
+																				</td>
+																				<td class="text-center" style="vertical-align: middle; min-width: 100px;">
+																					<select ng-if="featureConfig.Idx > 3 && featureConfig.Idx < 14" class='form-control' ng-model="featureConfig.Md">
+																						<option ng-repeat="item in powerInBandMode" ng-selected="{{item.key==featureConfig.Md}}" value="{{item.key}}" ng-bind-html="item.value"></option>
+																					</select>
+																					<div ng-if="featureConfig.Idx <= 3 || featureConfig.Idx >= 14">-</div>
+																				</td>
+																				<td class="text-center" style="vertical-align: middle;">
+																					<input ng-if="featureConfig.Idx > 3 && featureConfig.Idx < 14" type='number' class='form-control' min="1" max="255" ng-model="featureConfig.P">
+																					<div ng-if="featureConfig.Idx <= 3 || featureConfig.Idx >= 14">-</div>
+																				</td>
+																				<td class="text-center" style="vertical-align: middle;">
+																					<div ng-if="featureConfig.Idx > 3 && featureConfig.Idx < 14 && featureConfig.Md == 1" class='input-group'>
+																						<input type='number' class='form-control' min="5" max="8000" ng-model="featureConfig.DB">
+																						<span class="input-group-addon">Hz</span>
+																					</div>
+																					<input ng-if="featureConfig.Idx > 3 && featureConfig.Idx < 14 && featureConfig.Md == 0" type='number' class='form-control' min="1" max="1599" step="0.1" ng-model="featureConfig.DB">
+																					<div ng-if="featureConfig.Idx <= 3 || featureConfig.Idx >= 14">-</div>
+																				</td>
+																				<td class="text-center" style="vertical-align: middle;">
+																					<div ng-if="featureConfig.Idx > 3 && featureConfig.Idx < 14 && featureConfig.Md == 1" class='input-group'>
+																						<input type='number' class='form-control' min="5" max="8000" ng-model="featureConfig.BR">
+																						<span class="input-group-addon">Hz</span>
+																					</div>
+																					<input ng-if="featureConfig.Idx > 3 && featureConfig.Idx < 14 && featureConfig.Md == 0" type='number' class='form-control' min="0.1" max="1" step="0.1" ng-model="featureConfig.BR">
+																					<div ng-if="featureConfig.Idx <= 3 || featureConfig.Idx >= 14">-</div>
+																				</td>
+																			</tr>
+																		</tbody>
+																	</table>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class='form-group'>
+														<label class="col-sm-1 control-label"></label>
+														<div class="col-sm-11">
+															<label class='col-sm-3 control-label' style="padding-top:30px;">Temperature Alarm</label>
+															<div class='col-sm-8 form-inline'>
+																<div class="input-group padding-right-10">
+																	<div style="margin-bottom:5px;font-weight:700;">Upper Limit Level Of Warning</div>
+																	<div class="input-group">
+																		<input type='number' class='form-control' min="-99999.999" max="99999.999" step="0.001" ng-model="channelObj.temp.SB">
+																		<span class="input-group-addon" style="width: 5px">{{channelObj.temp.OffsetUnitName}}</span>
+																	</div>
+																</div>
+																<div class="input-group">
+																	<div style="margin-bottom:5px;font-weight:700;">Upper Limit Level Of Error</div>
+																	<div class="input-group">
+																		<input type='number' class='form-control' min="-99999.999" max="99999.999" step="0.001" ng-model="channelObj.temp.Err">
+																		<span class="input-group-addon" style="width: 5px">{{channelObj.temp.OffsetUnitName}}</span>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div><!-- panel-body -->
+												<div class="panel-footer clearfix">
+													<div class="pull-right">
+														<button class="btn btn-success privilege root admin" ng-click="onSensorConfigClick()"><i class="fa fa-check"></i> Submit</button>
+													</div>
+												</div>
+											</div><!-- panel -->
+										</div>
+									</div>
+								</div>
+							</div><!-- panel-body -->
+						</div><!-- panel -->
+					</div><!-- tab-pane -->
+				</div><!-- tab-content -->
+			</div>
+		</div>
+	</div>
+</div><!-- ng-controller -->

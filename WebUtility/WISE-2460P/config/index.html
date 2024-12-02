@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Cache-Control" content="no-cache">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Advanetch Module Web Configuration">
+		<meta name="author" content="Advantech">
+		<link rel="shortcut icon" href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAJUSURBVDhPhZLLaxNRFIfnHxGKCi7cuBDULlxIQQpdN+JGRUXMQilWdOMiiEURLILWQnxAK7bUVEn6CNVqSR9pm2SSmWTymKSZvNM0adqoSSYJJD/vnQ6N0WC/xQz3cb5z7r2HKZdlhKMJlEplHER+ZxeBjTDkSkWdAZh0JguvKMElBP4riSVTcPACtnLbyrheryt/hn68wQ1MTM/B7RdBK2rH0rqDVBpTR4AYjqBCKlEElGgiiY8zX8D7RBRLJXV2D5ptzemCPywhu51HcjMD1u1V1vYFlHgqjTHjLDhynF/FpiQoRRAgGYVgEA63AKuDQy6fV9ZaBJR0ZgsjBhPJ4EN+twApnoAoxSCIIayxTuRIBZVqVd3dRkBJpTcxPDoGK8vBznmUYJZzq6uttBVQ3hs+49HzVxBMZqzoHkKyLKLRaKirTdoKpFgcNpLxcf99sNo7yE2awd66C79xCvjL0SKgGUJSFB5yWXxAxDfzHIY7joLt1oDX9sN1sw/C+IS6e499QbVagxAggeQZeV8AllUbarUa4jyPgY4jsPT0gr92G84rWkgfxtUoVUBb0+ZyY2p+Qbn9ZRvb0gsSkTw7dhzz53rgvHgd9t5LCI2M0pLB0Cb5umRVsntI2YvrLAo/fqqhTRLkWEMnT8Hc2QXuwlW4LmsRMRnB0IbQDb7A7HcLEa0gk82pIf+yk0rhZedZLJzuguHEGYRnpsHQixvUv0OfbgAJ8v4HUSSN9Fajweqb18qYkWUZN+49wJMhPZbtbNu3/hPX5Cc8PXQY+vPdkAsF/AZH45idlVfYFgAAAABJRU5ErkJggg==">
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<!-- Bootstrap Core CSS -->
+		<link href="/config/bootstrap.css" rel="stylesheet">
+		<!-- nv.d3 core CSS -->
+		<link href="/config/nvd3.css" rel="stylesheet" type="text/css">
+		<!-- advantech core CSS -->
+		<link href="/config/adv.css" rel="stylesheet">
+		<!-- add dev parameter to prevent cache in Wise Studio -->
+		<script src="/config/parameter.js?dev=2400"></script>
+		<script src="/config/version.js?dev=2400"></script>
+		<!-- jQuery Version 1.11.0 -->
+		<script src="/config/jquery.js"></script>
+		<script src="/config/angular.js"></script>
+		<script src="/config/angular-sanitize.js"></script>
+		<!-- moment and Bootstrap Core JavaScript -->
+		<script src="/config/moment.js"></script>
+		<script src="/config/bootstrap.js"></script>
+		<!-- d3, nvd3 and iopctrl Core JavaScript -->
+		<script src="/config/d3.js"></script>
+		<script src="/config/nvd3.js"></script>
+		<script src="/config/iopctrl.js"></script>
+		<!-- Advantech Core JavaScript -->
+		<script src="/config/adv_common.js?dev=2400"></script>
+		<script src="/config/advT1X0.js?dev=2400"></script>
+		<script>document.write("<title>"+module+"</title>");</script>
+	</head>
+	<body onload='onload();'>
+		<div id="wrapper" class='page-wrap'>
+			<!--Navigation-->
+			<nav class='navbar navbar-inverse navbar-fixed-top' role='navigation' id='titleNavbar'>
+				<!--Brand and toggle get grouped for better mobile display -->
+				<div class='navbar-header'>
+					<button type='button' class='navbar-toggle' data-toggle='collapse' data-target='#collapseableNavbar' >
+						<span class='sr-only'>Toggle navigation</span>
+						<span class='icon-bar'></span>
+						<span class='icon-bar'></span>
+						<span class='icon-bar'></span>
+					</button>
+					<a class='navbar-brand ajax-home' href='/config/index.html' style='font-size:20px;'><script>document.write(module)</script></a>
+				</div>
+				<!--Top Menu Items-->
+				<ul class='nav navbar-right top-nav' style='font-size:16px;' id='navbarUserInfo'>
+					<li class='dropdown'>
+						<a class='dropdown-toggle' data-toggle='dropdown' id='userTitle'>
+							<i class='fa fa-user'></i>
+							<b class='caret'></b>
+						</a>
+						<ul class='dropdown-menu'>
+							<li>
+								<a id='logout'><i class='fa fa-fw fa-eject'></i> Log Out</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<!--Sidebar Menu Items - These collapse to the responsive navigation menu on small screens-->
+				<div class='collapse navbar-collapse' id ='collapseableNavbar'>
+					<ul class='nav navbar-nav side-nav main-menu' id ='collapseableListview' style='font-size:16px;'>
+						<li>
+							<a id ='dashboard' href='/config/index.html' class='ajax-home'><i class='fa fa-fw fa-info-circle'></i> Information </a>
+						</li>
+						<li id='mainMenuConfig'>
+							<a id ='configuration' href='/config/config.html' onclick="return loadConfigPage();" class='ajax-link'> <i class='fa fa-fw fa-wrench'></i> Configuration </a>
+						</li>
+						<li id='soltInfoListViewItem'></li>
+ 						<li class='hasMoreType'  id='mainMenuAdvanced'>
+							<div id ='advancedFunction' href='/config/advanced.html' class='ajax-link' style="color: #777;cursor: pointer;line-height: 20px;padding: 15px;width: 225px;"><i class='fa fa-fw fa-cogs'></i>  Advanced
+								<i class='fa fa-fw fa-caret-down'></i>
+							</div>
+							<ul class='collapse' id="advanced">
+							</ul>
+						</li>
+					</ul>
+				</div><!--.navbar-collapse-->
+			</nav>
+			<!--Confirm Modal -->
+			<div class="modal fade" id="CommonConfirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">
+								<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+							</button>
+							<h4 class="modal-title" id="confirmModalLabel"></h4>
+						</div>
+
+						<div class="modal-body" id="confirmContext"></div>
+						<div class="modal-footer">
+							<button id="btnCommonConfirm" class="btn btn-success">
+								Yes
+							</button>
+							<button id="btnCommonCancel" class="btn btn-danger" data-dismiss="modal">
+								No
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="page-context" style='background-color:#fff; min-width:300px;'>
+				<center>
+					<button class="title-toggle" id="btnMenuToggle" data-target="#titleNavbar #page-context">
+						<span class='fa fa-angle-double-up fa-2x' style='margin-top:10px;'></span>
+					</button>
+				</center>
+				<div id="page-wrapper" ng-app="wiseApp">
+					<center>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<h1>
+							<i class="fa fa-cog fa-spin"></i> initializing...
+						</h1>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+					</center>
+				</div>
+				<!-- /#page-wrapper -->
+			</div>
+			<!-- for Display in WISE Studio -->
+			<center style='color:#ffffff;'>
+				Version : <script>document.write(Advantech.Profile.Information.Version);</script>, Copyright &copy; <script>document.write(Advantech.Profile.Information.Date);</script>&nbsp;By&nbsp;Advantech
+			</center>
+		</div>
+		<!-- /#wrapper -->
+		<script>
+			function buildIoCommunicateBoardProfile(){
+				try{
+					//parse device module name from parameter.js
+					var combineArry = module.split("-");
+					var baseBoard = combineArry[0] + "-" + combineArry[1];
+					var boardFunction = "";
+					var deviceName = baseBoard;
+
+					//error check
+					if(combineArry.length < 2 || WiseModule.baseBoard[deviceName] === undefined){
+						return false;
+					}
+
+					//fuzzy match
+					if(combineArry.length == 3){
+						deviceName = deviceName + "-" + combineArry[2];
+					}
+
+					//build module device profile and store in Advantech.Profile.DeviceEmun
+					Advantech.Profile.DeviceEmun = {};
+					Advantech.Profile.DeviceEmun[deviceName] = {};
+					$.extend(true, Advantech.Profile.DeviceEmun[deviceName], WiseModule.baseBoard[baseBoard]);
+					return true;
+				}catch(e){
+					return false;
+				}
+			}
+			function loadConfigPage(){
+				Advantech.Utility.loadAjaxContent(null, "/config/config.html", null, null, true);
+			};
+			(function(){
+				var $toggleBtn = $("#btnMenuToggle");
+				var toggleTargets = [];
+				var targetsIds = $toggleBtn.attr("data-target").split(" ");
+				var dragFlag = false, basePosY, mouseStartPosY, menuEndPosY, isShow = true, MAX_MARGIN_TOP = -85;
+				for(var idx = 0; idx < targetsIds.length; ++idx){
+					toggleTargets.push($(targetsIds[idx]));
+				}
+				$toggleTargets = $(toggleTargets);
+				function setDisplayStatus(displayState){
+					isShow = displayState;
+			    	var $span = $toggleBtn.find("span");
+			    	var unlockIdx = $toggleTargets.length -1;
+			    	if(displayState == true){
+			    		$span.removeClass('fa-angle-double-down');
+			        	$span.addClass('fa-angle-double-up');
+			        	$toggleTargets.each(function(idx, obj){
+		            		obj.css("margin-top", "0px")
+		          		});
+			    	}
+			    	else{
+			        	$span.addClass('fa-angle-double-down');
+			        	$span.removeClass('fa-angle-double-up');
+			        	$toggleTargets.each(function(idx, obj){
+	          				obj.css("margin-top", MAX_MARGIN_TOP+"px");
+	          			});
+			        }
+		    	};
+		    	function checkPosition(){
+				    if($(window).width() >= 765)
+				    {
+				       	$toggleTargets.each(function(index, obj){
+				       		isShow = true;
+				       		setDisplayStatus(true);
+				       	});
+				    }
+				};
+				$('#CommonConfirmModal').on('hidden.bs.modal', function(){
+					//modal dialog used in many places, unbind event handler to prevent unexpected action
+					$("#CommonConfirmModal #btnCommonConfirm").unbind( "click" );
+				});
+		    	$(document).load($(window).bind("resize", checkPosition));
+				$toggleBtn.on({
+	          	"mousedown touchstart": function(e) {
+			            e.preventDefault();
+			            e.stopPropagation();
+			            dragFlag = true;
+			            basePosY = (isShow)?0:MAX_MARGIN_TOP;
+			            menuEndPosY = 0.0001;
+			            mouseStartPosY = (e.pageY || e.originalEvent.touches[0].pageY);
+			     },
+		        "mousemove touchmove": function(e) {
+		            	var difference, move;
+			            if (!dragFlag) {
+			            	return;
+			            }
+			            e.preventDefault();
+			            difference = (e.pageY || e.originalEvent.touches[0].pageY) - mouseStartPosY;
+			            menuEndPosY = (isShow)?(basePosY+difference):(basePosY+difference);
+			            if(menuEndPosY > 0 || menuEndPosY < MAX_MARGIN_TOP){
+			             	return;
+			            }
+				        $toggleTargets.each(function(idx, obj){
+		           			obj.css("margin-top", menuEndPosY+"px");
+		           		});
+				},
+	          	"mouseup touchend": function(e) {
+	          			if (!dragFlag) {
+		             	   return;
+		              	}
+		              	var state;
+		              	e.preventDefault();
+		              	dragFlag = false;
+	          			if (menuEndPosY) {
+	          				if(isShow){
+	          					state = (menuEndPosY <= 0.0001)?!isShow:isShow;
+	          				}else{
+	          					state = (menuEndPosY >= MAX_MARGIN_TOP)?!isShow:isShow;
+	          				}
+			            }
+			            setDisplayStatus(state);
+			            menuEndPosY = false;
+	          	 },
+	          	"mouseleave": function(e) {
+	          		e.preventDefault();
+		            $toggleBtn.trigger("mouseup");
+		         }
+          	});
+			})();
+
+			/*function errorPage(){
+					$("#page-wrapper").html("<center>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<h1>"+
+					"<i class='fa fa-exclamation-triangle'></i> initial Failed..."+
+					"</h1>"+
+					"<a class='btn btn-danger' href='/config'><i class='fa fa-fw fa-home'></i>Re-Connect</a>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+					"<br>"+
+				"</center>");
+				};*/
+			function errorPage (code, msg, apiErrorCode, jsonObjMsg) {
+				var profile = Advantech.Utility.ProfileRecordInstance.getInstance().getProfile();
+				var errorMessage = 'RESTful API: ' + onLoadAPI + ' response error.'
+				if (typeof apiErrorCode != 'undefined') {
+					errorMessage = Advantech.Profile.API_ERROR_CODE_NAME[apiErrorCode] || ''
+				}
+				$("body").html( '<div class="container-fluid">'+
+									'<div class="row">'+
+										'<div class="col-xs-12 text-center" style="color:white;">'+
+											'<h1>' + errorMessage + '</h1>'+
+											(typeof profile != 'undefined' && typeof profile.FwVer != 'undefined' ? '<h3>FW version: ' + profile.FwVer + ', A/D FW version: ' + profile.ADVer + ', Web Utility version: ' + WEB_UTILITY_VERSION + '</h3>' : '<h3>Web Utility version: ' + WEB_UTILITY_VERSION + '</h3>')+
+											'<h6>current RESTful API: ' + onLoadAPI + '</h6>'+
+										'</div>'+
+									'</div>'+
+								'</div>');
+			}
+			try{
+				var waitForm = Advantech.Form.WaitingForm.getInstance();
+				waitForm.showPleaseWait(errorPage);
+				var adamT1X0form = new Advantech.Form.MainForm.AdamT1X0form('wrapper');
+				var couplerInfo = null, networkConfig = null, slotInfo = null, generalStatus = null
+				var nodeListArray = null; //end devices of gateway
+				var nodeAmount = 0; //end device amount of gateway
+				var onLoadAPI = null;
+
+				//adamT1X0form.initialEventHandle();
+				function onload() {
+					// check IE version
+					var myNav = window.navigator.userAgent.toLowerCase();
+					if (myNav.indexOf('msie') > -1) { // below IE11
+						Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+						var version = parseInt(myNav.split('msie')[1]);
+						Advantech.Utility.moduleNotSupportPage('Please Upgrade Internet Explorer ' + version + ' To Internet Explorer 11', WEB_UTILITY_VERSION);
+						return;
+					}
+
+					adamT1X0form.initialEventHandle();
+					$('#wrapper #navbarUserInfo').html("");
+					Advantech.Privilege.UIManagerSingleton.getInstance(2); //root for VCOM
+					if(!buildIoCommunicateBoardProfile()){
+						Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+						Advantech.Utility.moduleNotSupportPage("This Module("+ module +") is not supported with current WISE Studio version", WEB_UTILITY_VERSION);
+						return;//stop further html loading
+					}
+
+					//httpGetOperation(HTTP_GET, URL_GENERAL_CONFIG, callbackGetGeneralConfig, callbackServerError);
+					//force module changes from raw data mode to normal mode
+					// httpGetOperation(HTTP_PATCH, URL_SENSOR_MEASURE,
+					// 	function(){
+							Advantech.Utility.loadAjaxContent("dashboard", "/config/dashboard.html", null, onDashboardLoad);
+					// 	},
+					// 	callbackServerError,
+					// 	JSON.stringify({"En": 0})
+					// );
+					//Advantech.Utility.loadAjaxContent("dashboard", "/config/dashboard.html", null, onDashboardLoad);
+                };
+
+                function checkSiteSurveyMode(){
+					// if (typeof window.external.VComWebUtilitySyncCallBackFun !== 'undefined') {
+					if (Advantech.Utility.checkExternalFunExist()) {
+						var containerId = 'wrapper';
+						var htmlCode = '<a href="#" id="siteSurvey">';
+						htmlCode += "<i class='fa fa-fw fa-sitemap'></i> Site Survey";
+						htmlCode += "</a>";
+						$("#" + containerId + " #soltInfoListViewItem").append(htmlCode);
+						$("#" + containerId + ' #soltInfoListViewItem #siteSurvey').on('click', function(e) {
+							if (Advantech.Data.ModuleData.getInstance().getMode() !== 2) {
+								Advantech.Form.MessageForm.getInstance().showMessageBox("<h4>Error<h4>", "<h5><i class='fa fa-fw fa-exclamation-triangle'></i>Site Survey Is Only Support LoRaWAN Mode.");
+								return;
+							}
+							$("#CommonConfirmModal #confirmModalLabel").html("Please Confirm");
+							$("#CommonConfirmModal #confirmContext").html("<i class='fa fa-fw fa-warning'></i>Module will enter Site Survey mode. Other operation is not allowed. Please make sure that RF module configuration have been done.<br/><br/>Do you want to proceed?");
+							$("#CommonConfirmModal").modal("show");
+							$("#CommonConfirmModal #btnCommonConfirm").one("click", function(){
+								httpGetOperation(HTTP_PATCH, URL_SITE_SURVEY_CONFIG + '/slot_' + SLOT_NUMBER,
+										function(){
+											$("#" + containerId + ' #soltInfoListViewItem #siteSurvey').unbind('click');
+											$("#CommonConfirmModal").modal("hide");
+											//hide all other menu
+											$("#" + containerId + " #collapseableNavbar")
+												.find('#dashboard').hide().end()
+												.find('#configuration').hide().end()
+												.find('#ioStatus0').hide().end()
+												.find('#mainMenuAdvanced').hide();
+											Advantech.Utility.loadAjaxContent(null, "/config/pages.html", null, null, true);
+										},
+										function(){
+											Advantech.Form.MessageForm.getInstance().showMessageBox("<h4>Error<h4>", "<h5><i class='fa fa-fw fa-exclamation-triangle'></i>Error occurs when enter Site Survery Mode! Please restart module!");
+										}, JSON.stringify({"En": 1}));
+							});
+						});
+					}
+                    if (Advantech.Data.ModuleData.getInstance().getMode() === 2) {
+                        httpGetOperation(HTTP_GET, URL_SITE_SURVEY_CONFIG + "/slot_" + SLOT_NUMBER,
+                            function(jsonObj){
+                                if(jsonObj.En == 1){//FW is in site survey mode
+									// if (typeof window.external.VComWebUtilitySyncCallBackFun === 'undefined') {
+									if (!Advantech.Utility.checkExternalFunExist()) {
+										Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+										Advantech.Utility.moduleNotSupportPage("Module is in Site Survey mode. Please use WISE Studio to continue operation.", WEB_UTILITY_VERSION);
+										return;
+									}
+                                    //disable unused items in VCOM
+                                    $("#" + containerId + " #collapseableNavbar")
+                                        .find('#dashboard').hide().end()
+                                        .find('#configuration').hide().end()
+                                        .find('#mainMenuAdvanced').hide();
+                                    var htmlCode = '<a href="#" id="siteSurvey">';
+                                    htmlCode += "<i class='fa fa-fw fa-sitemap'></i> Site Survey";
+                                    htmlCode += "</a>";
+                                    $("#wrapper #soltInfoListViewItem").html(htmlCode);
+                                    Advantech.Utility.loadAjaxContent(null, "/config/pages.html", null,
+                                        function(){
+                                            Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                                        }, true);
+                                }else{//normal mode
+                                    callbackFinished();
+                                }
+                            },
+                            callbackServerError);
+                    } else {
+                        callbackFinished();
+                    }
+				}
+
+				function callbackGetGeneralConfig(jsonObj) {
+					Advantech.Data.ModuleData.getInstance().setIoMode(jsonObj.Md);//set IO board working mode
+					Advantech.Utility.loadAjaxContent("dashboard", "/config/dashboard.html", null, onDashboardLoad);
+				}
+
+				function callbackServerError(code, msg, apiErrorCode, jsonObjMsg) {
+					waitForm.hidePleaseWait();
+					Advantech.Utility.TimerDispatchSingleton.getInstance().ClearTimer();
+					errorPage(code, msg, apiErrorCode, jsonObjMsg);
+				};
+
+				function onDashboardLoad() {
+					couplerInfo = new Advantech.Form.SystemForm.CouplerInfoPanel("DashboardCouplerInformationPanel");
+					generalStatus = new Advantech.Form.ConfigForm.GeneralStatusPanel("GeneralStatusPanel", true);
+					networkConfig = new Advantech.Form.ConfigForm.NetworkPanel("DashboardNetworkPanel", true);
+					couplerInfo.initialPanel(true);
+					generalStatus.initialPanel();
+					networkConfig.initialPanel();
+
+				    slotInfo = new Advantech.Form.SystemForm.SlotInfoPanel("DashboardSlotInformationPanel");
+					slotInfo.initialPanel("DashboardContext", true);
+					var userType = {Acnt: Advantech.Privilege.UIManagerSingleton.getInstance().getRank()};
+					adamT1X0form.initialForm(Advantech.Profile.AdvancedEmun.ADAMT1X0Series.getAdvancedFunctionProfile(), userType);
+					httpGetOperation(HTTP_GET, URL_SYS_INFO + '/slot_' + SLOT_NUMBER, callbackGetDashboardCouplerInfor, callbackServerError);
+					httpGetOperation(HTTP_GET, URL_SENSOR_GENCONFIG + '/slot_' + SLOT_NUMBER, callbackGetSensorInfor, callbackServerError);
+				};
+
+				function callbackGetDashboardCouplerInfor(jsonObj) {
+					if(couplerInfo !== null){
+						couplerInfo.setCouplerInfoPanel(jsonObj);
+						//callbackGetDashboardNetworkConfig();
+						// getLpwanSettingList();
+						callbackGetProfile();
+					}else{
+						callbackServerError();
+					}
+				};
+				function callbackGetSensorInfor(jsonObj) {
+					$("#DashboardSensorPanel #inpUserSensitivity").val(jsonObj.ReA + " mV/g");
+				}
+				function getLpwanSettingList(){
+					httpGetOperation(HTTP_GET, URL_LPWAN_SETTING_LIST + "/slot_" + SLOT_NUMBER,
+						function(jsonObj){
+							callbackGetDashboardNetworkConfig(jsonObj.RT)
+						},
+						callbackServerError);
+				}
+				function callbackGetDashboardNetworkConfig(settingList) {
+					httpGetOperation(HTTP_GET, URL_LPWAN_CONFIG + "/slot_" + SLOT_NUMBER,
+						function(jsonObj){
+							Advantech.Data.ModuleData.getInstance().setMode(jsonObj.Md);//set module working mode
+							couplerInfo.setIoWorkingMode(jsonObj);
+							networkConfig.setNetworkConfig(jsonObj, settingList);
+							getGeneralStatus();
+						},
+						callbackServerError);
+				}
+				function getGeneralStatus(){
+					httpGetOperation(HTTP_GET, URL_GENERAL_STATUS + "/slot_" + SLOT_NUMBER,
+						function(jsonObj){
+							callbackGetGeneralStatus(jsonObj, true);
+						},
+						callbackServerError);
+
+					//event handler for refresh button
+					generalStatus.onGeneralStatusRefreshed(function(obj, e){
+						Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+						httpGetOperation(HTTP_GET, URL_GENERAL_STATUS + "/slot_" + SLOT_NUMBER,
+							function(jsonObj){
+								callbackGetGeneralStatus(jsonObj);
+								waitForm.hidePleaseWait();
+							},
+							callbackServerError, JSON.stringify(e));
+					});
+				}
+				function callbackGetGeneralStatus(jsonObj, bInitial){
+					generalStatus.setPanel(jsonObj);
+					if(bInitial){
+						/*httpGetOperation(HTTP_GET, URL_NETWROK,
+							function(networkData){
+								callbackGetDashboardNetwork(networkData);
+							},
+							callbackServerError);*/
+						callbackGetProfile();
+					}
+				}
+				function callbackGetProfile(){
+					httpGetOperation(HTTP_GET, URL_PROFILE + "/slot_" + SLOT_NUMBER, //use slot0 for VCOM(node device)
+							function(jsonObj){
+								slotInfo.setSlotInfoPanel(0, jsonObj);
+								Advantech.Utility.ProfileRecordInstance.getInstance(jsonObj);
+
+								Advantech.Utility.RecordContextPageIdSingleton.getInstance().SetCurrentModule(jsonObj.Id);
+								//couplerInfo.checkUpgradePrompt(jsonObj);
+
+								if(typeof(jsonObj.FCS) != 'undefined' && jsonObj.FCS & Advantech.Profile.FCSMask.SiteSurvey){//FW support site survey
+									checkSiteSurveyMode();
+								}else{
+									callbackFinished();
+								}
+							},
+							callbackServerError);
+				}
+
+				function callbackFinished(){
+					var profile = Advantech.Utility.ProfileRecordInstance.getInstance().getProfile();
+					Advantech.Utility.dotNetUtilityCallBack(ADVANTECH_PROFILE, profile);
+					waitForm.hidePleaseWait();
+				}
+			}
+			catch(e){
+
+			}
+			window.onerror = function (message, file, line, col, error) {
+				var stack;
+				var jsMsg = message + " on line " + line + " at " + file + "\r\n";
+				if(error != undefined){
+					stack = error.stack;
+				}
+				else{
+					stack = "";
+				}
+				jsMsg += stack;
+			    $("body").html('<div class="container-fluid">'+
+                                '<div class="row">'+
+                                    '<div class="col-xs-12 text-center" style="color:white;">'+
+                                        '<h1>Error Occurs</h1>'+
+                                        '<h3>'+message+'</h3>'+
+                                        '<h3 style="display:none;">Detail: '+jsMsg+'</h3>'+
+                                        "<h1><i class='fa fa-exclamation-triangle fa-5x'></i></h1>"+
+                                        '<h2>Please reconnect module.</h2>'+
+                                        //'<a href="/config" class="btn btn-danger btn-label-left"><span><i class="fa fa-reply"></i></span> Re-login</a>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</div>');
+			};
+		</script>
+	</body>
+</html>

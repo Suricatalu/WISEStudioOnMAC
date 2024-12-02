@@ -1,0 +1,77 @@
+
+<div class="container-fluid">
+	<!-- Page Heading -->
+	<div class="row">
+		<div class="col-lg-12">
+			<h2 class="page-header"><i class="fa fa-fw fa-stethoscope"></i> Diagnostician </h2>
+		</div>
+	</div>
+	<!-- /.row -->
+	<div class="row" id='diagnosticContainer'>
+		<div class="col-sm-12" id ='diagnosticTable'>
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover table-striped" id="tbModbusTable">
+					<thead>
+						<tr>
+							<th> Name </th>
+							<th> Description </th>
+							<th> Value </th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><i class="fa fa-fw fa-save"></i> Data Logger</td>
+							<td> Event Status </td>
+							<td id='dataloggerStatus'>Loading...</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<!--./table-responsive-->
+		</div>
+		<script type="text/javascript">
+			function onGetLogEvent(data, hasRecursive){
+				var dataLogStatus = "";
+				if(data.Evt > 0){
+					var maskLength = 16;
+					var evtArray = Advantech.Utility.convertMaskToArray(data.Evt, maskLength);
+					for(var evtIdx = 0; evtIdx < maskLength; ++evtIdx){
+						if(evtArray[evtIdx] == 1){
+							var eventCode = Math.pow(2, evtIdx);
+							dataLogStatus += Advantech.Profile.DATA_LOG_STATUS[eventCode]+"<br/>";
+						}
+					}
+				}
+				else{
+					dataLogStatus = Advantech.Profile.DATA_LOG_STATUS[0];
+				}
+				$("#dataloggerStatus").html(dataLogStatus);
+				if(hasRecursive){
+					/*Implement next diagnostic function*/
+				}
+			}
+
+			var gobalTimer = Advantech.Utility.TimerDispatchSingleton.getInstance();
+			//For first time update
+	        httpGetOperation(HTTP_GET,
+	                URL_LOG_DATA_EVENT,
+	                function(data){
+	                var hasRecursive = true;
+	                onGetLogEvent(data, hasRecursive);
+	                },
+	                null);
+	        gobalTimer.ClearTimer();
+	        gobalTimer.EnableTimer(function(){
+	                httpGetOperation(HTTP_GET,
+	                    URL_LOG_DATA_EVENT,
+	                    function(data){
+	                    	var hasRecursive = true;
+	                        onGetLogEvent(data, hasRecursive);
+	                    },
+	                    null);
+	            },
+	            3000);
+		</script>
+	</div>
+	<!-- /.row -->
+</div><!-- /.container-fluid -->

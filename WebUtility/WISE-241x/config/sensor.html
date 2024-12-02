@@ -1,0 +1,680 @@
+<style>
+/* table, th, td {
+	border: 1px solid black;
+  } */
+  .btn-default.active{
+	  background-color: white;
+  }
+</style>
+<div ng-controller="SensorCtrl"><!-- ng-controller -->
+	<div class="col-lg-12 row">
+		<ul class="nav nav-tabs nav-justified" role="tablist">
+			<li ng-class="{'active': activeTab === 'status'}">
+		        <a href data-toggle="tab" ng-click="switchTabTo('status')">Status</a>
+		    </li>
+		    <li ng-class="{'active': activeTab === 'config'}">
+		        <a href data-toggle="tab" ng-click="switchTabTo('config')">Configuration</a>
+		    </li>
+		</ul>
+		<div class="tab-content">
+			<div ng-show="isTabShow('status')" class="tab-pane active">
+				<div class='panel panel-default'>
+					<div class='panel-heading'>
+						<h4>Status</h4>
+					</div>
+					<div class='panel-body'>
+						<!-- <ul class="nav nav-tabs nav-justified" role="tablist">
+							<li ng-class="{'active': statusActiveTab === 'status_current'}">
+						        <a href data-toggle="tab" ng-click="switchStatusTab('status_current')">Current</a>
+						    </li>
+						    <li ng-class="{'active': statusActiveTab === 'status_max'}">
+						        <a href data-toggle="tab" ng-click="switchStatusTab('status_max')">Max</a>
+						    </li>
+						    <li ng-class="{'active': statusActiveTab === 'status_min'}">
+						        <a href data-toggle="tab" ng-click="switchStatusTab('status_min')">Min</a>
+						    </li>
+						</ul> -->
+						<div class="tab-content">
+							<p></p>
+							<div class='panel panel-default'>
+		                        <div class='panel-body'>
+		                            <div class='table-responsive'>
+			                            <center>
+											<!-- temperature sensor -->
+			                            	<table class='table-control' ng-show="isTemperatureSensor(channelObj.RangeId)">
+			                                    <tbody>
+			                                        <tr>
+			                                            <td rowspan='7' style="min-width: 380px">
+					                                        <div class="col-md-11">
+					                                            <div class="panel panel-primary">
+						                                            <div class="panel-heading">
+						                                                <h2 class="panel-title"><i class="fa fa-fw fa-dashboard"></i>&nbsp;{{channelObj.RangeName}}</h2>
+						                                            </div>
+						                                            <div class="panel-body">
+						                                                <div id="Temperature" style="font-size:45px;text-align:center;">{{channelObj.value}}&nbsp;{{channelObj.UnitName}}</div>
+						                                            </div>
+																</div>
+						                                    </div>
+														</td>
+													</tr>
+			                                        <tr>
+			                                            <td class='td-label'>
+			                                                <label ng-if="!isWISE2411">Channel:</label>
+			                                                <label ng-if="isWISE2411">Range:</label>
+			                                            </td>
+			                                            <td class='td-control'>
+			                                            	<select class='form-control' ng-model="selectedChannel.ch" ng-change="onValueChannelChange(selectedChannel.ch)">
+			                                            		<option ng-repeat="data in channelSelectList_2411" value="{{data.value}}">{{data.name}}</option>
+			                                            	</select>
+			                                            </td>
+			                                        </tr>
+			                                        <tr ng-if="!isWISE2411">
+			                                            <td class='td-label'><label>Range:</label></td>
+														<td class='td-control'><p style='margin-left:10px;'>{{channelObj.RangeName}}</p></td>
+			                                        </tr>
+			                                        <tr>
+			                                            <td class='td-label'><label>Value:</label></td>
+			                                            <td class='td-control'><p style='margin-left:10px;'>{{channelObj.value}}</p></td>
+			                                        </tr>
+			                                        <!-- <tr ng-show="statusActiveTab === 'status_current'">
+			                                            <td class='td-label'><label>Low Alarm Status:</label></td>
+			                                            <td class='td-control'>
+			                                                <input type = 'checkbox' class='Indicator-checkbox' ng-checked="channelObj.LoA==1"><a class='Indicator-light' style='width:40px; height:25px; float:left;'></a>
+			                                                <button class='btn btn-warning' style='margin-top:-1px;' ng-click="onClearLowAlarmClick()">
+			                                                	<span class='fa fa-fw fa-eraser'></span> Clear
+			                                                </button>
+			                                            </td>
+			                                        </tr> -->
+			                                        <tr ng-show="statusActiveTab === 'status_current'">
+			                                            <td class='td-label'><label>High Alarm Status:</label></td>
+			                                            <td class='td-control'>
+			                                                <input type = 'checkbox' class='Indicator-checkbox' ng-checked="channelObj.HiA==1"><a class='Indicator-light' style='width:40px; height:25px; float:left;'></a>
+			                                                <!-- <button class='btn btn-warning' style='margin-top:-1px;' ng-click="onClearHighAlarmClick()">
+			                                                	<span class='fa fa-fw fa-eraser'></span> Clear
+			                                                </button> -->
+			                                            </td>
+			                                        </tr>
+			                                        <!-- <tr ng-hide="statusActiveTab === 'status_current'">
+			                                            <td class='td-label'><label>Reset Value:</label></td>
+			                                            <td class='td-control'>
+			                                            	<button class='btn btn-success' ng-click="onResetValueClick()">
+			                                            		<span class='fa fa-fw fa-refresh'></span> Reset
+			                                            	</button>
+			                                            </td>
+			                                        </tr> -->
+			                                    </tbody>
+			                                </table>
+
+											<!-- vibration sensor -->
+											<table class='table-control' ng-hide="isTemperatureSensor(channelObj.RangeId) || !isEgF(channelObj.EgF)">
+												<tbody>
+													<tr>
+														<td style="min-width: 410px">
+															<div class="btn-group" data-toggle="buttons">
+																<label class="btn btn-warning" style="width:230px">
+																  <input type="radio" name="options" id="option1" autocomplete="off" checked>Velocity RMS (mm/s)
+																</label>
+																<label class="btn btn-default" style="width:160px">
+																	<input type="radio" name="options" id="option2" autocomplete="off"> {{ showVibrationValue(0) }}
+																</label>
+															</div>
+														</td>
+														<td class='td-label'>
+														    <label ng-if="!isWISE2411">Channel:</label>
+			                                                <label ng-if="isWISE2411">Range:</label></td>
+														<td>
+															<select style="margin-left:10px;" class='form-control' ng-model="selectedChannel.ch" ng-change="onValueChannelChange(selectedChannel.ch)">
+																<option ng-repeat="data in channelSelectList_2411" value="{{data.value}}">{{data.name}}</option>
+															</select>
+														</td>
+			                                        </tr>
+			                                        <tr>
+														<td style="min-width: 410px">
+															<div class="btn-group" data-toggle="buttons">
+																<label class="btn btn-info" style="width:230px">
+																	<input type="radio" name="options" id="option1" autocomplete="off" checked>
+																	<span ng-if="channelObj.Rng == 4256" ng-bind-html="accelerationPeakGText"></span>
+																	<span ng-if="channelObj.Rng == 4257" ng-bind-html="accelerationPeakMS2Text"></span>
+																</label>
+																<label class="btn btn-default" style="width:160px">
+																	<input type="radio" name="options" id="option2" autocomplete="off"> {{ showVibrationValue(1) }}
+																</label>
+															</div>
+														</td>
+														<td class='td-label' ng-if="!isWISE2411"><label>Range:</label></td>
+			                                            <td class='td-control' ng-if="!isWISE2411"><p style='margin-left:10px;' ng-bind-html="channelObj.RangeName"></p></td>
+														<td class='td-label' ng-if="isWISE2411"><label>Value:</label></td>
+			                                            <td class='td-control' ng-if="isWISE2411"><p style='margin-left:10px;'>{{channelObj.value}}</p></td>
+			                                        </tr>
+			                                        <tr>
+			                                            <td style="min-width: 410px">
+															<div class="btn-group" data-toggle="buttons">
+																<label class="btn btn-info" style="width:230px">
+																	<input type="radio" name="options" id="option1" autocomplete="off" checked>
+																	<span ng-if="channelObj.Rng == 4256" ng-bind-html="accelerationRmsGText"></span>
+																	<span ng-if="channelObj.Rng == 4257" ng-bind-html="accelerationRmsMS2Text"></span>
+																</label>
+																<label class="btn btn-default" style="width:160px">
+																	<input type="radio" name="options" id="option2" autocomplete="off"> {{ showVibrationValue(2) }}
+																</label>
+															</div>
+														</td>
+														<td class='td-label' ng-if="!isWISE2411"><label>Value:</label></td>
+			                                            <td class='td-control' ng-if="!isWISE2411"><p style='margin-left:10px;'>{{channelObj.value}}</p></td>
+														<td class='td-label' ng-if="isWISE2411"><label>High Alarm Status:</label></td>
+			                                            <td class='td-control' ng-if="isWISE2411">
+			                                                <input style="margin-top: 0;" type = 'checkbox' class='Indicator-checkbox' ng-checked="channelObj.HiA==1"><a class='Indicator-light' style='width:40px; height:25px; float:left; margin-top: 0;'></a>
+			                                            </td>
+													</tr>
+			                                        <tr>
+														<td style="min-width: 410px">
+															<div class="btn-group" data-toggle="buttons">
+																<label ng-class="isWISE2411 ? (channelObj.SLgDArray[0] == 0 ? 'btn btn-secondary' : 'btn btn-info') : 'btn btn-success'" ng-disabled="isWISE2411 && channelObj.SLgDArray[0] == 0" style="width:230px">
+																	<input type="radio" name="options" id="option1" autocomplete="off" checked>Kurtosis
+																</label>
+																<label class="btn btn-default" ng-disabled="isWISE2411 && channelObj.SLgDArray[0] == 0" style="width:160px">
+																	<input type="radio" name="options" id="option2" autocomplete="off"> {{ showVibrationValue(3) }}
+																</label>
+															</div>
+														</td>
+														<td class='td-label' ng-if="!isWISE2411"><label>High Alarm Status:</label></td>
+			                                            <td class='td-control' ng-if="!isWISE2411">
+			                                                <input style="margin-top: 0;" type = 'checkbox' class='Indicator-checkbox' ng-checked="channelObj.HiA==1"><a class='Indicator-light' style='width:40px; height:25px; float:left; margin-top: 0;'></a>
+			                                                <!-- <button class='btn btn-danger' style='margin-top:-1px;' ng-click="onClearHighAlarmClick()">
+			                                                	<span class='fa fa-fw fa-eraser'></span> Clear
+			                                                </button> -->
+			                                            </td>
+			                                        </tr>
+			                                        <tr ng-show="statusActiveTab === 'status_current'">
+			                                            <td style="min-width: 410px">
+															<div class="btn-group" data-toggle="buttons">
+																<label ng-class="isWISE2411 ? (channelObj.SLgDArray[1] == 0 ? 'btn btn-secondary' : 'btn btn-info') : 'btn btn-primary'" ng-disabled="isWISE2411 && channelObj.SLgDArray[1] == 0" style="width:230px">
+																	<input type="radio" name="options" id="option1" autocomplete="off" checked>Crest Factor
+																</label>
+																<label class="btn btn-default" ng-disabled="isWISE2411 && channelObj.SLgDArray[1] == 0" style="width:160px">
+																	<!-- <input type="radio" name="options" id="option2" autocomplete="off"> <h4>{{channelObj.value[0]}}</h4> -->
+																	<input type="radio" name="options" id="option2" autocomplete="off"> {{ showVibrationValue(4) }}
+																</label>
+															</div>
+														</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+			                                        </tr>
+			                                        <tr ng-show="statusActiveTab === 'status_current'">
+														<td style="min-width: 410px">
+															<div class="btn-group" data-toggle="buttons">
+																<label ng-class="isWISE2411 ? (channelObj.SLgDArray[2] == 0 ? 'btn btn-secondary' : 'btn btn-info') : 'btn btn-warning'" ng-disabled="isWISE2411 && channelObj.SLgDArray[2] == 0" style="width:230px">
+																	<input type="radio" name="options" id="option1" autocomplete="off" checked>Skewness
+																</label>
+																<label class="btn btn-default" ng-disabled="isWISE2411 && channelObj.SLgDArray[2] == 0" style="width:160px">
+																	<!-- <input type="radio" name="options" id="option2" autocomplete="off" checked><h4> 3.25</h4> -->
+																	<input type="radio" name="options" id="option2" autocomplete="off"> {{ showVibrationValue(5) }}
+																</label>
+															</div>
+														</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr ng-show="statusActiveTab === 'status_current'">
+														<td style="min-width: 410px">
+															<div class="btn-group" data-toggle="buttons">
+																<label ng-class="isWISE2411 ? (channelObj.SLgDArray[3] == 0 ? 'btn btn-secondary' : 'btn btn-info') : 'btn btn-info'" ng-disabled="isWISE2411 && channelObj.SLgDArray[3] == 0" style="width:230px">
+																	<input type="radio" name="options" id="option1" autocomplete="off" checked>Standard Deviation
+																</label>
+																<label class="btn btn-default" ng-disabled="isWISE2411 && channelObj.SLgDArray[3] == 0" style="width:160px">
+																	<!-- <input type="radio" name="options" id="option2" autocomplete="off" checked><h4> 3.25</h4> -->
+																	<input type="radio" name="options" id="option2" autocomplete="off"> {{ showVibrationValue(6) }}
+																</label>
+															</div>
+														</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr ng-if="channelObj.EgF.length >= 8" ng-show="statusActiveTab === 'status_current'">
+														<td style="min-width: 410px">
+															<div class="btn-group" data-toggle="buttons">
+																<label ng-class="isWISE2411 ? (channelObj.SLgDArray[4] == 0 ? 'btn btn-secondary' : 'btn btn-info') : 'btn btn-info'" ng-disabled="isWISE2411 && channelObj.SLgDArray[4] == 0" style="width:230px">
+																	<input type="radio" name="options" id="option1" autocomplete="off" checked>
+																	<span ng-if="!isWISE2411">Displacement (um)</span>
+																	<span ng-if="isWISE2411">Peak to Peak Displacement (um)</span>
+																</label>
+																<label class="btn btn-default" ng-disabled="isWISE2411 && channelObj.SLgDArray[4] == 0" style="width:160px">
+																	<!-- <input type="radio" name="options" id="option2" autocomplete="off" checked><h4> 3.25</h4> -->
+																	<input type="radio" name="options" id="option2" autocomplete="off"> {{ showVibrationValue(7) }}
+																</label>
+															</div>
+														</td>
+														<td>&nbsp;</td>
+														<td>
+															<button class='btn btn-success btn-sm' ng-click="onSendValuePacketClick()" ng-if="!isWISE2411">
+			                                            		<span class='fa fa-fw fa-refresh'></span> Send RF Packet
+			                                            	</button>
+														</td>
+													</tr>
+													<tr ng-show="statusActiveTab === 'status_current' && isWISE2411">
+														<td style="min-width: 410px">
+															<div class="btn-group" data-toggle="buttons">
+																<label ng-class="isWISE2411 ? (channelObj.SLgDArray[5] == 0 ? 'btn btn-secondary' : 'btn btn-info') : 'btn btn-info'" ng-disabled="isWISE2411 && channelObj.SLgDArray[5] == 0" style="width:230px">
+																	<input type="radio" name="options" id="option1" autocomplete="off" checked>Clearance Factor
+																</label>
+																<label class="btn btn-default" ng-disabled="isWISE2411 && channelObj.SLgDArray[5] == 0" style="width:160px">
+																	<input type="radio" name="options" id="option2" autocomplete="off"> {{ showVibrationValue(8) }}
+																</label>
+															</div>
+														</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr ng-show="statusActiveTab === 'status_current' && isWISE2411">
+														<td style="min-width: 410px">
+															<div class="btn-group" data-toggle="buttons">
+																<label ng-class="isWISE2411 ? (channelObj.SLgDArray[6] == 0 ? 'btn btn-secondary' : 'btn btn-info') : 'btn btn-info'" ng-disabled="isWISE2411 && channelObj.SLgDArray[6] == 0" style="width:230px">
+																	<input type="radio" name="options" id="option1" autocomplete="off" checked>Shape Factor
+																</label>
+																<label class="btn btn-default" ng-disabled="isWISE2411 && channelObj.SLgDArray[6] == 0" style="width:160px">
+																	<input type="radio" name="options" id="option2" autocomplete="off"> {{ showVibrationValue(9) }}
+																</label>
+															</div>
+														</td>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+													</tr>
+													<tr ng-show="statusActiveTab === 'status_current' && isWISE2411">
+														<td style="min-width: 410px">
+															<div class="btn-group" data-toggle="buttons">
+																<label ng-class="isWISE2411 ? (channelObj.SLgDArray[7] == 0 ? 'btn btn-secondary' : 'btn btn-info') : 'btn btn-info'" ng-disabled="isWISE2411 && channelObj.SLgDArray[7] == 0" style="width:230px">
+																	<input type="radio" name="options" id="option1" autocomplete="off" checked>Impulse Factor
+																</label>
+																<label class="btn btn-default" ng-disabled="isWISE2411 && channelObj.SLgDArray[7] == 0" style="width:160px">
+																	<input type="radio" name="options" id="option2" autocomplete="off"> {{ showVibrationValue(10) }}
+																</label>
+															</div>
+														</td>
+														<td>&nbsp;</td>
+														<td>
+															<button class='btn btn-success btn-sm' ng-click="onSendValuePacketClick()">
+			                                            		<span class='fa fa-fw fa-refresh'></span> Send RF Packet
+			                                            	</button>
+														</td>
+													</tr>
+			                                    </tbody>
+			                                </table>
+
+											<table class='table-control' ng-if="isWISE2411" ng-hide="isTemperatureSensor(channelObj.RangeId) || isEgF(channelObj.EgF)">
+												<tbody>
+													<tr>
+														<td style="min-width:450px;width:60%">
+															<div class="col-md-11">
+																<div class="panel panel-primary">
+																	<div class="panel-heading">
+																		<h2 class="panel-title ng-binding"><i class="fa fa-fw fa-bar-chart-o"></i>&nbsp;Acceleration RMS in Band</h2>
+																	</div>
+																	<div class="panel-body" id="fqBarChart">
+																		<svg style='height:500px'> </svg>
+																	</div>
+																</div>
+															</div>
+														</td>
+														<td style="vertical-align: top;">
+															<table class='table-control'>
+																<tbody>
+																	<tr>
+																		<td class='td-label'>
+																			<label>Range:</label>
+																		</td>
+																		<td class='td-control'>
+																			<select class='form-control' ng-model="selectedChannel.ch" ng-change="onValueChannelChange(selectedChannel.ch)">
+																				<option ng-repeat="data in channelSelectList_2411" value="{{data.value}}">{{data.name}}</option>
+																			</select>
+																		</td>
+																	</tr>
+																	<tr>
+																		<td class='td-label'><label>Value:</label></td>
+																		<td class='td-control'><p style='margin-left:10px;'>{{channelObj.value}}</p></td>
+																	</tr>
+																	<tr ng-show="statusActiveTab === 'status_current'">
+																		<td class='td-label'><label>High Alarm Status:</label></td>
+																		<td class='td-control'>
+																			<input type = 'checkbox' class='Indicator-checkbox' ng-checked="channelObj.HiA==1"><a class='Indicator-light' style='width:40px; height:25px; float:left;'></a>
+																		</td>
+																	</tr>
+																</tbody>
+															</table>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+		                                </center>
+		                            </div>
+		                            <div class='table-responsive' style='display:block;'>
+		                                <table id='"+this.getTableId()+"_overview' class ='table table-bordered table-hover table-striped'>
+		                                    <thead>
+		                                        <tr>
+													<th>
+													    <span ng-if="!isWISE2411">Channel</span>
+													    <span ng-if="isWISE2411">Range</span>
+													 </th>
+													<th>Status</th>
+													<th ng-if="!isWISE2411">Range</th>
+													<th>Value</th>
+		                                            <th>Unit</th>
+		                                        </tr>
+		                                    </thead>
+		                                    <tbody ng-if="!isWISE2411">
+												<tr ng-repeat="channel in sensorValues" ng-click="onTableRowClick(channel.Ch)">
+													<td>{{channel.Ch}}</td>
+													<!-- <td>{{channel.EventName}}</td> -->
+													<td>{{channel.EnableStatus}}</td>
+													<td>{{channel.Desc}}</td>
+													<td>{{channel.value}}</td>
+													<td ng-bind-html="channel.UnitName"></td>
+												</tr>
+		                                    </tbody>
+		                                    <tbody ng-if="isWISE2411">
+												<tr ng-repeat="(i,channel) in sensorValues" ng-click="onTableRowClick(i)" style="cursor: pointer;">
+													<td>{{channel.Desc}}</td>
+													<td>{{channel.EnableStatus}}</td>
+													<td>{{channel.value}}</td>
+													<td ng-bind-html="channel.UnitName"></td>
+												</tr>
+		                                    </tbody>
+		                                </table>
+		                            </div>
+		                        </div><!-- panel-body -->
+		                    </div><!-- panel -->
+						</div><!-- tab-content -->
+					</div><!-- panel-body -->
+				</div>
+			</div><!-- tab-pane -->
+			<div ng-show="isTabShow('config')" class="tab-pane active">
+				<div class='panel panel-default'>
+					<div class='panel-heading'>
+						<h4>Configuration</h4>
+					</div>
+					<div class='panel-body'>
+						<div class="col-lg-12">
+							<ul class='nav nav-tabs nav-justified' role='tablist'>
+								<li ng-show="isSupportFeatureAvgMode || isSupportOaFreqSetting || isSupportVibrationDetection">
+									<a href="#tabCommConfig" data-toggle="tab">Common Settings</a>
+								</li>
+								<li class="active">
+									<a href="#tabChConfig" data-toggle="tab">Channel Settings</a>
+								</li>
+							</ul>
+							<div class="tab-content">
+								<div class="tab-pane" id="tabCommConfig">
+									<div class="panel panel-default form-horizontal">
+										<div class='panel-body'>
+											<div class='form-group' ng-show="isSupportFeatureAvgMode">
+												<label class='col-sm-3 control-label'>Feature Average Mode</label>
+												<div class='col-sm-8'>
+													<div class="radio">
+														<label>
+															<input type="radio" ng-model="commonObj.Avg" value="0">Disable&nbsp;&nbsp;
+														</label>
+														<label>
+															<input type="radio" ng-model="commonObj.Avg" value="1">Enable<br/>
+														</label>
+													</div>
+												</div>
+											</div>
+											<div class='form-group' ng-show="isSupportOaFreqSetting">
+												<label class='col-sm-3 control-label'>Start Frequency of OA Calculation</label>
+												<div class='col-sm-8'>
+													<div class="input-group" style="min-width: 20px">
+														<input type='number' class='form-control isNumericType' max='1000' min='2' ng-model="commonObj.TSt">
+														<span class="input-group-addon" style="width: 5px">Hz</span>
+													</div>
+												</div>
+											</div>
+											<div class='form-group' ng-show="isSupportOaFreqSetting">
+												<label class='col-sm-3 control-label'>End Frequency of OA Calculation</label>
+												<div class='col-sm-8'>
+													<div class="input-group" style="min-width: 20px">
+														<input type='number' class='form-control isNumericType' max='1000' min='2' ng-model="commonObj.TEnd">
+														<span class="input-group-addon" style="width: 5px">Hz</span>
+													</div>
+												</div>
+											</div>
+											<div class='form-group' ng-show="isSupportOaFreqSetting">
+												<label class='col-sm-3 control-label'>Start Frequency of Acceleration OA Calculation</label>
+												<div class='col-sm-8'>
+													<div class="input-group" style="min-width: 20px">
+														<input type='number' class='form-control isNumericType' max='1000' min='2' ng-model="commonObj.Ws">
+														<span class="input-group-addon" style="width: 5px">Hz</span>
+													</div>
+												</div>
+											</div>
+											<div class='form-group' ng-show="isSupportOaFreqSetting">
+												<label class='col-sm-3 control-label'>End Frequency of Acceleration OA Calculation</label>
+												<div class='col-sm-8'>
+													<div class="input-group" style="min-width: 20px">
+														<input type='number' class='form-control isNumericType' max='1000' min='2' ng-model="commonObj.We">
+														<span class="input-group-addon" style="width: 5px">Hz</span>
+													</div>
+												</div>
+											</div>
+											<div class='form-group' ng-show="isSupportVibrationDetection">
+												<label class='col-sm-3 control-label'>Vibration Threshold</label>
+												<div class='col-sm-8'>
+													<div class="input-group" style="min-width: 25px">
+														<input type='number' class='form-control isNumericType' max='63' min='1' ng-model="commonObj.WMd">
+														<span class="input-group-addon" style="width: 5px">{{commonObj.WMd * 31.25}} mg</span>
+													</div>
+												</div>
+											</div>
+										</div><!-- panel-body -->
+										<div class="panel-footer clearfix">
+											<div class="pull-right">
+												<button class="btn btn-success privilege root admin" ng-click="onSensorCommonConfigClick()"><i class="fa fa-check"></i> Submit</button>
+											</div>
+										</div>
+									</div><!-- panel -->
+								</div>
+								<div class="tab-pane active" id="tabChConfig">
+									<div class="panel panel-default form-horizontal">
+										<div class='panel-body'>
+											<div class='form-group'>
+												<label class='col-lg-3 control-label'>Channel</label>
+												<div class='col-lg-3'>
+													<div class='input-group'>
+														<select class='form-control' ng-model="selectedChannel.ch" ng-change="onConfigChannelChange(selectedChannel.ch)" ng-if="!isWISE2411">
+															<option ng-repeat="data in channelSelectList" value="{{data.name}}">{{data.value}}</option>
+														</select>
+														<select class='form-control' ng-model="selectedChannel.configCh" ng-change="onConfigChannelChange(selectedChannel.configCh)" ng-if="isWISE2411">
+															<option ng-repeat="data in channelSelectList" value="{{data.name}}">{{data.value}}</option>
+														</select>
+													</div>
+												</div>
+											</div>
+											<div class='form-group' ng-if="!isWISE2411">
+												<label class='col-sm-3 control-label'>Channel Mask</label>
+												<div class='col-sm-8'>
+													<div class="radio">
+														<label>
+															<input type="radio" ng-model="channelObj.En" value="0">Disable&nbsp;&nbsp;
+														</label>
+														<label>
+															<input type="radio" ng-model="channelObj.En" value="1">Enable<br/>
+														</label>
+													</div>
+													</div>
+											</div>
+											<!-- <div class='form-group'>
+												<label class='col-lg-3 control-label'>Tag Name</label>
+												<div class='col-lg-6'>
+													<div class='input-group'>
+														<input type='text' class='form-control' id='inpTag' maxlength="21" ng-model="channelObj.Tag" value="{{channelObj.Tag}}">
+													</div>
+												</div>
+											</div> -->
+											<div class='form-group'>
+												<label class='col-lg-3 control-label'>Range</label>
+												<div class='col-lg-6'>
+													<div class='input-group'>
+														<select class='form-control' ng-model="channelObj.Rng" ng-change="onRangeChange(channelObj.Rng)">
+															<option ng-repeat="(key, data) in CurrentList" ng-selected="{{key==channelObj.Rng}}" value="{{key}}" ng-bind-html="data.name"></option>
+														</select>
+													</div>
+												</div>
+											</div>
+											<div class='form-group' ng-if="!isTemperatureSensor(channelObj.Rng)">
+												<label class='col-sm-3 control-label'>Feature Enable</label>
+												<div class='col-sm-8'>
+													<label class="checkbox-inline" ng-repeat="item in channelObj.FeatureArry">
+														<input type="checkbox" ng-model="item.val" ng-true-value="1" ng-false-value="0" ng-checked="item.val == 1">{{getVibrationFeatureName($index)}}
+													</label>
+												</div>
+											</div>
+											<div class='form-group' ng-if="isWISE2411 && !isTemperatureSensor(channelObj.Rng)">
+												<label class='col-sm-3 control-label'>Acceleration RMS Enable</label>
+												<div class='col-sm-8'>
+													<div class="radio" style="min-height: 34px;">
+														<label>
+															<input type="radio" ng-model="channelObj.Arr[0].Ev" value="0">Disable&nbsp;&nbsp;
+														</label>
+														<label>
+															<input type="radio" ng-model="channelObj.Arr[0].Ev" value="1">Enable<br/>
+														</label>
+													</div>
+												</div>
+											</div>
+											<div class='form-group' ng-show="isTemperatureSensor(channelObj.Rng)">
+												<label class='col-sm-3 control-label'>Sensor Offset Value</label>
+												<div class='col-sm-8'>
+													<div class='input-group' style='min-width: 20px'>
+														<input type='text' class='form-control' maxlength="9" ng-model="channelObj.Val">
+														<span class="input-group-addon" style="width: 5px">{{channelObj.OffsetUnitName}}</span>
+													</div>
+												</div>
+											</div>
+											<!-- <div class='form-group'>
+												<label class='col-lg-3 control-label'>One Measurement Interval</label>
+												<div class='col-lg-3'>
+													<div class='input-group'>
+														<input class='form-control' type='text' ng-model='channelObj.PItv' max='8640000' min='100' step='10'>
+														<span class='input-group-addon' style='min-width: 5px'>10ms</span>
+													</div>
+												</div>
+											</div> -->
+											<!-- <div class="well">
+												<div class='form-group'>
+													<label class='col-sm-3 control-label'>Enable Low Alarm</label>
+													<div class='col-sm-8'>
+														<div class="radio">
+															<label>
+																<input type="radio" ng-model="channelObj.EnLA" value="0">Disable&nbsp;&nbsp;
+															</label>
+															<label>
+																<input type="radio" ng-model="channelObj.EnLA" value="1">Enable<br/>
+															</label>
+														</div>
+													 </div>
+												</div>
+												<div class='form-group' ng-show="channelObj.EnLA==1">
+													<label class='col-sm-3 control-label'>Low Alarm Mode</label>
+													<div class='col-sm-3'>
+														<select class='form-control' ng-model="channelObj.LAMd">
+															<option value='0'>Momentary</option>
+															<option value='1'>Latch</option>
+														</select>
+													</div>
+												</div>
+												<div class='form-group' ng-show="channelObj.EnLA==1">
+													<label class='col-sm-3 control-label'>Low Alarm Value</label>
+													<div class='col-sm-8'>
+														<div class='input-group' style='min-width: 20px'>
+															<input id='inpLoA' type='text' class='form-control' maxlength="12" ng-model="channelObj.LoA">
+															<span class="input-group-addon" style="width: 5px">{{channelObj.UnitName}}</span>
+														</div>
+													</div>
+												</div>
+											</div> -->
+											<div class="well">
+												<div class='form-group'>
+													<label class='col-sm-3 control-label'>Enable High Alarm</label>
+													<div class='col-sm-8'>
+														<div class="radio" style="min-height: 34px;">
+															<label>
+																<input type="radio" ng-model="channelObj.EnHA" value="0">Disable&nbsp;&nbsp;
+															</label>
+															<label>
+																<input type="radio" ng-model="channelObj.EnHA" value="1">Enable<br/>
+															</label>
+														</div>
+													 </div>
+												</div>
+												<!-- <div class='form-group' ng-show="channelObj.EnHA==1">
+													<label class='col-sm-3 control-label'>High Alarm Mode</label>
+													<div class='col-sm-3'>
+														<select class='form-control' ng-model="channelObj.HAMd">
+															<option value='0'>Momentary</option>
+															<option value='1'>Latch</option>
+														</select>
+													</div>
+												</div> -->
+												<div class='form-group' ng-show="channelObj.EnHA==1">
+													<label class='col-sm-3 control-label'>High Alarm Value</label>
+													<div class='col-sm-8'>
+														<div class='input-group' style='min-width: 20px'>
+															<input id='inpHiA' type='text' class='form-control' maxlength="12" ng-model="channelObj.HiA">
+															<!-- <span class="input-group-addon" style="width: 5px">{{channelObj.UnitName}}</span> -->
+														</div>
+													</div>
+												</div>
+												<div class='form-group' ng-show="channelObj.EnHA==1 && isTemperatureSensor(channelObj.Rng) && isSupportSendAlarmEvent">
+													<label class='col-sm-3 control-label'>Send Alarm Event</label>
+													<div class='col-sm-8'>
+														<div class="radio">
+															<label>
+																<input type="radio" ng-model="channelObj.Cntn" value="0">Continuously&nbsp;&nbsp;
+															</label>
+															<label>
+																<input type="radio" ng-model="channelObj.Cntn" value="4">Four Times<br/>
+															</label>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- <div class='form-group'>
+												<label class='col-lg-3 control-label'>Sensor Offset Range</label>
+												<div class='col-lg-6'>
+													<div class='input-group'>
+														<select class='form-control' ng-model="channelObj.RCD" ng-change="onOffsetRangeChange(channelObj.RCD)">
+															<option ng-repeat="(key, data) in CurrentOffsetList" ng-selected="key==channelObj.RCD" value="{{key}}">{{data.name}}</option>
+														</select>
+													</div>
+												</div>
+											</div> -->
+											<div class='form-group' ng-show="isTemperatureSensor(channelObj.Rng) && !isSupportSendAlarmEvent">
+												<label class='col-sm-3 control-label'>Release Alarm Value</label>
+												<div class='col-sm-3'>
+													<div style='min-width: 20px'>
+														<input type='text' class='form-control' maxlength="10" ng-model="channelObj.ReA">
+													</div>
+												</div>
+											</div>
+											<!-- <div class='form-group'>
+												<label class='col-sm-3 control-label'>Sensor Deviation Value</label>
+												<div class='col-sm-8'>
+													<div class='input-group' style='min-width: 20px'>
+														<input type='text' class='form-control' maxlength="30" ng-model="channelObj.Dev">
+													</div>
+												</div>
+											</div> -->
+										</div><!-- panel-body -->
+										<div class="panel-footer clearfix">
+											<div class="pull-right">
+												<button class="btn btn-success privilege root admin" ng-click="onSensorConfigClick()"><i class="fa fa-check"></i> Submit</button>
+											</div>
+										</div>
+									</div><!-- panel -->
+								</div>
+							</div>
+						</div>
+					</div><!-- panel-body -->
+		        </div><!-- panel -->
+			</div><!-- tab-pane -->
+		</div><!-- tab-content -->
+	</div>
+</div><!-- ng-controller -->

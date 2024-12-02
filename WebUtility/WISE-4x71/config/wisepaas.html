@@ -1,0 +1,238 @@
+<style>
+	.form-control{
+		box-shadow:0px -1px 1px rgba(0, 0, 0, 0.075) inset;
+	}
+	.form-control.rule_id{
+		border: 0px transparent;
+		background-color: transparent;
+		box-shadow:none;
+	}
+</style>
+
+<div ng-controller="wisePaasIoConfigCtrl"><!-- ng-controller -->
+	<div class="col-lg-12">
+		<div class='panel panel-default'>
+			<div class='panel-body'>
+				<form class='form-horizontal' name='wpLogForm'>
+					<h4 class='page-header'>WISE-PaaS 2.0 Log Data</h4>
+					<ul class='nav nav-tabs nav-justified' role='tablist'>
+						<li class='active' >
+							<a href data-toggle="tab" ng-click="switchFieldTo('IO')">Channel Fields</a>
+						</li>
+						<li>
+							<a href data-toggle="tab" ng-show="checkRTUModule()" ng-click="switchFieldTo('Modbus')">Modbus/RTU Fields</a>
+						</li>
+					</ul><!-- Tab panes -->
+					<div class='tab-content'>
+						<div ng-show="isFieldShow('IO')" class="tab-pane active">
+						<div class="panel panel-default">
+							<div class="panel-body">
+								<ul class="nav nav-tabs nav-justified" role="tablist">
+									<li class="active">
+										<a href data-toggle="tab" ng-click="switchTabTo('di')">DI</a>
+									</li>
+									<li>
+										<a href data-toggle="tab" ng-click="switchTabTo('do')">DO/Relay</a>
+									</li>
+									<li>
+										<a href data-toggle="tab" ng-click="switchTabTo('ai')">{{nameAiOrRtd}}</a>
+									</li>
+									<li>
+										<a href data-toggle="tab" ng-click="switchTabTo('ao')">AO</a>
+									</li>
+								</ul><!-- Tab panes -->
+								<div class="tab-content">
+									<div ng-show="isTabShow('di')" class="tab-pane active">
+										<div ng-show="diAmount!=0">
+											<div class="table-responsive">
+												<table class="table table-bordered table-hover">
+													<thead>
+														<tr>
+															<th>Channel</th>
+															<th>Log Enabled <input type="checkbox" ng-model="logEnable.di" ng-click="logEnableClick('di')"></th>
+															<th>Access Enabled <input type="checkbox" ng-model="accessEnable.di" ng-click="accessEnableClick('di')"></th>
+															<!-- <th>Data Type</th> -->
+														</tr>
+													</thead>
+													<tbody>
+														<tr ng-repeat="item in diConfig">
+															<td>{{item.Ch}}</td>
+															<td><input type="checkbox" ng-model="item.Lch" ng-true-value="1" ng-false-value="0"></td>
+															<td><input type="checkbox" ng-model="item.En" ng-true-value="1" ng-false-value="0"></td>
+															<!-- <td><select class='form-control' ng-model="item.Md" ng-value="item.Md">
+																<option value='1'>DI Status</option>
+																<option value='2'>Counter</option>
+																<option value='4'>Frequency</option>
+																<option value='8'>High to Low Latch</option>
+																<option value='16'>Low to High Latch</option>
+															</select></td> -->
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<div ng-show="diAmount==0">
+											<div class="row">
+												<br><br><br><center><h3><i class="fa fa-fw fa-exclamation-triangle"></i>Is Empty</h3></center><br><br><br>
+											</div>
+										</div>
+									</div>
+									<div ng-show="isTabShow('do')" class="tab-pane active">
+										<div ng-show="doAmount!=0">
+											<div class="table-responsive">
+												<table class="table table-bordered table-hover">
+													<thead>
+														<tr>
+															<th>Channel</th>
+															<th>Log Enabled <input type="checkbox" ng-model="logEnable.do" ng-click="logEnableClick('do')"></th>
+															<th>Access Enabled <input type="checkbox" ng-model="accessEnable.do" ng-click="accessEnableClick('do')"></th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr ng-repeat="item in doConfig">
+															<td>{{item.Ch}}</td>
+															<td><input type="checkbox" ng-model="item.Lch" ng-true-value="1" ng-false-value="0"></td>
+															<td><input type="checkbox" ng-model="item.En" ng-true-value="1" ng-false-value="0"></td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<div ng-show="doAmount==0">
+											<div class="row">
+												<br><br><br><center><h3><i class="fa fa-fw fa-exclamation-triangle"></i>Is Empty</h3></center><br><br><br>
+											</div>
+										</div>
+									</div>
+									<div ng-show="isTabShow('ai')" class="tab-pane active">
+										<div ng-show="aiAmount!=0">
+											<div class="table-responsive">
+												<table class="table table-bordered table-hover">
+													<thead>
+														<tr>
+															<th>Channel</th>
+															<th>Log Enabled <input type="checkbox" ng-model="logEnable.ai" ng-click="logEnableClick('ai')"></th>
+															<th>Access Enabled <input type="checkbox" ng-model="accessEnable.ai" ng-click="accessEnableClick('ai')"></th>
+															<th>{{nameAiOrRtd}} Deviation Rate (1~99%, full scale range)</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr ng-repeat="item in aiConfig">
+															<td>{{item.Ch}}</td>
+															<td><input type="checkbox" ng-model="item.Lch" ng-true-value="1" ng-false-value="0"></td>
+															<td><input type="checkbox" ng-model="item.En" ng-true-value="1" ng-false-value="0"></td>
+															<td><input type="number" class="form-control" ng-blur="aiDevRateCheck(item.AIDR)" ng-model="item.AIDR" min="1" max="99" required></td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<div ng-show="aiAmount==0">
+											<div class="row">
+												<br><br><br><center><h3><i class="fa fa-fw fa-exclamation-triangle"></i>Is Empty</h3></center><br><br><br>
+											</div>
+										</div>
+									</div>
+									<div ng-show="isTabShow('ao')" class="tab-pane active">
+										<div class="col-lg-12" ng-show="aoAmount==0">
+											<div class="row">
+												<br><br><br><center><h3><i class="fa fa-fw fa-exclamation-triangle"></i>Is Empty</h3></center><br><br><br>
+											</div>
+										</div>
+									</div>
+									<br>
+									<br>
+									<center>
+										<p>
+											<i class='fa fa-fw fa-info-circle'></i>
+											All data will be cleared in the data logger if parameter in the "IO Fields" is changed.
+										</p>
+									</center>
+								</div>
+							</div>
+						</div><!-- panel -->
+						</div>
+						<div class="panel panel-default" ng-show="isFieldShow('Modbus')">
+							<div  class="tab-pane active">
+							<div class="panel-body">
+								<ul class="nav nav-pills">
+								    <li ng-repeat="item in getTotalCom() track by $index" ng-class="{'active': $index == 0}">
+								      <a href data-toggle="tab" ng-click="loadWaModbusSetting($index + 1, activeModbus)">COM{{$index + 1}}</a>
+								    </li>
+								</ul>
+								<ul class="nav nav-tabs nav-justified" role="tablist">
+									<li class="active">
+										<a href data-toggle="tab" ng-click="switchModbusTo('Bit')">Bit</a>
+									</li>
+									<li>
+										<a href data-toggle="tab" ng-click="switchModbusTo('Word')">Word</a>
+									</li>
+								</ul><!-- Tab panes -->
+								<div class="tab-content">
+									<div ng-show="isModbusShow('Bit')" class="tab-pane active">
+										<table class="table table-bordered">
+									        <thead>
+									            <tr>
+									                <th title="Rule ID">Channel</th>
+													<th>Log Enabled <input type="checkbox" ng-model="logEnableClick.bit" ng-click="logEnableClick('bit')"></th>
+													<th>Access Enabled <input type="checkbox" ng-model="accessEnable.bit" ng-click="accessEnableClick('bit')"></th>
+									            </tr>
+									        </thead>
+									        <tbody>
+									            <tr ng-repeat="item in ModbusBitConfig">
+													<td>
+									                    {{ item.Ch }}
+									                    <span ng-show="item.writeOnly">(Write Only)</span>
+													</td>
+													<td>
+														<input type="checkbox" ng-model="item.Lch" ng-true-value="1" ng-false-value="0">
+													</td>
+													<td>
+														<input type="checkbox" ng-model="item.En" ng-true-value="1" ng-false-value="0">
+													</td>
+									            </tr>
+									        </tbody>
+									    </table>
+								    </div>
+									<div ng-show="isModbusShow('Word')" class="tab-pane active">
+										<table class="table table-bordered">
+									        <thead>
+									            <tr>
+									                <th title="Rule ID">Channel</th>
+													<th>Log Enabled <input type="checkbox" ng-model="logEnableClick.word" ng-click="logEnableClick('word')"></th>
+													<th>Access Enabled <input type="checkbox" ng-model="accessEnable.word" ng-click="accessEnableClick('word')"></th>
+									            </tr>
+									        </thead>
+									        <tbody>
+									            <tr ng-repeat="item in ModbusWordConfig">
+													<td>
+									                    {{ item.Ch }}
+									                    <span ng-show="item.writeOnly">(Write Only)</span>
+													</td>
+													<td>
+														<input type="checkbox" ng-model="item.Lch" ng-true-value="1" ng-false-value="0">
+													</td>
+													<td>
+														<input type="checkbox" ng-model="item.En" ng-true-value="1" ng-false-value="0">
+													</td>
+									            </tr>
+									        </tbody>
+									    </table>
+								    </div>
+								</div>
+							</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div><!-- panel-body -->
+			<div class="panel-footer clearfix">
+				<div class="pull-right">
+					<button class='btn btn-success' ng-click="btnWaSettingClick()" ng-disabled="wpLogForm.$error.required || !wpLogForm.$valid">
+						<i class="fa fa-check"></i> Submit
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,1788 @@
+<div class="container-fluid">
+	<!-- Page Heading -->
+	<div class="row">
+		<div class="col-lg-12">
+			<h2 class="page-header"><i class="fa fa-fw fa-save"></i> Data Logger</h2>
+		</div>
+	</div>
+	<!-- /.row -->
+	<div class="row" id='dataLogMainForm'>
+		<div class="col-lg-12">
+			<div class='form-horizontal' id ='dataLogForm'>
+				<ul class="nav nav-pills">
+					<li class="active">
+						<a href="#tabLocalhostSetting" data-toggle="tab">Data Configuration</a>
+					</li>
+					<li>
+						<a href="#tabLoggerConfig" data-toggle="tab">Logger Configuration</a>
+					</li>
+					<li>
+						<a href="#tabDataLogViewer" data-toggle="tab">Local Data Query</a>
+					</li>
+				</ul>
+				<div id='contentSysInfo' class="tab-content">
+					<div class="tab-pane active" id='tabLocalhostSetting'>
+						<ul class='nav nav-tabs nav-justified' role='tablist'>
+							<li class='active' style="display: none;">
+								<a href='#tabLogCondition' role='tab' data-toggle='tab'>I/O Configuration</a>
+							</li>
+							<li id="systemConfigurationTab" style="display: none;">
+								<a href='#tabDataLogSysSetting' role='tab' data-toggle='tab'>System Configuration</a>
+							</li>
+						</ul><!-- Tab panes -->
+						<div class='tab-content'>
+							<div class='tab-pane' id='tabLogCondition'>
+								<div class='panel panel-default'>
+									<div class='panel-body'>
+										<form class='form-horizontal' id='panelLogCondition'>
+											<h4 class='page-header'>Log Conditions</h4>
+											<div class='form-group row'>
+												<div class='col-lg-offset-3 col-lg-6 form-inline'>
+													<div class='input-group'>
+														<input type="checkbox" id='inpPer'>
+														By Period
+													</div>
+													<!-- <div class='input-group'>
+														<input id='inpPItv' type='number' max='2147483647' min='1' class='form-control isNumericType' value='1'>
+														<span class='input-group-addon' style='width: 5px'>0.1 sec</span>
+													</div> -->
+												</div>
+											</div>
+											<!-- <div class='form-group row'>
+												<div class="col-lg-offset-3 col-lg-6 checkbox">
+													<label>
+														<input type="checkbox" id='inpCWDT'>
+														By Communication WDT Log </label>
+												</div>
+											</div> -->
+											<!-- <h4 class='page-header aioType'>IO Trigger Log Conditions</h4>
+											<div class='form-group row aiType'>
+												<div class="col-lg-offset-3 col-lg-6 form-inline">
+													<div class='input-group'>
+														By AI Deviation Rate
+													</div>
+													<div class='input-group'>
+														<input id='inpAIDR' type='number' max='99' min='1' class='form-control isNumericType' value='1'>
+														<span class='input-group-addon' style='width: 5px'>%</span>
+													</div>
+												</div>
+											</div>
+											<div class='form-group row aoType'>
+												<div class="col-lg-offset-3 col-lg-6 form-inline">
+													<div class='input-group'>
+														By AO Deviation Rate
+													</div>
+													<div class='input-group'>
+														<input id='inpAODR' type='number' max='99' min='1' class='form-control isNumericType' value='1'>
+														<span class='input-group-addon' style='width: 5px'>%</span>
+													</div>
+												</div>
+											</div> -->
+											<h4 class='page-header'>General</h4>
+											<div class='form-group row'>
+												<div class='col-lg-offset-3 col-lg-6'>
+													<div class="checkbox">
+														<label>
+															<input type="checkbox" id='inpRst'>
+															Clear Log when Power Up </label>
+													</div>
+												</div>
+											</div>
+											<div class='form-group row'>
+												<div class='col-lg-offset-3 col-lg-6'>
+													<div class="checkbox">
+														<label>
+															<input type="checkbox" id='inpCir'>
+															Circular Log when Memory Full </label>
+													</div>
+												</div>
+											</div>
+											<button type="button" id='btnLogConditionSubmit' style='display:none;'>
+												<i class="fa fa-check"></i> Submit
+											</button>
+										</form>
+										<form class='form-horizontal'>
+											<h4 class='page-header'>Log Data</h4>
+											<ul class='nav nav-tabs nav-justified' role='tablist'>
+												<li class='active' >
+													<a href='#tabChannelFieldSetting' role='tab' data-toggle='tab'>By Channel</a>
+												</li>
+												<li class='aioType'>
+													<a href='#tabIOFieldSetting' role='tab' data-toggle='tab'>By AIO</a>
+												</li>
+												<li class='sensorType'>
+													<a href='#tabSensorFieldSetting' role='tab' data-toggle='tab'>By Sensor</a>
+												</li>
+											</ul><!-- Tab panes -->
+											<div class='tab-content'>
+												<div class='tab-pane' id='tabSensorFieldSetting'>
+													<div class='panel panel-default' id='panelSensorDataOption'>
+														<div class='panel-body'>
+															<div class='col-sm-12 sensorType'>
+																<h4 class='page-header'>Sensor Log Data Options</h4>
+																<div class='form-group row'>
+																	<label class='col-sm-3 control-label'>Temperature value</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBSensorData0'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																	<label class='col-sm-3 control-label'>Sensor Status</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBSensorData3' class='disabled' disabled checked>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																</div>
+																<div class='form-group row'>
+																	<label class='col-sm-3 control-label'>Velocity RMS</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBSensorData7'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																	<label class='col-sm-3 control-label'>Acceleration Peak</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBSensorData8'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																</div>
+																<div class='form-group row'>
+																	<label class='col-sm-3 control-label'>Acceleration RMS</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBSensorData9'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																	<label class='col-sm-3 control-label'>Kurtosis</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBSensorData10'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																</div>
+																<div class='form-group row'>
+																	<label class='col-sm-3 control-label'>Crest factor</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBSensorData11'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																	<label class='col-sm-3 control-label'>Skewness</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBSensorData12'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																</div>
+																<div class='form-group row'>
+																	<label class='col-sm-3 control-label'>Standard deviation</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBSensorData13'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																	<label class='col-sm-3 control-label'>Displacement</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBSensorData14'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																</div>
+																<div class='form-group row'>
+																	<label id="dataFormatLabel" class='col-sm-3 control-label'>Raw data</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<span class="averageModeTooltip" data-toggle="tooltip" title="Please disable Feature Average Mode to enable Raw Data log.">
+																				<label>
+																					<input type="checkbox" id='cBSensorData6'>
+																					Enabled/Disabled </label>
+																			</span>
+																		</div>
+																	</div>
+																	<label class='col-sm-3 control-label'>Sensor high alarm for all channels</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBSensorData4'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																</div>
+																<div class='form-group row rawDataFormat' style="display: none;">
+																	<label class='col-sm-3 control-label'>Raw data Format</label>
+																	<div class='col-sm-3'>
+																		<span class="averageModeTooltip" data-toggle="tooltip" title="Please disable Feature Average Mode to enable Raw Data log.">
+																			<label class="radio-inline">
+																				<input type="radio" id="radioRawData" name="cBSensorData15" value="0">
+																				Raw data </label>
+																		</span>
+																		<span class="averageModeTooltip" data-toggle="tooltip" title="Please disable Feature Average Mode to enable Raw Data log.">
+																			<label class="radio-inline">
+																				<input type="radio" id="radioFFT" name="cBSensorData15" value="1">
+																				FFT </label>
+																		</span>
+																	</div>
+																</div>
+															</div>
+															<br>
+															<br>
+														</div>
+														<div class="panel-footer clearfix" style='display:none;'>
+															<div class="pull-right">
+																<button class='btn btn-success privilege root admin' id='btnSensorOptionSubmit'>
+																	<i class="fa fa-check"></i> Submit
+																</button>
+															</div>
+														</div>
+													</div>
+												</div><!-- tabSensorFieldSetting -->
+												<div class='tab-pane' id='tabIOFieldSetting'>
+													<div class='panel panel-default' id='panelDataOption'>
+														<div class='panel-body'>
+															<div class='col-sm-12 aiType'>
+																<h4 class='page-header'>AI Log Data Value Options</h4>
+																<div class='form-group row'>
+																	<label class='col-sm-3 control-label'>Raw</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBAIData0'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																	<label class='col-sm-3 control-label'>Engineering</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBAIData1'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																</div>
+																<div class='form-group row'>
+																	<label class='col-sm-3 control-label'>Max Raw</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBAIData2'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																	<label class='col-sm-3 control-label'>Max Engineering</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBAIData3'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																</div>
+																<div class='form-group row'>
+																	<label class='col-sm-3 control-label'>Min Raw</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBAIData4'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																	<label class='col-sm-3 control-label'>Min Engineering</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBAIData5'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																</div>
+																<div class='form-group row'>
+																	<label class='col-sm-3 control-label'>After Scaling</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBAIData6'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																	<label class='col-sm-3 control-label'>Status</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBAIData7' class='disabled' disabled checked>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																</div>
+																<div class='form-group row' id='physicalValueOption'>
+																	<label class='col-sm-3 control-label'>Physical Value</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBAIData8'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																	<!-- <label class='col-sm-3 control-label'>Reserved</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBAIData9'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div> -->
+																</div>
+															</div><!-- aiType -->
+															<div class='col-sm-12 aoType'>
+																<h4 class='page-header'>AO Log Data Value Options</h4>
+																<div class='form-group row'>
+																	<label class='col-sm-3 control-label'>Raw</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBAOData0'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																	<label class='col-sm-3 control-label'>Engineering</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBAOData1'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																</div>
+																<div class='form-group row'>
+																	<label class='col-sm-3 control-label'>After Scaling</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBAOData2'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																	<label class='col-sm-3 control-label'>Status</label>
+																	<div class='col-sm-3'>
+																		<div class="checkbox">
+																			<label>
+																				<input type="checkbox" id='cBAOData3'>
+																				Enabled/Disabled </label>
+																		</div>
+																	</div>
+																</div>
+															</div><!-- aoType -->
+															<br>
+															<br>
+															<!-- <center>
+																<p>
+																	<i class='fa fa-fw fa-info-circle'></i>
+																	All data will be cleared in the data logger if parameter in the "IO Fields" is changed.
+																</p>
+															</center> -->
+														</div><!--panel-body-->
+														<div class="panel-footer clearfix" style='display:none;'>
+															<div class="pull-right">
+																<button class='btn btn-success privilege root admin' id='btnDataOptionSubmit'>
+																	<i class="fa fa-check"></i> Submit
+																</button>
+															</div>
+														</div>
+													</div><!--panel-->
+												</div><!-- tabIOFieldSetting -->
+
+												<div class='tab-pane active' id='tabChannelFieldSetting'>
+													<div class='panel panel-default' >
+														<div class='panel-body'>
+															<div id='tabDataLogConfigSlot0'>
+																<ul class='nav nav-tabs nav-justified' role='tablist'>
+																	<li id='sensorLiId' class='active'>
+																		<a href='#pageS_SL0' role='tab' data-toggle='tab'>Sensor</a>
+																	</li>
+																	<li id='diLiId'>
+																		<a href='#pageDI_SL0' role='tab' data-toggle='tab'>DI</a>
+																	</li>
+																	<li id='doLiId'>
+																		<a href='#pageDO_SL0' role='tab' data-toggle='tab'>DO/Relay</a>
+																	</li>
+																	<li id='aiLiId'>
+																		<a href='#pageAI_SL0' role='tab' data-toggle='tab' id="aiChannelTabId">AI</a>
+																	</li>
+																	<li id='aoLiId'>
+																		<a href='#pageAO_SL0' role='tab' data-toggle='tab'>AO</a>
+																	</li>
+																</ul><!-- Tab panes -->
+																<div class='tab-content'>
+																	<div class='tab-pane active' id='pageS_SL0'>
+
+																	</div>
+																	<div class='tab-pane' id='pageDI_SL0'>
+
+																	</div>
+																	<div class='tab-pane' id='pageDO_SL0'>
+
+																	</div>
+																	<div class='tab-pane' id='pageAI_SL0'>
+
+																	</div>
+																	<div class='tab-pane' id='pageAO_SL0'>
+
+																	</div>
+																</div>
+																<!--./tab-pane-->
+															</div>
+															<!-- <center>
+																<p>
+																	<i class='fa fa-fw fa-info-circle'></i>
+																	All data will be cleared in the data logger if parameter in the "Channel Fields" is changed.
+																</p>
+															</center> -->
+														</div><!--panel-body-->
+													</div><!--panel-->
+												</div><!--tabChannelFieldSetting-->
+											</div><!--./tab-content-->
+										</form>
+									</div><!--panel-body-->
+									<div class="panel-footer clearfix">
+										<div class="pull-right">
+											<button type='submit' class='btn btn-success privilege root admin' id='btnLogConfigAll'>
+												<i class="fa fa-check"></i> Submit
+											</button>
+										</div>
+									</div>
+								</div><!--panel-->
+							</div>
+							<div class='tab-pane' id='tabDataLogSysSetting'>
+								<div class='panel panel-default'>
+									<div class='panel-body'>
+										<form class='form-horizontal' id='panelLogSysCondition'>
+											<h4 class='page-header'>Log System Events</h4>
+											<div class='form-group row'>
+												<div class="col-lg-offset-3 col-lg-6 checkbox" id="colWIRELESS_CONNECTION">
+													<label>
+														<input type="checkbox" id='inpWIRELESS_CONNECTION'>
+														Wireless Connection </label>
+												</div>
+												<div class="col-lg-offset-3 col-lg-6 checkbox" id="colPOWER_ON_OFF">
+													<label>
+														<input type="checkbox" id='inpPOWER_ON_OFF'>
+														Power on/off </label>
+												</div>
+												<div class="col-lg-offset-3 col-lg-6 checkbox" id="colMEMORY_FULL_OVERWRITE">
+													<label>
+														<input type="checkbox" id='inpMEMORY_FULL_OVERWRITE'>
+														Memory full/overwrite </label>
+												</div>
+												<div class="col-lg-offset-3 col-lg-6 checkbox" id="colFW_UPGRADE">
+													<label>
+														<input type="checkbox" id='inpFW_UPGRADE'>
+														Firmware upgrade </label>
+												</div>
+												<div class="col-lg-offset-3 col-lg-6 checkbox" id="colBATTERY">
+													<label>
+														<input type="checkbox" id='inpBATTERY'>
+														Battery </label>
+												</div>
+												<div class="col-lg-offset-3 col-lg-6 checkbox" id="colRF_EVENT">
+													<label>
+														<input type="checkbox" id='inpRF_EVENT'>
+														RF event </label>
+												</div>
+												<div class="col-lg-offset-3 col-lg-6 checkbox" id="colHW">
+													<label>
+														<input type="checkbox" id='inpHW'>
+														HW </label>
+												</div>
+											</div>
+										</form>
+									</div><!--panel-body-->
+									<div class="panel-footer clearfix">
+										<div class="pull-right">
+											<button type='submit' class='btn btn-success privilege root admin' id='btnLogSysConfig'>
+												<i class="fa fa-check"></i> Submit
+											</button>
+										</div>
+									</div>
+								</div><!--panel-->
+							</div>
+						</div>
+					</div>
+					<div class='tab-pane' id='tabLoggerConfig'>
+						<div class='panel panel-default' id='panelLoggerConfig'>
+							<div class='panel-body'>
+								<form class='form-horizontal'>
+									<h4 class='page-header'>Memory Storage</h4>
+ 									<!-- <div class='form-group row'>
+										<div class='col-lg-12'>
+											<label class='col-sm-2 control-label'>I/O Log</label>
+											<div class='col-sm-10'>
+												<div class='input-group'>
+													<div class='SliderSwitch'>
+											            <input type='checkbox' class='SliderSwitch-checkbox' id='memDEn'>
+											            <label class='SliderSwitch-label' for='memDEn'>
+										                    <span class='SliderSwitch-inner'></span>
+										                    <span class='SliderSwitch-switch'></span>
+											            </label>
+											        </div>
+												</div>
+											</div>
+										</div>
+									</div> -->
+									<div class='form-group row'>
+										<div class='col-lg-12'>
+											<label class='col-sm-2 control-label'>System Log</label>
+											<div class='col-sm-10'>
+												<div class='input-group'>
+													<div class='SliderSwitch'>
+											            <input type='checkbox' class='SliderSwitch-checkbox' id='memSEn'>
+											            <label class='SliderSwitch-label' for='memSEn'>
+										                    <span class='SliderSwitch-inner'></span>
+										                    <span class='SliderSwitch-switch'></span>
+											            </label>
+											        </div>
+												</div>
+											</div>
+										</div>
+									</div>
+<!--
+									<div class='page-header'><h4>Cloud Upload <span style="font-size:smaller">(CSV format)</span></h4>
+									</div>
+ 									<span id='log_upload'>
+										<span id="cloudUploadSetting">
+											<div class='form-group row'>
+												<div class='col-lg-12'>
+													<label class='col-sm-2 control-label'>Cloud Upload</label>
+													<div class='col-sm-10'>
+														<div class='input-group'>
+															<div class='SliderSwitch'>
+																<input type='checkbox' class='SliderSwitch-checkbox' id='cloudEn'>
+																<label class='SliderSwitch-label' for='cloudEn'>
+																	<span class='SliderSwitch-inner'></span>
+																	<span class='SliderSwitch-switch'></span>
+																</label>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class='form-group row'>
+												<label class='col-sm-offset-2 col-sm-2 control-label'>File Name Format</label>
+												<div class='col-sm-8'>
+													<select id='logFn'class='form-control'>
+														<option value='0'>YYYYMMDDHHMMSS</option>
+														<option value='1'>YYYYMMDD</option>
+													</select>
+												</div>
+											</div>
+											<div class='form-group row'>
+												<label class='col-sm-offset-2 col-sm-2 control-label'>Timestamp Format</label>
+												<div class='col-sm-8'>
+													<select id='logTmF'class='form-control'>
+														<option value='0'>Coordinated Universal Time(UTC)</option>
+														<option value='1'>Local Date and Time(GMT)</option>
+													</select>
+												</div>
+											</div>
+										</span>
+									</span>
+-->
+<!--
+									<div class='page-header'><h4>Push Notification <span style="font-size:smaller">(JSON format)</span></h4>
+									</div>
+									<span id='push_output'>
+										<div class='form-group row'>
+											<div class='col-lg-12'>
+												<label class='col-sm-2 control-label'>RF Data Push</label>
+												<div class='col-sm-10'>
+													<div class='input-group'>
+														<div class='SliderSwitch'>
+															<input type='checkbox' class='SliderSwitch-checkbox' id='pushREn'>
+															<label class='SliderSwitch-label' for='pushREn'>
+																<span class='SliderSwitch-inner'></span>
+																<span class='SliderSwitch-switch'></span>
+															</label>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<span id='pushNotifySetting'>
+											<div class='form-group'>
+												<div class='col-sm-offset-2 col-sm-2'>
+													<div class="checkbox">
+														<label>
+															<input type="checkbox" id='logMAC'>
+															Push MAC Address</label>
+													</div>
+												</div>
+											</div>
+											<div class='form-group'>
+												<div class='col-sm-offset-2 col-sm-2'>
+													<div class="checkbox">
+														<label>
+															<input type="checkbox" id='logTIM' data-target='#selTmF'>
+															Push Timestamp </label>
+													</div>
+												</div>
+											</div>
+											<div class='form-group row'>
+												<label class='col-sm-offset-2 col-sm-2 control-label'>Timestamp Format</label>
+												<div class='col-sm-8'>
+													<select id='selTmF'class='form-control'>
+														<option value='0'>Coordinated Universal Time(UTC)</option>
+														<option value='1'> Local Date and Time(GMT)</option>
+													</select>
+												</div>
+											</div>
+										</span>
+									</span>
+ -->
+								</form>
+							</div>
+							<div class="panel-footer clearfix">
+								<div class="pull-right">
+									<button type='submit' class='btn btn-success privilege root admin' id='btnLoggerConfigSubmit'>
+										<i class="fa fa-check"></i> Submit
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class='tab-pane' id='tabDataLogViewer'>
+						<ul class='nav nav-tabs nav-justified' role='tablist'>
+							<li class='active' style="display: none;">
+								<a href='#tabQueryIo' role='tab' data-toggle='tab'>Push Data Query</a>
+							</li>
+							<li id="systemDataQueryTab" style="display: none;">
+								<a href='#tabQuerySystem' role='tab' data-toggle='tab'>System Data Query</a>
+							</li>
+						</ul><!-- Tab panes -->
+						<div class='tab-content'>
+							<div class='tab-pane active' id='tabQueryIo'>
+								<div class='panel panel-default' id='panelDataLogViewer'>
+									<div class='panel-body'>
+										<form class='form-horizontal'>
+											<h4 class='page-header'>
+												Push Data Query Format
+												<a data-toggle='collapse' data-target='#collapseaFormatConfig'>
+													<i class='fa fa-fw fa-caret-down'>
+													</i>
+												</a>
+											</h4>
+											<div class='collapse' id='collapseaFormatConfig'>
+												<div class='form-group'>
+													<label class='col-md-3 control-label'>UUID</label>
+													<div class='col-md-3'>
+														<div class="checkbox">
+															<label>
+																<input type="checkbox" id='inpUID'>
+																Enabled/Disabled </label>
+														</div>
+													</div>
+													<label class='col-md-3 control-label'>MAC ID</label>
+													<div class='col-md-3'>
+														<div class="checkbox">
+															<label>
+																<input type="checkbox" id='inpMAC'>
+																Enabled/Disabled </label>
+														</div>
+													</div>
+												</div>
+												<div class='form-group'>
+													<label class='col-md-3 control-label'>Timestamp</label>
+													<div class='col-md-5'>
+														<select id='selTmF'class='form-control'>
+															<option value='0'>Coordinated Universal Time(UTC)</option>
+															<option value='1'> Local Date and Time(GMT)</option>
+														</select>
+													</div>
+												</div>
+											</div>
+											<h4 class='page-header'>
+												Query Filter
+												<a data-toggle='collapse' data-target='#collapseaModeConfig'>
+													<i class='fa fa-fw fa-caret-down'>
+													</i>
+												</a>
+											</h4>
+											<div class='collapse'  id='collapseaModeConfig'>
+												<div class='form-group'>
+													<label class='col-md-3 control-label'>Filter Mode</label>
+													<div class='col-md-9'>
+														<select id='selFltr'class='form-control'>
+															<option value='0'>No Filter Enabled</option>
+															<option value='1'>Time Filter</option>
+															<option value='2'>Amount of Latest Data</option>
+														</select>
+													</div>
+												</div>
+												<div class='amountFltrType'>
+													<div class='form-group'>
+														<label class='col-md-3 control-label'>Current Total Amount</label>
+														<div class='col-md-9'>
+															<div class='input-group'>
+																<span class="input-group-addon"><span class="fa fa-pencil"></span>
+																</span>
+																<input id='inpTotal' type='number' class='form-control isNumericType' disabled>
+															</div>
+														</div>
+														<label class='col-md-3 control-label'>Total Amount</label>
+														<div class='col-md-9'>
+															<div class='input-group'>
+																<span class="input-group-addon"><span class="fa fa-pencil"></span>
+																</span>
+																<input id='inpAmt' type='number' class='form-control isNumericType' value='1'>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class='timeFltrType'>
+													<div class='form-group'>
+														<label class='col-md-3 control-label'>Timestamp of the Oldest</label>
+														<div class='col-md-9'>
+															<div class='input-group'>
+																<span class="input-group-addon"><span class="fa fa-calendar"></span>
+																</span>
+																<input id='inpTLst' type='text' class='form-control minBund' disabled>
+															</div>
+														</div>
+														<label class='col-md-3 control-label'>Start Time</label>
+														<div class='col-md-9'>
+															<div class='input-group'>
+																<span class="input-group-addon"><span class="fa fa-calendar"></span>
+																</span>
+																<input class='form-control utcValue minType' data-max='#panelDataLogViewer #inpTFst' data-min='#panelDataLogViewer #inpTLst' id='inpTSt' placeholder="Click Me..." data-date-format="YYYY-MM-DDTHH:mm:ss">
+															</div>
+														</div>
+													</div>
+													<div class='form-group'>
+														<label class='col-md-3 control-label'>Timestamp of the Latest </label>
+														<div class='col-md-9'>
+															<div class='input-group'>
+																<span class="input-group-addon"><span class="fa fa-calendar"></span>
+																</span>
+																<input id='inpTFst' type='text' class='form-control maxBund' disabled>
+															</div>
+														</div>
+														<label class='col-md-3 control-label'>End Time</label>
+														<div class='col-md-9'>
+															<div class='input-group'>
+																<span class="input-group-addon"><span class="fa fa-calendar"></span>
+																</span>
+																<input class='form-control utcValue maxType' data-max='#panelDataLogViewer #inpTFst' data-min='#panelDataLogViewer #inpTSt' id='inpTEnd' placeholder="Click Me..." data-date-format="YYYY-MM-DDTHH:mm:ss">
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- <div class='macFltrType'>
+													<div class='form-group macSlotType'>
+														<label class='col-md-3 control-label'>End Device MAC Address</label>
+														<div class='col-md-9'>
+															<div class='input-group'>
+																<select class='form-control' data-select="macSlot">
+																</select>
+															</div>
+														</div>
+													</div>
+												</div> -->
+											</div>
+										</form>
+										<div class='processingType'>
+											<br>
+											<br>
+											<center><i class='fa fa-spinner fa-spin fa-5x'></i></center>
+											<br>
+											<br>
+										</div>
+                                        <div class='dataType'>
+											<h4 class='page-header'>
+												Chart
+												<a data-toggle='collapse' data-target='#collapseaChart'>
+													<i class='fa fa-fw fa-caret-down'>
+													</i>
+												</a>
+											</h4>
+											<div class='col-md-12 collapse' id='collapseaChart'>
+												<div class='form-group hasSlotType'>
+													<label class='col-lg-1 control-label'>Slot</label>
+													<div class='col-lg-11'>
+														<select class='form-control' data-select="slot">
+														</select>
+													</div>
+												</div>
+
+												<div class="col-md-3"></div> <!-- tmp, only for center bar char -->
+
+												<div class="col-md-6 chartType">
+													<div class="panel panel-red">
+														<div class="panel-heading">
+															<h3 class='panel-title'><i class="fa fa-fw fa-bar-chart-o"></i> IO-Type Statistic</h3>
+														</div>
+														<div class="panel-body" style='height:600px;'>
+															<div class="row">
+																<div class='form-group'>
+																	<label class='col-md-3 control-label'>IO Type</label>
+																	<div class='col-md-9'>
+																		<div class='input-group'>
+																			<select class='form-control' data-select="ioType">
+																			</select>
+																		</div>
+																	</div>
+																</div>
+																<center><h3>IO-Type Bar Chart</h3></center>
+															</div>
+															<div class="row" id='ioTypeBar' style='height:500px;'>
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- <div class="col-md-6 chartType">
+													<div class="panel panel-green">
+														<div class="panel-heading">
+															<h3 class='panel-title'><i class="fa fa-fw  fa-pie-chart"></i> Log Type Proportion</h3>
+														</div>
+														<div class="panel-body" style='height:600px;'>
+															<div class="row">
+																<div class='form-group'>
+																	<label class='col-md-3 control-label'>Log Type</label>
+																	<div class='col-md-9'>
+																		<div class='input-group'>
+																			<select class='form-control' data-select="logType">
+																			</select>
+																		</div>
+																	</div>
+																</div>
+																<center><h3 id='pieTitle'>Title</h3></center>
+															</div>
+															<div class="row" id='channelPie' style='height:500px;'>
+															</div>
+														</div>
+													</div>
+												</div> -->
+												<!-- <div class="col-md-12 chartType">
+													<div class="panel panel-primary">
+														<div class="panel-heading">
+															<h3 class='panel-title'><i class="fa fa-fw fa-line-chart"></i> Value Trend</h3>
+														</div>
+														<div class="panel-body">
+															<div class="row">
+																<center><h3 id='trendTitle'>Title</h3></center>
+															</div>
+															<div class="row" id='valTrend' style='height:400px'>
+															</div>
+															<nav class="row">
+																<ul class="pager">
+																    <li>
+																    	<a href="#" data-trendToogle ='minusStep'>
+																    		<span aria-hidden="true">&larr;</span> Previous
+																    	</a>
+																    </li>
+																    <li>
+																    	<a href="#" data-trendToogle ='addStep' >Next
+																    		<span aria-hidden="true">&rarr;</span>
+																    	</a>
+																    </li>
+																</ul>
+															</nav>
+														</div>
+													</div>
+												</div> -->
+											</div>
+										</div>
+										<div class='dataType'>
+											<h4 class='page-header'>
+												Data
+												<a data-toggle='collapse' data-target='#collapseaData'>
+													<i class='fa fa-fw fa-caret-down'></i>
+												</a>
+											</h4>
+											<div class='col-md-12 collapse'  id='collapseaData'>
+												<!-- <div class="table-responsive" > -->
+													<table id='dataViewerTable' class="table table-bordered table-hover table-striped dt-responsive" cellspacing ="0" width="100%">
+														<thead>
+															<tr>
+																<td class='peType'>Log Type</td>
+																<td class='timType'>Timestamp</td>
+																<td class='uidType'>UUID</td>
+																<td class='macType'>MAC</td>
+																<td class='slotType'>Slot</td>
+																<td class='channelType'>Channel</td>
+																<td class='ioTypeType'>I/O-type</td>
+																<td class='valueType'>Value</td>
+															</tr>
+														</thead>
+														<tbody></tbody>
+													</table>
+												<!-- </div> -->
+											</div>
+										</div>
+									</div><!--panel-body-->
+ 									<div class="panel-footer clearfix">
+                                        <center>
+                                            <div class="btn-group">
+                                                <button type="button" id='btnQuery' class="btn btn-info">
+                                                    <i class="fa fa-search"></i> Query
+                                                </button>
+                                                <button type="button" id='btnClear' class="btn btn-danger privilege root admin">
+                                                    <i class="fa fa-eraser"></i> Clear
+                                                </button>
+                                            </div>
+                                        </center>
+										<!-- <div class='pull-right'>
+											<button type="button" id='btnSubmit' class="btn btn-success privilege root admin">
+												<i class="fa fa-check"></i> Submit
+											</button>
+										</div> -->
+                                    </div>
+								</div><!--panel-->
+							</div><!--tab pannel -->
+							<div class='tab-pane' id='tabQuerySystem'>
+								<div class='panel panel-default' id='panelSystemLogViewer'>
+									<div class='panel-body'>
+										<form class='form-horizontal'>
+											<h4 class='page-header'>
+												System Data Query Format
+												<a data-toggle='collapse' data-target='#collapseSysFormatConfig'>
+													<i class='fa fa-fw fa-caret-down'>
+													</i>
+												</a>
+											</h4>
+											<div class='collapse' id='collapseSysFormatConfig'>
+												<div class='form-group'>
+													<label class='col-md-3 control-label'>UUID</label>
+													<div class='col-md-3'>
+														<div class="checkbox">
+															<label>
+																<input type="checkbox" id='inpUID'>
+																Enabled/Disabled </label>
+														</div>
+													</div>
+													<label class='col-md-3 control-label'>MAC ID</label>
+													<div class='col-md-3'>
+														<div class="checkbox">
+															<label>
+																<input type="checkbox" id='inpMAC'>
+																Enabled/Disabled </label>
+														</div>
+													</div>
+												</div>
+												<div class='form-group'>
+													<label class='col-md-3 control-label'>Timestamp</label>
+													<div class='col-md-5'>
+														<select id='selTmF'class='form-control'>
+															<option value='0'>Coordinated Universal Time(UTC)</option>
+															<option value='1'> Local Date and Time(GMT)</option>
+														</select>
+													</div>
+												</div>
+											</div>
+											<h4 class='page-header'>
+												Query Filter
+												<a data-toggle='collapse' data-target='#collapseSysModeConfig'>
+													<i class='fa fa-fw fa-caret-down'>
+													</i>
+												</a>
+											</h4>
+											<div class='collapse'  id='collapseSysModeConfig'>
+												<div class='form-group'>
+													<label class='col-md-3 control-label'>Filter Mode</label>
+													<div class='col-md-9'>
+														<select id='selFltr'class='form-control'>
+															<option value='0'>No Filter Enabled</option>
+															<option value='1'>Time Filter</option>
+															<option value='2'>Amount of Latest Data</option>
+														</select>
+													</div>
+												</div>
+												<div class='amountFltrType'>
+													<div class='form-group'>
+														<label class='col-md-3 control-label'>Current Total Amount</label>
+														<div class='col-md-9'>
+															<div class='input-group'>
+																<span class="input-group-addon"><span class="fa fa-pencil"></span>
+																</span>
+																<input id='inpTotal' type='number' class='form-control isNumericType' disabled>
+															</div>
+														</div>
+														<label class='col-md-3 control-label'>Total Amount</label>
+														<div class='col-md-9'>
+															<div class='input-group'>
+																<span class="input-group-addon"><span class="fa fa-pencil"></span>
+																</span>
+																<input id='inpAmt' type='number' class='form-control isNumericType' value='1'>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class='timeFltrType'>
+													<div class='form-group'>
+														<label class='col-md-3 control-label'>Timestamp of the Oldest</label>
+														<div class='col-md-9'>
+															<div class='input-group'>
+																<span class="input-group-addon"><span class="fa fa-calendar"></span>
+																</span>
+																<input id='inpTLst' type='text' class='form-control minBund' disabled>
+															</div>
+														</div>
+														<label class='col-md-3 control-label'>Start Time</label>
+														<div class='col-md-9'>
+															<div class='input-group'>
+																<span class="input-group-addon"><span class="fa fa-calendar"></span>
+																</span>
+																<input class='form-control utcValue minType' data-max='#panelSystemLogViewer #inpTFst' data-min='#panelSystemLogViewer #inpTLst' id='inpTSt' placeholder="Click Me..." data-date-format="YYYY-MM-DDTHH:mm:ss">
+															</div>
+														</div>
+													</div>
+													<div class='form-group'>
+														<label class='col-md-3 control-label'>Timestamp of the Latest </label>
+														<div class='col-md-9'>
+															<div class='input-group'>
+																<span class="input-group-addon"><span class="fa fa-calendar"></span>
+																</span>
+																<input id='inpTFst' type='text' class='form-control maxBund' disabled>
+															</div>
+														</div>
+														<label class='col-md-3 control-label'>End Time</label>
+														<div class='col-md-9'>
+															<div class='input-group'>
+																<span class="input-group-addon"><span class="fa fa-calendar"></span>
+																</span>
+																<input class='form-control utcValue maxType' data-max='#panelSystemLogViewer #inpTFst' data-min='#panelSystemLogViewer #inpTSt' id='inpTEnd' placeholder="Click Me..." data-date-format="YYYY-MM-DDTHH:mm:ss">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</form>
+										<div class='processingType'>
+											<br>
+											<br>
+											<center><i class='fa fa-spinner fa-spin fa-5x'></i></center>
+											<br>
+											<br>
+										</div>
+                                        <div class='dataType'>
+											<h4 class='page-header'>
+												Chart
+												<a data-toggle='collapse' data-target='#collapseaChartSys'>
+													<i class='fa fa-fw fa-caret-down'>
+													</i>
+												</a>
+											</h4>
+											<div class='col-md-12 collapse' id='collapseaChartSys'>
+												<!-- <div class='form-group hasSlotType'>
+													<label class='col-lg-1 control-label'>Slot</label>
+													<div class='col-lg-11'>
+														<select class='form-control' data-select="slot">
+														</select>
+													</div>
+												</div> -->
+												<div class="col-md-6 chartType">
+													<div class="panel panel-red">
+														<div class="panel-heading">
+															<h3 class='panel-title'><i class="fa fa-fw fa-bar-chart-o"></i> Event-Type Statistic</h3>
+														</div>
+														<div class="panel-body" style='height:600px;'>
+															<div class="row">
+																<!-- <div class='form-group'>
+																	<label class='col-md-3 control-label'>Event Type</label>
+																	<div class='col-md-9'>
+																		<div class='input-group'>
+																			<select class='form-control' data-select="ioType">
+																			</select>
+																		</div>
+																	</div>
+																</div> -->
+																<center><h3>Event-Type Bar Chart</h3></center>
+															</div>
+															<div class="row" id='ioTypeBarSys' style='height:500px;'>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col-md-6 chartType">
+													<div class="panel panel-green">
+														<div class="panel-heading">
+															<h3 class='panel-title'><i class="fa fa-fw  fa-pie-chart"></i> Event Type Proportion</h3>
+														</div>
+														<div class="panel-body" style='height:600px;'>
+															<div class="row">
+																<!-- <div class='form-group'>
+																	<label class='col-md-3 control-label'>Log Type</label>
+																	<div class='col-md-9'>
+																		<div class='input-group'>
+																			<select class='form-control' data-select="logType">
+																			</select>
+																		</div>
+																	</div>
+																</div> -->
+																<center><h3 id='pieTitle'>Event Type Pie Chart</h3></center>
+															</div>
+															<div class="row" id='channelPieSys' style='height:500px;'>
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- <div class="col-md-12 chartType">
+													<div class="panel panel-primary">
+														<div class="panel-heading">
+															<h3 class='panel-title'><i class="fa fa-fw fa-line-chart"></i> Amount Trend</h3>
+														</div>
+														<div class="panel-body">
+															<div class="row">
+																<center><h3 id='trendTitle'>Amount of Events</h3></center>
+															</div>
+															<div class="row" id='valTrendSys' style='height:400px'>
+															</div>
+															<nav class="row">
+																<ul class="pager">
+																    <li>
+																    	<a href="#" data-trendToogle ='minusStep'>
+																    		<span aria-hidden="true">&larr;</span> Previous
+																    	</a>
+																    </li>
+																    <li>
+																    	<a href="#" data-trendToogle ='addStep' >Next
+																    		<span aria-hidden="true">&rarr;</span>
+																    	</a>
+																    </li>
+																</ul>
+															</nav>
+														</div>
+													</div>
+												</div> -->
+											</div>
+										</div>
+										<div class='dataType'>
+											<h4 class='page-header'>
+												Data
+												<a data-toggle='collapse' data-target='#collapseSysData'>
+													<i class='fa fa-fw fa-caret-down'></i>
+												</a>
+											</h4>
+											<div class='col-md-12 collapse'  id='collapseSysData'>
+												<!-- <div class="table-responsive" > -->
+													<table id='dataViewerTableSys' class="table table-bordered table-hover table-striped dt-responsive" cellspacing ="0" width="100%">
+														<thead>
+															<tr>
+																<td class='peType'>Event Type</td>
+																<td class='timType'>Timestamp</td>
+																<td class='uidType'>UUID</td>
+																<td class='macType'>MAC</td>
+																<td class='eventType'>Record</td>
+																<!-- <td class='slotType'>Slot</td>
+																<td class='channelType'>Channel</td>
+																<td class='ioTypeType'>I/O-type</td>
+																<td class='valueType'>Value</td> -->
+															</tr>
+														</thead>
+														<tbody></tbody>
+													</table>
+												<!-- </div> -->
+											</div>
+										</div>
+									</div><!--panel-body-->
+ 									<div class="panel-footer clearfix">
+                                        <center>
+                                            <div class="btn-group">
+                                                <button type="button" id='btnQuery' class="btn btn-info">
+                                                    <i class="fa fa-search"></i> Query
+                                                </button>
+                                                <button type="button" id='btnClear' class="btn btn-danger privilege root admin">
+                                                    <i class="fa fa-eraser"></i> Clear
+                                                </button>
+                                            </div>
+                                        </center>
+                                    </div>
+								</div><!--panel-->
+							</div><!--tab pannel -->
+						</div><!--tab content-->
+					</div>
+				</div><!--./tab-content-->
+			</div><!--form-horizontal-->
+		</div>
+		<!--/.col-lg-12-->
+	</div>
+	<!-- /.row -->
+</div>
+<!-- /.container-fluid -->
+<script>
+	var physicalValueSupport = Advantech.Profile.DeviceEmun[module].aiPhysicalValueSupport;
+	if(typeof(physicalValueSupport)!="undefined" && !physicalValueSupport){
+		$("#dataLogMainForm #contentSysInfo #tabLogCondition #tabIOFieldSetting #physicalValueOption").hide();
+	}
+	Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+	$('#dataLogForm a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+		var type = e.target.hash.slice(4);
+		Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+		/*if(type === "LocalhostSetting"){
+			httpGetOperation(HTTP_GET, URL_LOG_DATA_OPTION, function(jsonObj){onGetDataOption.apply(this, [jsonObj, true, true]);}, dataLogErrorCallback);
+        }else*/ if(type === "LocalhostSetting" || type === "DataLogSysSetting"){//system data log config
+        	Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+        	httpGetOperation(HTTP_GET, URL_LOGSYS_DATA_OPTION, function(jsonObj){onGetLogSysDataOption.apply(this, [jsonObj, false]);}, dataLogErrorCallback);
+		}else if(type === "LoggerConfig"){
+			//dataLogEntry(false);
+			httpGetOperation(HTTP_GET,
+				 URL_LOG_LOG_SWITCH,
+				 function(jsonObj){
+				 	onGetLogSwitchConfig.apply(this, [jsonObj, false]);
+				 },
+				 dataLogErrorCallback);
+		}else if(type === "DataLogViewer"){
+			onGetLogOutput();
+			// httpGetOperation(HTTP_GET, URL_LOG_DATA_OUTPUT, function(jsonObj){onGetLogOutput.apply(this, [jsonObj]);}, dataLogErrorCallback);
+			//httpGetOperation(HTTP_GET, URL_LPWAN_OUTPUT, function(jsonObj){onGetLogOutput.apply(this, [jsonObj]);}, dataLogErrorCallback);
+		}else{
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		}
+	});
+
+	var dataLogOptionPanel = new Advantech.Form.AdvancedForm.DataLogOptionPanel('panelDataOption');
+    var sensorLogOptionPanel = new Advantech.Form.AdvancedForm.DataLogSensorOptionPanel('panelSensorDataOption');
+	var logConditionPanel = new Advantech.Form.AdvancedForm.DataLogConditionPanel('panelLogCondition');
+    var logSysConditionPanel = new Advantech.Form.AdvancedForm.DataLogSysOptionPanel('panelLogSysCondition');
+	var dataViewerPanel = new Advantech.Form.AdvancedForm.DataViewerPanel('panelDataLogViewer', 'dataViewerTable', "channelPie", "ioTypeBar", "valTrend", 'io');
+    var sysDataViewerPanel = new Advantech.Form.AdvancedForm.DataViewerPanel('panelSystemLogViewer', 'dataViewerTableSys', "channelPieSys", "ioTypeBarSys", "valTrendSys", 'system');
+	var channelMaskPanel = new Advantech.Form.AdvancedForm.DataLogChannelMaskPanel("tabChannelFieldSetting", 1);
+	var loggerConfigPanel = new Advantech.Form.AdvancedForm.DataLogLoggerConfigPanel("panelLoggerConfig");
+	var fileUpdatePrgressForm = new Advantech.Form.ProgressForm.getInstance();
+    var uiChannelAmount = 0;
+
+    function dataLogEntry(bInitial){
+    	if(bInitial){
+	    	dataViewerPanel.initialPanel();//data chart
+	    	sysDataViewerPanel.initialPanel();//system chart
+	    	loggerConfigPanel.initialPanel();
+    	}
+		/* httpGetOperation(HTTP_GET,
+			URL_LOG_DATA_LOG_UPLOAD + "/slot_0",
+			function(logUploadJson){
+				onGetLogUploadConfig.apply(this, [logUploadJson, true]);
+			},
+			dataLogErrorCallback); */
+			onGetLogUploadConfig(null, true);
+	}
+
+	function onGetProfile(jsonObj) {
+		//for backward comptability
+		var tmpObj = {Dev:[]};
+		tmpObj.Dev.push(jsonObj);
+		jsonObj = tmpObj;
+		///////////////////////////
+		if(typeof(jsonObj.Dev[0].UIn)!='undefined'){//universal input channel
+			uiChannelAmount = Number(jsonObj.Dev[0].UIn);
+			jsonObj.Dev[0].AIn = Number(jsonObj.Dev[0].AIn) + uiChannelAmount;
+		}
+
+        channelMaskPanel.initialPanel(jsonObj);
+		var hasAi = (Number(jsonObj.Dev[0].AIn)>0)?true:false;
+		var hasAo = (Number(jsonObj.Dev[0].AOn)>0)?true:false;
+		var hasSensor = (Number(jsonObj.Dev[0].Sn)>0)?true:false;
+		if(hasAi || hasAo){
+			dataLogOptionPanel.initialPanel(hasAi, hasAo);
+		}else{
+			$("#panelDataOption").hide();
+			$(".aioType").hide();
+		}
+        if(hasSensor){
+			if (typeof jsonObj.Dev[0].FCS != 'undefined' && jsonObj.Dev[0].FCS & Advantech.Profile.FCSMask.FeatureAverageMode) {
+				httpGetOperation(HTTP_GET,
+					URL_SENSOR_MEASURE,
+					function(objSensorMeasure){
+						sensorLogOptionPanel.initialPanel(hasSensor, Boolean(objSensorMeasure.Avg));
+					},
+					dataLogErrorCallback);
+			} else {
+				sensorLogOptionPanel.initialPanel(hasSensor, false);
+			}
+		}else{
+			$("#panelSensorDataOption").hide();
+			$(".sensorType").hide();
+		}
+
+		$("#contentSysInfo #systemConfigurationTab").show().find('a').trigger('click');
+		$("#contentSysInfo #systemDataQueryTab").show().find('a').trigger('click');
+
+		logConditionPanel.initialPanel((Number(jsonObj.Dev[0].AIn)>0)?true:false, (Number(jsonObj.Dev[0].AOn)>0)?true:false, false, false);
+		// dataViewerPanel.initialPanel();
+        sysDataViewerPanel.initialPanel();
+		loggerConfigPanel.initialPanel();
+		// httpGetOperation(HTTP_GET, URL_LOG_DATA_OPTION, function(jsonObj){onGetDataOption.apply(this, [jsonObj, true, true]);}, dataLogErrorCallback);
+	};
+
+	function onGetDataOption(jsonObj, isRecursive, isNextRecursive) {
+		channelMaskPanel.setPanelEnableSegment(jsonObj, uiChannelAmount);
+		dataLogOptionPanel.setPanel(jsonObj);
+        sensorLogOptionPanel.setPanel(jsonObj);//for sensor
+		if( isRecursive ){
+			httpGetOperation(HTTP_GET, URL_LOG_DATA_CONTROL, function(jsonObj){onGetLogControl.apply(this, [jsonObj, isNextRecursive]);}, dataLogErrorCallback);
+		}else{
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		}
+	};
+
+	function onGetLogControl(jsonObj, isRecursive){
+        if(uiChannelAmount == 0){
+            logConditionPanel.setPanel(jsonObj);
+            channelMaskPanel.setPanelCosSegment(jsonObj);
+            //for Sensor
+            channelMaskPanel.setPanelSensorSegment(jsonObj);
+            Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+        }else{
+            httpGetOperation(HTTP_GET, URL_UI_CONFIG + "/slot_0", function(uioObj){onGetUioConfig.apply(this, [jsonObj,uioObj]);}, dataLogErrorCallback);
+        }
+	};
+    function onGetUioConfig(jsonObj, uioObj){
+        logConditionPanel.setPanel(jsonObj);
+        channelMaskPanel.setPanelCosSegment(jsonObj);
+        channelMaskPanel.setPanelUioSegment(uioObj, jsonObj);
+        Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+    }
+
+	function onGetLogSysDataOption(jsonObj, isRecursive){
+		logSysConditionPanel.setPanel(jsonObj);
+		Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+	}
+
+	function onGetLogSwitchConfig(logSwitchJson, isRecursive) {
+		loggerConfigPanel.setPanel(logSwitchJson, null, null);
+		if( isRecursive ){
+			httpGetOperation(HTTP_GET,
+				URL_LOG_DATA_LOG_UPLOAD + "/slot_0",
+				function(logUploadJson){
+					onGetLogUploadConfig.apply(this, [logUploadJson, true]);
+				},
+				dataLogErrorCallback);
+		}else{
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		}
+	}
+	function onGetLogUploadConfig(logUploadJson, isRecursive) {
+		loggerConfigPanel.setPanel(null, logUploadJson, null);
+		if( isRecursive ){
+			httpGetOperation(HTTP_GET,
+				URL_LOG_PUSH_OUTPUT + "/slot_0",
+				function(pushOutputJson){
+					onGetPushOutputConfig.apply(this, [pushOutputJson]);
+				},
+				dataLogErrorCallback);
+		}else{
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		}
+	}
+	function onGetPushOutputConfig(pushOutputJson) {
+		loggerConfigPanel.setPanel(null, null, pushOutputJson);
+		Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+	}
+
+	function onGetTransmissionFilterData(jsonObj, isRecursive) {
+		dataViewerPanel.setPanel(jsonObj);
+		if( isRecursive ){
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+			fileUpdatePrgressForm.showProgressForm(undefined, "Fetching Data Log...");
+			fileUpdatePrgressForm.updateDataLogProgress(99, jsonObj.LVal);
+			httpGetOperation(HTTP_GET,
+				URL_LOG_DATA_MESSAGE,
+				onGetLogData,
+				function(status, msg, apiErrorCode, Msg){
+					fileUpdatePrgressForm.hideProgressForm();
+					dataLogErrorCallback(status, msg, apiErrorCode, Msg);
+					dataViewerPanel.clearDataTable.apply(this,[]);
+				},
+				null,
+				1800000 //set timeout to 30 mins
+				);
+		}else{
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		}
+	};
+
+    function onGetSysTransmissionFilterData(jsonObj, isRecursive) {
+		sysDataViewerPanel.setPanel(jsonObj);
+		if( isRecursive ){
+			httpGetOperation(HTTP_GET,
+				URL_LOGSYS_DATA_MESSAGE,
+				onGetLogSysData,
+				function(status, msg, apiErrorCode, Msg){
+					dataLogErrorCallback(status, msg, apiErrorCode, Msg);
+					sysDataViewerPanel.clearDataTable.apply(this,[]);
+				});
+		}else{
+			Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		}
+	};
+
+	function onGetLogData(jsonObj) {
+		fileUpdatePrgressForm.updateDataLogProgress(100);
+		fileUpdatePrgressForm.hideProgressForm();
+		dataViewerPanel.setDataTable(jsonObj);
+        Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+	};
+    function onGetLogSysData(jsonObj) {
+		sysDataViewerPanel.setDataTable(jsonObj);
+        Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+	};
+    function onGetLogOutput(jsonObj) {
+		// dataViewerPanel.setPanel(jsonObj, true);
+		// var profile = Advantech.Utility.ProfileRecordInstance.getInstance().getProfile();
+		// if(typeof(profile.FCS) != 'undefined' && profile.FCS & Advantech.Profile.FCSMask.SystemLogger) {
+			httpGetOperation(HTTP_GET,
+					URL_LOGSYS_DATA_OUTPUT,
+					onGetLogSysOutput,
+					dataLogErrorCallback
+					);
+		// } else {
+		// 	Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+		// }
+	}
+    function onGetLogSysOutput(jsonObj) {
+		sysDataViewerPanel.setPanel(jsonObj, true);
+        Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+	}
+	function dataLogErrorCallback(code, commonMsg, apiErrorCode, apiErrorMsg) {
+        Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+        var returnMsg;
+        returnMsg = apiErrorCode!=undefined? Advantech.Profile.API_ERROR_CODE_NAME[apiErrorCode] : "";
+        returnMsg += apiErrorMsg!=undefined && apiErrorMsg!="" ? "<p/>(Reason:" + apiErrorMsg + " error, Error number:" +apiErrorCode+")" : "";
+		if(returnMsg == "")
+			returnMsg = commonMsg;
+        Advantech.Form.MessageForm.getInstance().showMessageBox("Error code: " + code, "<i class='fa fa-fw fa-exclamation-triangle'></i>" + returnMsg , null);
+	};
+	loggerConfigPanel.onDataLogConfigSubmitted(function(obj, jsonObj){
+		Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+		var logUploadJson = jsonObj['log_upload'];
+		var pushOutputJson = jsonObj['push_output'];
+		if(JSON.stringify(logUploadJson) == '{}'){//empty setting string
+			if(JSON.stringify(pushOutputJson) == '{}'){//empty setting string
+				onGetLogSwitchConfig.apply(this, [null, true]);
+			}else{
+				httpGetOperation(HTTP_PATCH,
+					URL_LOG_PUSH_OUTPUT + "/slot_0",
+					function(){
+						onGetLogSwitchConfig.apply(this, [null, true]);
+					},
+					dataLogErrorCallback,
+					JSON.stringify(pushOutputJson));
+			}
+		}else{
+			httpGetOperation(HTTP_PATCH,
+				 URL_LOG_DATA_LOG_UPLOAD + "/slot_0",
+				 function(){
+				 	if(JSON.stringify(pushOutputJson) == '{}'){//empty setting string
+						onGetLogSwitchConfig.apply(this, [null, true]);
+					}else{
+					 	httpGetOperation(HTTP_PATCH,
+		 					URL_LOG_PUSH_OUTPUT + "/slot_0",
+		 					function(){
+								onGetLogSwitchConfig.apply(this, [null, true]);
+		 					},
+		 					dataLogErrorCallback,
+		 					JSON.stringify(pushOutputJson));
+					 }
+				},
+				dataLogErrorCallback,
+				JSON.stringify(logUploadJson));
+		}
+	});
+	loggerConfigPanel.onMemoryLogStatusChanged(function(obj, e){
+		Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+		httpGetOperation(HTTP_PATCH,
+			 URL_LOG_LOG_SWITCH,
+			 function() {
+			 	httpGetOperation(HTTP_GET,
+			 					 URL_LOG_LOG_SWITCH,
+			 					 function(jsonObj){
+			 					 	onGetLogSwitchConfig.apply(this, [jsonObj, false]);
+			 					 },
+			 					 dataLogErrorCallback);
+			},
+			dataLogErrorCallback,
+			JSON.stringify(e));
+	});
+	loggerConfigPanel.onCloudLogStatusChanged(function(obj, e){
+		Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+		httpGetOperation(HTTP_PATCH,
+			 URL_LOG_DATA_LOG_UPLOAD + "/slot_0",
+			 function() {
+			 	httpGetOperation(HTTP_GET,
+			 					 URL_LOG_DATA_LOG_UPLOAD + "/slot_0",
+			 					 function(jsonObj){
+			 					 	onGetLogUploadConfig.apply(this, [jsonObj, false]);
+			 					 },
+			 					 dataLogErrorCallback);
+			},
+			dataLogErrorCallback,
+			JSON.stringify(e));
+	});
+	loggerConfigPanel.onPushLogStatusChanged(function(obj, e){
+		Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+		httpGetOperation(HTTP_PATCH,
+			 URL_LOG_PUSH_OUTPUT + "/slot_0",
+			 function() {
+			 	httpGetOperation(HTTP_GET,
+			 					 URL_LOG_PUSH_OUTPUT + "/slot_0",
+			 					 function(jsonObj){
+			 					 	onGetPushOutputConfig.apply(this, [jsonObj]);
+			 					 },
+			 					 dataLogErrorCallback);
+			},
+			dataLogErrorCallback,
+			JSON.stringify(e));
+	});
+
+	dataViewerPanel.onDataViewCleared(function(obj, e) {
+		$("#CommonConfirmModal #confirmModalLabel").text("Clear Data Log Confirm");
+	        $("#CommonConfirmModal #confirmContext").html("<i class='fa fa-fw fa-warning'></i>All data of log will be cleared! Are you sure keep going?");
+	        $("#CommonConfirmModal").modal("show");
+	        $("#CommonConfirmModal #btnCommonConfirm").click(function(){
+	        	httpGetOperation(HTTP_PATCH,
+							 URL_DEVICE_CONTROL,
+							null,
+	                        null,
+	                        JSON.stringify(e));
+	        	$("#CommonConfirmModal #btnCommonConfirm").unbind( "click" );
+	        	$("#CommonConfirmModal").modal("hide");
+	        });
+	});
+
+    sysDataViewerPanel.onDataViewCleared(function(obj, e) {
+		$("#CommonConfirmModal #confirmModalLabel").text("Clear Data Log Confirm");
+	        $("#CommonConfirmModal #confirmContext").html("<i class='fa fa-fw fa-warning'></i>All data of log will be cleared! Are you sure keep going?");
+	        $("#CommonConfirmModal").modal("show");
+	        $("#CommonConfirmModal #btnCommonConfirm").click(function(){
+	        	httpGetOperation(HTTP_PATCH,
+							 URL_DEVICE_CONTROL,
+							null,
+	                        null,
+	                        JSON.stringify(e));
+	        	$("#CommonConfirmModal #btnCommonConfirm").unbind( "click" );
+	        	$("#CommonConfirmModal").modal("hide");
+	        });
+	});
+
+	dataViewerPanel.onDataViewQueried(function(obj, e) {
+		//Advantech.Form.WaitingForm.getInstance().showPleaseWait(null, false, 63000);
+		Advantech.Form.WaitingForm.getInstance().showPleaseWait(null, false, 1800000);//set timeout to 30 mins
+		httpGetOperation(HTTP_PATCH,
+						URL_LOG_DATA_OUTPUT,
+						 function() {
+							httpGetOperation(HTTP_GET,
+								URL_LOG_DATA_OUTPUT,
+									function(jsonObj){
+									onGetTransmissionFilterData.apply(this, [jsonObj, true]);
+									},
+									dataLogErrorCallback);
+						},
+						dataLogErrorCallback,
+						JSON.stringify(e));
+	});
+	dataViewerPanel.onDataViewSaved(function(obj, e, type) {
+		initDataLogDownload(e, type);
+	});
+
+    sysDataViewerPanel.onDataViewQueried(function(obj, e) {
+		Advantech.Form.WaitingForm.getInstance().showPleaseWait(null, false, 63000);
+		httpGetOperation(HTTP_PATCH,
+						 URL_LOGSYS_DATA_OUTPUT,
+						 function() {
+							httpGetOperation(HTTP_GET,
+											 URL_LOGSYS_DATA_OUTPUT,
+											 function(jsonObj){
+											 	onGetSysTransmissionFilterData.apply(this, [jsonObj, true]);
+											 },
+											 dataLogErrorCallback);
+						},
+						dataLogErrorCallback,
+						JSON.stringify(e));
+	});
+
+	dataViewerPanel.onDataViewFilterChanged(function(obj, e) {
+		Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_GET,
+							 URL_LOG_DATA_OUTPUT,
+							 function(jsonObj){
+							 	dataViewerPanel.updateFltrValue(jsonObj);
+							 	Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+							 },
+							 dataLogErrorCallback);
+	});
+    sysDataViewerPanel.onDataViewFilterChanged(function(obj, e) {
+		Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+			httpGetOperation(HTTP_GET,
+							 URL_LOGSYS_DATA_OUTPUT,
+							 function(jsonObj){
+							 	sysDataViewerPanel.updateFltrValue(jsonObj);
+							 	Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+							 },
+							 dataLogErrorCallback);
+	});
+
+	dataLogOptionPanel.onDataLogOptionSubmitted(function(obj, e) {
+		Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+		var maskObj = channelMaskPanel.toJson();
+		var enMask = maskObj.ChM;
+        var sensorMask = sensorLogOptionPanel.toJson();//sensor
+
+		for(var prop in enMask){
+			e[prop] = enMask[prop];
+		}
+        for(var prop in sensorMask){
+			e[prop] = sensorMask[prop];
+		}
+		httpGetOperation(HTTP_PATCH,
+			 URL_LOG_DATA_OPTION,
+			 function() {
+			 	httpGetOperation(HTTP_GET,
+			 					 URL_LOG_DATA_OPTION,
+			 					 function(jsonObj){
+			 					 	onGetDataOption.apply(this, [jsonObj, false, false]);
+			 					 	var cosMask = maskObj.COS;
+			 					 	var optionObj = logConditionPanel.toJson();
+			 					 	for(var prop in cosMask){
+										optionObj[prop] = cosMask[prop];
+									}
+			 					 	logConditionPanel.onDataLogConditionSubmitted().apply(this, [this, optionObj]);
+			 					 },
+			 					 dataLogErrorCallback);
+			},
+			dataLogErrorCallback,
+			JSON.stringify(e));
+	});
+	$("#btnLogConfigAll").click(function(evt){
+		evt.preventDefault();
+		dataLogOptionPanel.onDataLogOptionSubmitted().apply(this, [this, dataLogOptionPanel.toJson()]);
+	});
+
+	logSysConditionPanel.onDataLogSysOptionSubmitted(function(obj, e) {
+		Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+		httpGetOperation(HTTP_PATCH,
+			 URL_LOGSYS_DATA_OPTION,
+			 function() {
+			 	httpGetOperation(HTTP_GET,
+			 					 URL_LOGSYS_DATA_OPTION,
+			 					 function(jsonObj){
+			 					 	onGetLogSysDataOption.apply(this, [jsonObj, false]);
+			 					 },
+			 					 dataLogErrorCallback);
+			},
+			dataLogErrorCallback,
+			JSON.stringify(e));
+	});
+	$("#btnLogSysConfig").click(function(evt){
+		evt.preventDefault();
+		logSysConditionPanel.onDataLogSysOptionSubmitted().apply(this, [this, logSysConditionPanel.toJson()]);
+	});
+	logConditionPanel.onDataLogStatusChanged(function(obj, e) {
+		httpGetOperation(HTTP_PATCH,
+						 URL_LOG_DATA_CONTROL,
+						 function() {
+						 	httpGetOperation(HTTP_GET,
+						 		URL_LOG_DATA_CONTROL,
+						 		function(jsonObj){
+						 			onGetLogControl.apply(this, [jsonObj, false]);
+						 		},
+						 		dataLogErrorCallback);
+						},
+						dataLogErrorCallback,
+						JSON.stringify(e));
+	});
+	logConditionPanel.onDataLogConditionSubmitted(function(obj, e) {
+		Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+		var maskObj = channelMaskPanel.toJson();
+		var cosMask = maskObj.COS;
+		for(prop in cosMask){
+			e[prop] = cosMask[prop];
+		}
+		httpGetOperation(HTTP_PATCH,
+						 URL_LOG_DATA_CONTROL,
+						 function() {
+						 	httpGetOperation(HTTP_GET,
+						 		URL_LOG_DATA_CONTROL,
+						 		function(jsonObj){
+						 			onGetLogControl.apply(this, [jsonObj, false]);
+						 		},
+						 		dataLogErrorCallback);
+						},
+						dataLogErrorCallback,
+						JSON.stringify(e));
+	});
+	httpGetOperation(HTTP_GET, URL_PROFILE, onGetProfile, dataLogErrorCallback);
+	//dataLogEntry(true);
+
+	function isValid($element, $parent){
+		if($element.hasClass("utcValue")){
+			var maxBund = moment($($element.attr("data-max")).val(), "YYYY-MM-DDTHH:mm:ss").valueOf();
+			var minBund = moment($($element.attr("data-min")).val(), "YYYY-MM-DDTHH:mm:ss").valueOf();
+			if($element.hasClass("minType")){
+				var min = moment($element.val(), "YYYY-MM-DDTHH:mm:ss").valueOf();
+				if( min < minBund || min >= maxBund){
+					$element.val($($element.attr("data-min")).val());
+	                $parent.addClass("has-error");
+	                Advantech.Form.MessageForm.getInstance().showMessageBox("<h4>Parameter Invalid<h4>", "<h5><i class='fa fa-fw fafrown-o'></i>The parameter "+$element[0].id.slice(3)+" out of range "+moment(minBund).format("YYYY-MM-DDTHH:mm:ss")+" ~ "+moment(maxBund).format("YYYY-MM-DDTHH:mm:ss")+"!<h5>");
+				}
+			}
+			else if($element.hasClass("maxType")){
+				var max = moment($element.val(), "YYYY-MM-DDTHH:mm:ss").valueOf();
+				if( max < minBund || max > maxBund){
+					$element.val($($element.attr("data-max")).val());
+	                $parent.addClass("has-error");
+	                Advantech.Form.MessageForm.getInstance().showMessageBox("<h4>Parameter Invalid<h4>", "<h5><i class='fa fa-fw fafrown-o'></i>The parameter "+$element[0].id.slice(3)+" out of range "+moment(minBund).format("YYYY-MM-DDTHH:mm:ss")+" ~ "+moment(maxBund).format("YYYY-MM-DDTHH:mm:ss")+"!<h5>");
+				}
+			}
+		}
+        else if($element[0].type == "number" || $element.hasClass("isNumericType")){
+            var val = parseInt($element.val(),10);
+            var max = Number($element.attr("max"));
+            var min = Number($element.attr("min"));
+            if(!$.isNumeric(val) || val < min || val > max){
+                $element.val($element.data("temp"));
+                $parent.addClass("has-error");
+                Advantech.Form.MessageForm.getInstance().showMessageBox("<h4>Parameter Invalid<h4>", "<h5><i class='fa fa-fw fafrown-o'></i>The parameter "+$element[0].id.slice(3)+" out of range "+min+" ~ "+max+"!<h5>");
+            }
+        }
+        else if($element[0].type == "text"){
+        	if($element.hasClass("txtIp") && !$element.is(":disabled")){
+        		var id = $element[0].id;
+        		if (!Advantech.Utility.isValidIp($element.val())) {
+        			$element.val($element.data("temp"));
+                	$parent.addClass("has-error");
+        			Advantech.Form.MessageForm.getInstance().showMessageBox("<h4>Format Error<h4>", "<h5><i class='fa fa-fw fafrown-o'></i>Invalid IP format in " + id.slice(3)+"!<h5>");
+        		}
+        	}
+        }
+	};
+	$("#dataLogMainForm form input").keypress(function(event){
+	        if(event.which == 13){
+	            event.preventDefault();
+	            var $parent = $(this).closest(".form-group");
+	            isValid($(this), $parent);
+	        }
+	    }).focusout(function() {
+	        var $parent = $(this).closest(".form-group");
+	        isValid($(this), $parent);
+	    }).focus(function() {
+	        $(this).data( 'temp', $(this).val());
+	        $(".form-group").removeClass("has-error");
+	    });
+</script>

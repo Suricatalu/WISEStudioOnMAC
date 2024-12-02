@@ -1,0 +1,414 @@
+<style>
+    .Indicator-light{
+        /*width: 30px;*/
+        height: 30px;
+    }
+</style>
+<div class="container-fluid">
+        <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+             <h3 class="page-header"><i class="fa fa-fw fa-bar-chart-o"></i> IO Status</h3>
+        </div>
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12" id='IOStatusContainer'>
+            <script>
+                    var recordObj = Advantech.Utility.RecordContextPageIdSingleton.getInstance();
+                    //var slot = recordObj.getSlotId();
+                    var slot = 0;
+                    var ioStatusTab = new Advantech.Form.IOForm.IOStatusTab("ioStatusTab");
+
+                    var aiStatusMaxPageTriggerSelect = true;
+                    var aiStatusMinPageTriggerSelect = true;
+                    var diStatusPageTriggerSelect = true;
+
+                    ioStatusTab.CreateTab('IOStatusContainer');
+                    ioStatusTab.onTabSwitch(function(obj, e){
+                		var gobalTimer = Advantech.Utility.TimerDispatchSingleton.getInstance();
+                		gobalTimer.ClearTimer();
+                        diStatusPageTriggerSelect = true; //reset value
+                		//Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                        //debugger;
+                        if( e.Type === "DO" || e.Type === "Relay"){
+                            var page = (e.Type === "DO")?ioStatusTab.GetDOPage():ioStatusTab.GetRelayPage();
+                            httpGetOperation(HTTP_GET,
+                                            URL_DO_CONFIG+"/slot_"+slot ,
+                                            function(jsonObj){
+                                                onIOStatusGetConfig(page, URL_DO_VALUE, jsonObj, true);
+                                            },
+                                            ioStatusErrorCallback);
+                            page.onConfigChanged(function(obj,e){
+                            	Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                httpGetOperation(HTTP_PATCH,
+                            					 URL_DO_CONFIG+"/slot_"+slot,
+                            					 function(){
+                            					 	httpGetOperation(HTTP_GET,
+                                                        URL_DO_CONFIG+"/slot_"+slot ,
+                                                        function(jsonObj){
+                                                            onIOStatusGetConfig(page, URL_DO_VALUE, jsonObj, false);
+                                                        },
+                                                        ioStatusErrorCallback);
+                            					 },
+                            					 ioStatusErrorCallback,
+                            					 JSON.stringify(e));
+                            });
+                            page.onValueChanged(function(obj,e){
+                            	httpGetOperation(HTTP_PATCH,
+                            					 URL_DO_VALUE+"/slot_"+slot,
+                            					 null,
+                            					 ioStatusErrorCallback,
+                            					 JSON.stringify(e));
+                            });
+                            page.onPageChanged(function(obj,e){
+                                    gobalTimer.ClearTimer();
+                                    if(e.type ==='Config'){
+
+                                    }
+                                    else if(e.type ==='Trend'){
+									    /*
+                                        page.clearChart();
+                                        gobalTimer.EnableTimer(function(){
+                                            httpGetOperation(HTTP_GET,
+                                                URL_DO_VALUE+"/slot_"+slot,
+                                                function(data){
+                                                    onIOStatusGetValueAndUpdateTrend(page, data);
+                                                },
+                                                ioStatusErrorCallback);
+                                        },
+                                        Advantech.Profile.Parameter.POLLING_RATE);
+										*/
+                                    }
+                                    else{
+                                        gobalTimer.EnableTimer(function(){
+                                            httpGetOperation(HTTP_GET,
+                                                URL_DO_VALUE+"/slot_"+slot ,
+                                                function(data){
+                                                    onIOStatusGetValue(page, data);
+                                                },
+                                                ioStatusErrorCallback);
+                                        },
+                                        Advantech.Profile.Parameter.POLLING_RATE);
+                                    }
+                            });
+                        }
+                        else if( e.Type === "DI"){
+                            var page = ioStatusTab.GetDIPage();
+                            httpGetOperation(HTTP_GET,
+                                            URL_DI_CONFIG+"/slot_"+slot ,
+                                            function(jsonObj){
+                                                onIOStatusGetConfig(page, URL_DI_VALUE, jsonObj, true);
+                                            },
+                                            ioStatusErrorCallback);
+                            page.onConfigChanged(function(obj,e){
+                                Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                httpGetOperation(HTTP_PATCH,
+                                                 URL_DI_CONFIG+"/slot_"+slot,
+                                                 function(){
+                                                    httpGetOperation(HTTP_GET,
+                                                        URL_DI_CONFIG+"/slot_"+slot ,
+                                                        function(jsonObj){
+                                                            onIOStatusGetConfig(page, URL_DI_VALUE, jsonObj, false);
+                                                        },
+                                                        ioStatusErrorCallback);
+                                                 },
+                                                 ioStatusErrorCallback,
+                                                 JSON.stringify(e));
+                            });
+                            page.onValueChanged(function(obj,e){
+                                httpGetOperation(HTTP_PATCH,
+                                                 URL_DI_VALUE+"/slot_"+slot,
+                                                 null,
+                                                 ioStatusErrorCallback,
+                                                 JSON.stringify(e));
+                            });
+                            page.onPageChanged(function(obj,e){
+                                    gobalTimer.ClearTimer();
+                                    if(e.type ==='Config'){
+
+                                    }
+                                    else if(e.type ==='Trend'){
+										/*
+                                        page.clearChart();
+                                        gobalTimer.EnableTimer(function(){
+                                            httpGetOperation(HTTP_GET,
+                                                URL_DI_VALUE+"/slot_"+slot,
+                                                function(data){
+                                                    onIOStatusGetValueAndUpdateTrend(page, data);
+                                                },
+                                                ioStatusErrorCallback);
+                                        },
+                                        Advantech.Profile.Parameter.POLLING_RATE);
+										*/
+                                    }
+                                    else{
+                                        gobalTimer.EnableTimer(function(){
+                                            httpGetOperation(HTTP_GET,
+                                                URL_DI_VALUE+"/slot_" + slot  ,
+                                                function(data){
+                                                    onIOStatusGetValue(page, data, null, diStatusPageTriggerSelect);
+                                                    diStatusPageTriggerSelect = false;
+                                                },
+                                                ioStatusErrorCallback);
+                                        },
+                                        Advantech.Profile.Parameter.POLLING_RATE);
+                                    }
+                            });
+                        }
+                        else if( e.Type == "AO"){
+                        }
+                        else if( e.Type == "AI"){
+                            var page = ioStatusTab.GetAIPage();
+                            httpGetOperation(HTTP_GET,
+                                            URL_AI_GEN_CONFIG+"/slot_"+slot ,
+                                            function(jsonObj){
+                                                onIOStatusGetAICommonConfig(page, jsonObj, true);
+                                            },
+                                            ioStatusErrorCallback);
+                            page.onConfigChanged(function(obj,e){
+                                Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                if(e.AICfg != undefined){
+                                    httpGetOperation(HTTP_PATCH,
+                                                 URL_AI_CONFIG+"/slot_"+slot,
+                                                 function(){
+                                                    httpGetOperation(HTTP_GET,
+                                                        URL_AI_CONFIG+"/slot_"+slot ,
+                                                        function(jsonObj){
+                                                            onIOStatusGetConfig(page, URL_AI_VALUE, jsonObj, false);
+                                                        },
+                                                        ioStatusErrorCallback);
+                                                 },
+                                                 ioStatusErrorCallback,
+                                                 JSON.stringify(e));
+                                }
+                                else{
+                                    httpGetOperation(HTTP_PATCH,
+                                                 URL_AI_GEN_CONFIG+"/slot_"+slot,
+                                                 function(){
+                                                    httpGetOperation(HTTP_GET,
+                                                        URL_AI_GEN_CONFIG+"/slot_"+slot ,
+                                                        function(jsonObj){
+                                                            page.setConfigs(jsonObj);
+                                                            Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                                                        },
+                                                        ioStatusErrorCallback);
+                                                 },
+                                                 ioStatusErrorCallback,
+                                                 JSON.stringify(e));
+                                }
+                            });
+                            page.onValueChanged(function(obj,e){
+                                httpGetOperation(HTTP_PATCH,
+                                                 URL_AI_VALUE+"/slot_"+slot,
+                                                 null,
+                                                 ioStatusErrorCallback,
+                                                 JSON.stringify(e));
+                            });
+                            page.onPageChanged(function(obj,e){
+                                    gobalTimer.ClearTimer();
+                                    //if(e.type ==='Config'){
+                                    if(e.type === 'bCommConfig'){
+                                        Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                        httpGetOperation(HTTP_GET,
+                                            URL_AI_GEN_CONFIG+"/slot_"+slot ,
+                                            function(jsonObj){
+                                                onIOStatusGetAICommonConfig(page, jsonObj, false);
+                                                Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                                            },
+                                            ioStatusErrorCallback);
+                                    }else if(e.type === 'bChConfig'){
+                                        Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                        httpGetOperation(HTTP_GET,
+                                            URL_AI_CONFIG+"/slot_"+slot ,
+                                            function(jsonObj){
+                                                onIOStatusGetConfig(page, URL_AI_VALUE, jsonObj, false);
+                                            },
+                                            ioStatusErrorCallback);
+                                    }else if(e.type ==='Trend'){
+										/*
+                                        page.clearChart();
+                                        gobalTimer.EnableTimer(function(){
+                                            httpGetOperation(HTTP_GET,
+                                                URL_AI_VALUE+"/slot_"+slot,
+                                                function(data){
+                                                    onIOStatusGetValueAndUpdateTrend(page, data);
+                                                },
+                                                ioStatusErrorCallback);
+                                        },
+                                        Advantech.Profile.Parameter.POLLING_RATE);
+										*/
+                                    }else if(e.type ==='Status'){
+                                        gobalTimer.EnableTimer(function(){
+                                            httpGetOperation(HTTP_GET,
+                                                URL_AI_VALUE+"/slot_"+slot ,
+                                                function(data){
+                                                    onIOStatusGetValue(page, data);
+                                                },
+                                                ioStatusErrorCallback);
+                                        },
+                                        Advantech.Profile.Parameter.POLLING_RATE);
+                                    }else if(e.type ==='MaxVal'){
+                                        page.setPollingValueStrategy(new Advantech.Form.IOForm.AIStatusPollingMaxValStrategy(page));
+                                        gobalTimer.EnableTimer(function(){
+                                            httpGetOperation(HTTP_GET,
+                                                URL_AI_VALUE+"/slot_"+slot ,
+                                                function(data){
+                                                    onIOStatusGetValue(page, data, e.type, aiStatusMaxPageTriggerSelect);
+                                                    aiStatusMaxPageTriggerSelect = false;
+                                                },
+                                                ioStatusErrorCallback);
+                                        },
+                                        Advantech.Profile.Parameter.POLLING_RATE);
+                                    }else if(e.type ==='MinVal'){
+                                        page.setPollingValueStrategy(new Advantech.Form.IOForm.AIStatusPollingMinValStrategy(page));
+                                        gobalTimer.EnableTimer(function(){
+                                            httpGetOperation(HTTP_GET,
+                                                URL_AI_VALUE+"/slot_"+slot ,
+                                                function(data){
+                                                    onIOStatusGetValue(page, data, e.type, aiStatusMinPageTriggerSelect);
+                                                    aiStatusMinPageTriggerSelect = false;
+                                                },
+                                                ioStatusErrorCallback);
+                                        },
+                                        Advantech.Profile.Parameter.POLLING_RATE);
+                                    }else if(e.type ==='GeneralVal'){
+                                        page.setPollingValueStrategy(new Advantech.Form.IOForm.AIStatusPollingGenValStrategy(page));
+                                        gobalTimer.EnableTimer(function(){
+                                            httpGetOperation(HTTP_GET,
+                                                URL_AI_VALUE+"/slot_"+slot ,
+                                                function(data){
+                                                    onIOStatusGetValue(page, data);
+                                                },
+                                                ioStatusErrorCallback);
+                                        },
+                                        Advantech.Profile.Parameter.POLLING_RATE);
+                                    }
+                            });
+                        }else if( e.Type === "UI Setting"){
+                            var page = ioStatusTab.GetUIModePage();
+                            httpGetOperation(HTTP_GET,
+                                URL_UI_CONFIG+"/slot_"+slot ,
+                                function(jsonObj){
+                                    onIOStatusGetUIConfig(page, jsonObj);
+                                },
+                                ioStatusErrorCallback);
+
+                            page.onSubmitted(function(obj,e){
+                                Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                httpGetOperation(HTTP_PATCH,
+                                     URL_UI_CONFIG+"/slot_"+slot,
+                                     function(){
+                                        httpGetOperation(HTTP_GET,
+                                            URL_UI_CONFIG+"/slot_"+slot ,
+                                            function(jsonObj){
+                                                onIOStatusGetUIConfig(page, jsonObj);
+                                            },
+                                            ioStatusErrorCallback);
+                                     },
+                                     ioStatusErrorCallback,
+                                     JSON.stringify(e));
+                            });
+                        }else if( e.Type.indexOf("COM") >=0 ){
+                            gobalTimer.ClearTimer();
+                            //load Angular html file
+                            //Advantech.Utility.loadAjaxContent("TabCom1", "/config/comport.html", null, null, true);
+                            Advantech.Utility.loadAjaxContent("Tab" + e.Type, "/config/comport.html", null, null, true);
+                            Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                        }else if( e.Type === "Sensor"){
+                            //load Angular html file
+                            Advantech.Utility.loadAjaxContent("TabSensor", "/config/sensor.html", null, null, true);
+                            Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                        }else{
+                            Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<i class='fa fa-fw fa-exclamation-triangle'></i>" + e.Type+" function is not supported" , null);
+                        }
+                    });
+                    function onIOStatusGetUIConfig(page, jsonObj){
+                        page.initialConfigs(jsonObj);
+                        Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                    }
+                    function onIOStatusGetConfig(page, urlBase, ioJsonObj, isInitial, commonJsonObj){
+                        if( isInitial == true){
+                            page.initialConfigs(ioJsonObj, commonJsonObj);
+                            page.setConfigs(ioJsonObj);
+                        }
+                        else{
+                            page.setConfigs(ioJsonObj);
+                        }
+                        httpGetOperation(HTTP_GET,
+                            urlBase+"/slot_"+slot ,
+                            function(data){
+                                onIOStatusGetInitialValue(page, data, isInitial);
+                            },
+                            ioStatusErrorCallback);
+                    };
+/*                    function onIOStatusGetInitialValue(page, jsonObj){
+                        if( jsonObj!=null && jsonObj!=undefined){
+                            page.setValues(jsonObj, true);
+                            page.initialCurrentPage();
+                            Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                        }
+                    };*/
+                    function onIOStatusGetValue(page, jsonObj, tabId, triggerChannelSelect){
+                        page.setValues(jsonObj, false);
+                        if(typeof(page.triggerSelectFirstChannel) != 'undefined'){
+                            page.triggerSelectFirstChannel(tabId, triggerChannelSelect);
+                        }
+                    };
+					/*
+                    function onIOStatusGetValueAndUpdateTrend(page, jsonObj){
+                        page.updateTrend(jsonObj);
+                    };
+					*/
+                    function onIOStatusGetInitialValue(page, jsonObj, isInitial){
+                        page.setValues(jsonObj, true);
+                        page.initialCurrentPage();
+                        if(isInitial && typeof(page.triggerSelectFirstChannel) != 'undefined'){
+                            page.triggerSelectFirstChannel(null, true);
+                        }
+                        Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                    };
+                    function onIOStatusGetAICommonConfig(page, jsonObj, isInitial){
+                            httpGetOperation(HTTP_GET,
+                                                URL_AI_CONFIG+"/slot_"+slot ,
+                                                function(ioCfgJson){
+                                                    onIOStatusGetConfig(page, URL_AI_VALUE, ioCfgJson, isInitial, jsonObj);
+                                                },
+                                                ioStatusErrorCallback);
+                    };
+                    function onIOStatusGetProfile(jsonObj) {
+						ioStatusTab.CreateIOPage(jsonObj, slot);
+					};
+					function ioStatusErrorCallback(code, commonMsg, apiErrorCode, apiErrorMsg) {
+                        Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                        var returnMsg;
+                        returnMsg = apiErrorCode!=undefined? Advantech.Profile.API_ERROR_CODE_NAME[apiErrorCode] : "";
+                        returnMsg += apiErrorMsg!=undefined && apiErrorMsg!="" ? "<p/>(Reason:" + apiErrorMsg + " error, Error number:" +apiErrorCode+")" : "";
+                        if(returnMsg == "")
+                            returnMsg = commonMsg;
+                        Advantech.Form.MessageForm.getInstance().showMessageBox("Error code: " + code, "<i class='fa fa-fw fa-exclamation-triangle'></i>" + returnMsg , null);
+
+                        if(Advantech.Utility.ErrorCounter.getInstance().getCount() == 5){
+                            Advantech.Utility.ErrorCounter.getInstance().resetCount();
+                            Advantech.Utility.TimerDispatchSingleton.getInstance().ClearTimer();
+                            Advantech.Utility.serverErrorPage("Connection Failed", "Polling failed more than 5 times...Please check USB connection or related errors!");
+                        }
+					};
+					//get working mode of IO board: 0: Performance mode, 1: Low power mode
+                    httpGetOperation(HTTP_GET,
+                    URL_GENERAL_CONFIG + "?s=" + (new Date().getTime()),
+                    function(jsonObj){
+                        //set working mode of IO board
+                        if(jsonObj.Md){
+                            Advantech.Data.ModuleData.getInstance().setIoMode(jsonObj.Md);//set IO board working mode
+                        }
+                        var url = URL_PROFILE + "/slot_" + slot + "?s=" + (new Date().getTime());
+					httpGetOperation(HTTP_GET, url, onIOStatusGetProfile, ioStatusErrorCallback);
+                    },
+                    ioStatusErrorCallback);
+                    //var url = URL_PROFILE + "/slot_" + slot ;
+					//httpGetOperation(HTTP_GET, url, onIOStatusGetProfile, ioStatusErrorCallback);
+            </script>
+        </div>
+    </div>
+</div>

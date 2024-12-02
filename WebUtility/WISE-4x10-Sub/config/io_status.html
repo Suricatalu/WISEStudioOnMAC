@@ -1,0 +1,798 @@
+<style>
+    .Indicator-light{
+        /*width: 30px;*/
+        height: 30px;
+    }
+</style>
+<div class="container-fluid">
+<div class="panel panel-default" id='panelControlCommand'>
+    <div class="panel-body">
+    <div class="row">
+        <div class="col-lg-12" id='IOStatusContainer'>
+            <script>
+                var deviceProfile = Advantech.Utility.ProfileRecordInstance.getInstance().getProfile();
+                var recordObj = Advantech.Utility.RecordContextPageIdSingleton.getInstance();
+                var slot = recordObj.getSlotId();
+                var ioStatusTab = new Advantech.Form.IOForm.IOStatusTab("ioStatusTab");
+                var aiStatusMaxPageTriggerSelect = true;
+                var aiStatusMinPageTriggerSelect = true;
+                var diStatusPageTriggerSelect = true;
+                //var pollingRate = 1000;
+				var pollingRate = Advantech.Profile.Parameter.POLLING_RATE;
+                var gobalTimer = Advantech.Utility.TimerDispatchSingleton.getInstance();
+                var diChannelCount = 0;
+
+				if(Advantech.Profile.VCOM_CONNECTION)
+					pollingRate = Advantech.Profile.Parameter.VCOM_POLLING_RATE;//larger interval for Sub-1G end device
+
+                ioStatusTab.CreateTab('IOStatusContainer');
+                ioStatusTab.onTabSwitch(function(obj, e){
+            		//var gobalTimer = Advantech.Utility.TimerDispatchSingleton.getInstance();
+            		gobalTimer.ClearTimer();
+                    diStatusPageTriggerSelect = true; //reset value
+            		Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+
+                    if( e.Type === "DO" || e.Type === "Relay"){
+                        var page = (e.Type === "DO")?ioStatusTab.GetDOPage():ioStatusTab.GetRelayPage();
+
+                        if(!Advantech.Profile.VCOM_CONNECTION){ //AP
+                            onIOStatusGetConfig(page, URL_DO_VALUE, null, false);
+                        }else{
+                            httpGetOperation(HTTP_GET,
+                                        URL_DO_CONFIG+"/slot_"+slot,
+                                        function(jsonObj){
+                                            setTimeout( function(){
+                                                onIOStatusGetConfig(page, URL_DO_VALUE, jsonObj, true);
+                                            }, Advantech.Profile.Parameter.VCOM_CONFIG_WAIT_MS);
+                                        },
+                                        ioStatusErrorCallback);
+                        }
+                        page.onConfigChanged(function(obj,e){
+                        	Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                            httpGetOperation(HTTP_PATCH,
+                        					 URL_DO_CONFIG+"/slot_"+slot,
+                                             function(){
+                                                //check write status when AP at Paring mode
+                                                if(Advantech.Data.ModuleData.getInstance().getRfMode()=="1" && Advantech.Profile.VCOM_CONNECTION == false){
+                                                    //Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                                    gobalTimer.EnableTimer(function(){
+                                                        CheckWriteStatus(
+                                                        function(){
+                                                            //check config
+                                                            CallIOStatusGetConfig(page, "DO");
+                                                        });
+                                                    }, pollingRate);
+                                                }else{
+                                                    setTimeout( function(){
+                                                        httpGetOperation(HTTP_GET,
+                                                            URL_DO_CONFIG+"/slot_"+slot,
+                                                            function(jsonObj){
+                                                                setTimeout( function(){
+                                                                    onIOStatusGetConfig(page, URL_DO_VALUE, jsonObj, false);
+                                                                }, Advantech.Profile.Parameter.VCOM_CONFIG_WAIT_MS);
+                                                            },
+                                                            ioStatusErrorCallback);
+                                                    }, Advantech.Profile.Parameter.VCOM_CONFIG_WAIT_MS);
+                                                }
+                                             },
+                        					 ioStatusErrorCallback,
+                        					 JSON.stringify(e));
+                        });
+                        page.onValueChanged(function(obj,e){
+                            Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                            Advantech.Utility.TimerDispatchSingleton.getInstance().ClearTimer();
+                        	httpGetOperation(HTTP_PATCH,
+                        					 URL_DO_VALUE+"/slot_"+slot,
+                                             function(){
+                                                //check write status when AP at Paring mode
+                                                if(Advantech.Data.ModuleData.getInstance().getRfMode()=="1" && Advantech.Profile.VCOM_CONNECTION == false){
+                                                    Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                                    gobalTimer.EnableTimer(function(){
+                                                        CheckWriteStatus(function(){
+                                                            Advantech.Utility.TimerDispatchSingleton.getInstance().EnableTimer(function(){
+                                                                httpGetOperation(HTTP_GET,
+                                                                    URL_DO_VALUE+"/slot_"+slot,
+                                                                    function(data){
+                                                                        onIOStatusGetValue(page, data);
+                                                                    },
+                                                                    ioStatusErrorCallback);
+                                                            },
+                                                            pollingRate);
+                                                        });
+                                                    }, pollingRate);
+                                                } else {
+                                                    Advantech.Utility.TimerDispatchSingleton.getInstance().EnableTimer(function(){
+                                                        httpGetOperation(HTTP_GET,
+                                                            URL_DO_VALUE+"/slot_"+slot,
+                                                            function(data){
+                                                                onIOStatusGetValue(page, data);
+                                                            },
+                                                            ioStatusErrorCallback);
+                                                    },
+                                                    pollingRate);
+                                                }
+                                                Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                                             },
+                        					 ioStatusErrorCallback,
+                                             JSON.stringify(e));
+                        });
+                        page.onPageChanged(function(obj,e){
+                                Advantech.Utility.TimerDispatchSingleton.getInstance().ClearTimer();
+                                if(e.type ==='Config'){
+
+                                }
+                                else if(e.type ==='Trend'){
+								    /*
+                                    page.clearChart();
+                                    gobalTimer.EnableTimer(function(){
+                                        httpGetOperation(HTTP_GET,
+                                            URL_DO_VALUE+"/slot_"+slot,
+                                            function(data){
+                                                onIOStatusGetValueAndUpdateTrend(page, data);
+                                            },
+                                            ioStatusErrorCallback);
+                                    },
+                                    Advantech.Profile.Parameter.POLLING_RATE);
+									*/
+                                }else{
+                                    Advantech.Utility.TimerDispatchSingleton.getInstance().EnableTimer(function(){
+                                        httpGetOperation(HTTP_GET,
+                                            URL_DO_VALUE+"/slot_"+slot,
+                                            function(data){
+                                                onIOStatusGetValue(page, data);
+                                            },
+                                            ioStatusErrorCallback);
+                                    },
+                                    pollingRate);
+                                }
+                        });
+                    }
+                    else if( e.Type === "DI"){
+                        var page = ioStatusTab.GetDIPage();
+                        if(!Advantech.Profile.VCOM_CONNECTION){ //AP
+                            onIOStatusGetConfig(page, URL_DI_VALUE, null, false);
+                        }else if(Advantech.Utility.isOldFwVersion(deviceProfile.FwVer)){
+                            httpGetOperation(HTTP_GET,
+                                URL_DI_CONFIG+"/slot_" + slot,
+                                function(jsonObj){
+                                    setTimeout( function(){
+                                        onIOStatusGetConfig(page, URL_DI_VALUE, jsonObj, true);
+                                    }, Advantech.Profile.Parameter.VCOM_CONFIG_WAIT_MS);
+                                },
+                                ioStatusErrorCallback);
+                        }else{
+                            performDiConfigLoopGet(diChannelCount,
+                                function(jsonObj){
+                                    setTimeout( function(){
+                                        onIOStatusGetConfig(page, URL_DI_VALUE, jsonObj, true);
+                                    }, Advantech.Profile.Parameter.VCOM_CONFIG_WAIT_MS);
+                                });
+                        }
+                        page.onConfigChanged(function(obj,e){
+                            Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                            performDiConfigLoopPatch(
+                                e.DICfg,
+                                function(){
+                                    //check write status when AP at Paring mode
+                                    if(Advantech.Data.ModuleData.getInstance().getRfMode()=="1" && Advantech.Profile.VCOM_CONNECTION == false){
+                                        //Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                        gobalTimer.EnableTimer(function(){
+                                            CheckWriteStatus(
+                                            function(){
+                                                //check config
+                                                CallIOStatusGetConfig(page, "DI");
+                                            });
+                                        }, pollingRate);
+                                    }else{
+                                        setTimeout( function(){
+                                            if(Advantech.Utility.isOldFwVersion(deviceProfile.FwVer) || !Advantech.Profile.VCOM_CONNECTION){
+                                                httpGetOperation(HTTP_GET,
+                                                    URL_DI_CONFIG+"/slot_"+slot,
+                                                    function(jsonObj){
+                                                        setTimeout( function(){
+                                                            onIOStatusGetConfig(page, URL_DI_VALUE, jsonObj, false);
+                                                        }, Advantech.Profile.Parameter.VCOM_CONFIG_WAIT_MS);
+                                                    },
+                                                    ioStatusErrorCallback);
+                                            }else{
+                                                performDiConfigLoopGet(diChannelCount,
+                                                    function(jsonObj){
+                                                        setTimeout( function(){
+                                                            onIOStatusGetConfig(page, URL_DI_VALUE, jsonObj, false);
+                                                        }, Advantech.Profile.Parameter.VCOM_CONFIG_WAIT_MS);
+                                                    });
+                                            }
+                                        }, Advantech.Profile.Parameter.VCOM_CONFIG_WAIT_MS);
+                                    }
+                                }
+                            );
+                        });
+                        page.onValueChanged(function(obj,e){
+                            Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                            Advantech.Utility.TimerDispatchSingleton.getInstance().ClearTimer();
+                            httpGetOperation(HTTP_PATCH,
+                                             URL_DI_VALUE+"/slot_" + slot,
+                                             function(){
+                                                //check write status when AP at Paring mode
+                                                if(Advantech.Data.ModuleData.getInstance().getRfMode()=="1" && Advantech.Profile.VCOM_CONNECTION == false){
+                                                    Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                                    gobalTimer.EnableTimer(function(){
+                                                        CheckWriteStatus(function(){
+                                                            Advantech.Utility.TimerDispatchSingleton.getInstance().EnableTimer(function(){
+                                                                httpGetOperation(HTTP_GET,
+                                                                    URL_DI_VALUE+"/slot_"+slot,
+                                                                    function(data){
+                                                                        onIOStatusGetValue(page, data, null, diStatusPageTriggerSelect);
+                                                                        diStatusPageTriggerSelect = false;
+                                                                    },
+                                                                    ioStatusErrorCallback);
+                                                            },
+                                                            pollingRate);
+                                                        });
+                                                    }, pollingRate);
+                                                } else {
+                                                    Advantech.Utility.TimerDispatchSingleton.getInstance().EnableTimer(function(){
+                                                        httpGetOperation(HTTP_GET,
+                                                            URL_DI_VALUE+"/slot_"+slot,
+                                                            function(data){
+                                                                onIOStatusGetValue(page, data, null, diStatusPageTriggerSelect);
+                                                                diStatusPageTriggerSelect = false;
+                                                            },
+                                                            ioStatusErrorCallback);
+                                                    },
+                                                    pollingRate);
+                                                }
+                                                Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                                             },
+                                             ioStatusErrorCallback,
+                                             JSON.stringify(e));
+                        });
+                        page.onPageChanged(function(obj,e){
+                                gobalTimer.ClearTimer();
+                                if(e.type ==='Config'){
+
+                                }
+                                else if(e.type ==='Trend'){
+									/*
+                                    page.clearChart();
+                                    gobalTimer.EnableTimer(function(){
+                                        httpGetOperation(HTTP_GET,
+                                            URL_DI_VALUE+"/slot_"+slot,
+                                            function(data){
+                                                onIOStatusGetValueAndUpdateTrend(page, data);
+                                            },
+                                            ioStatusErrorCallback);
+                                    },
+                                    Advantech.Profile.Parameter.POLLING_RATE);
+									*/
+                                }
+                                else{
+                                    Advantech.Utility.TimerDispatchSingleton.getInstance().EnableTimer(function(){
+                                        httpGetOperation(HTTP_GET,
+                                            URL_DI_VALUE+"/slot_"+slot,
+                                            function(data){
+                                                onIOStatusGetValue(page, data, null, diStatusPageTriggerSelect);
+                                                diStatusPageTriggerSelect = false;
+                                            },
+                                            ioStatusErrorCallback);
+                                    },
+                                    pollingRate);
+                                }
+                        });
+                    }
+                    else if( e.Type == "AO"){
+                    }
+                    else if( e.Type == "AI"){
+                        var page = ioStatusTab.GetAIPage();
+                        if(!Advantech.Profile.VCOM_CONNECTION){ //AP
+                            onIOStatusGetConfig(page, URL_AI_VALUE, null, false);
+                        }else{
+                            httpGetOperation(HTTP_GET,
+                                URL_AI_GEN_CONFIG+"/slot_"+slot,
+                                function(jsonObj){
+                                    setTimeout( function(){
+                                        onIOStatusGetAICommonConfig(page, jsonObj, true);
+                                    }, Advantech.Profile.Parameter.VCOM_CONFIG_WAIT_MS);
+                                },
+                                ioStatusErrorCallback);
+                        }
+                        page.onConfigChanged(function(obj,e){
+                            Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                            if(e.AICfg != undefined){
+                                httpGetOperation(HTTP_PATCH,
+                                             URL_AI_CONFIG+"/slot_"+slot,
+                                             /*function(){
+                                                httpGetOperation(HTTP_GET,
+                                                    URL_AI_CONFIG+"/slot_"+slot,
+                                                    function(jsonObj){
+                                                        onIOStatusGetConfig(page, URL_AI_VALUE, jsonObj, false);
+                                                    },
+                                                    ioStatusErrorCallback);
+                                             },*/
+                                             function(){
+                                                //check write status when AP at Paring mode
+                                                if(Advantech.Data.ModuleData.getInstance().getRfMode()=="1" && Advantech.Profile.VCOM_CONNECTION == false){
+                                                    Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                                    gobalTimer.EnableTimer(function(){
+                                                        CheckWriteStatus(
+                                                        function(){
+                                                            //check config
+                                                            CallIOStatusGetConfig(page, "AI");
+                                                        });
+                                                    }, pollingRate);
+                                                }else{
+                                                    setTimeout( function(){
+                                                        httpGetOperation(HTTP_GET,
+                                                            URL_AI_CONFIG+"/slot_"+slot,
+                                                            function(jsonObj){
+                                                                onIOStatusGetConfig(page, URL_AI_VALUE, jsonObj, false);
+                                                            },
+                                                            ioStatusErrorCallback);
+                                                    }, Advantech.Profile.Parameter.VCOM_CONFIG_WAIT_MS);
+                                                }
+                                             },
+                                             ioStatusErrorCallback,
+                                             JSON.stringify(e));
+                            }
+                            else{
+                                httpGetOperation(HTTP_PATCH,
+                                             URL_AI_GEN_CONFIG+"/slot_"+slot,
+                                             /*function(){
+                                                httpGetOperation(HTTP_GET,
+                                                    URL_AI_GEN_CONFIG+"/slot_"+slot,
+                                                    function(jsonObj){
+                                                        page.setConfigs(jsonObj);
+                                                        Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                                                    },
+                                                    ioStatusErrorCallback);
+                                             },*/
+                                             function(){
+                                                //check write status when AP at Paring mode
+                                                if(Advantech.Data.ModuleData.getInstance().getRfMode()=="1" && Advantech.Profile.VCOM_CONNECTION == false){
+                                                    Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                                    Advantech.Utility.TimerDispatchSingleton.getInstance().EnableTimer(function(){
+                                                        CheckWriteStatus(
+                                                        function(){
+                                                            CallAIStatusGetConfig(page);
+                                                        });
+                                                    }, pollingRate);
+                                                }else{
+                                                    setTimeout( function(){
+                                                        httpGetOperation(HTTP_GET,
+                                                            URL_AI_GEN_CONFIG+"/slot_"+slot,
+                                                            function(jsonObj){
+                                                                page.setConfigs(jsonObj);
+                                                                Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                                                            },
+                                                            ioStatusErrorCallback);
+                                                    }, Advantech.Profile.Parameter.VCOM_CONFIG_WAIT_MS);
+                                                }
+                                             },
+                                             ioStatusErrorCallback,
+                                             JSON.stringify(e));
+                            }
+                        });
+                        page.onValueChanged(function(obj,e){
+                            Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                            Advantech.Utility.TimerDispatchSingleton.getInstance().ClearTimer();
+                            httpGetOperation(HTTP_PATCH,
+                                             URL_AI_VALUE+"/slot_"+slot,
+                                             function(){
+                                                //check write status when AP at Paring mode
+                                                if(Advantech.Data.ModuleData.getInstance().getRfMode()=="1" && Advantech.Profile.VCOM_CONNECTION == false){
+                                                    Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                                    gobalTimer.EnableTimer(function(){
+                                                        CheckWriteStatus(function(){
+                                                            Advantech.Utility.TimerDispatchSingleton.getInstance().EnableTimer(function(){
+                                                                httpGetOperation(HTTP_GET,
+                                                                    URL_AI_VALUE+"/slot_"+slot,
+                                                                    function(data){
+                                                                        // onIOStatusGetValue(page, data, null, aiStatusPageTriggerSelect);
+                                                                        // aiStatusPageTriggerSelect = false;
+                                                                        onIOStatusGetValue(page, data);
+                                                                    },
+                                                                    ioStatusErrorCallback);
+                                                            },
+                                                            pollingRate);
+                                                        });
+                                                    }, pollingRate);
+                                                } else {
+                                                    Advantech.Utility.TimerDispatchSingleton.getInstance().EnableTimer(function(){
+                                                        httpGetOperation(HTTP_GET,
+                                                            URL_AI_VALUE+"/slot_"+slot,
+                                                            function(data){
+                                                                // onIOStatusGetValue(page, data, null, aiStatusPageTriggerSelect);
+                                                                // aiStatusPageTriggerSelect = false;
+                                                                onIOStatusGetValue(page, data);
+                                                            },
+                                                            ioStatusErrorCallback);
+                                                    },
+                                                    pollingRate);
+                                                }
+                                                Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                                             },
+                                             ioStatusErrorCallback,
+                                             JSON.stringify(e));
+                        });
+                        page.onPageChanged(function(obj,e){
+                            Advantech.Utility.TimerDispatchSingleton.getInstance().ClearTimer();
+                                //if(e.type ==='Config'){
+                                if(e.type === 'bCommConfig'){
+                                    Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                    httpGetOperation(HTTP_GET,
+                                        URL_AI_GEN_CONFIG+"/slot_"+slot,
+                                        function(jsonObj){
+                                            setTimeout( function(){
+                                                onIOStatusGetAICommonConfig(page, jsonObj, false);
+                                                Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                                            }, Advantech.Profile.Parameter.VCOM_CONFIG_WAIT_MS);
+                                        },
+                                        ioStatusErrorCallback);
+                                }else if(e.type === 'bChConfig'){
+                                    Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                    httpGetOperation(HTTP_GET,
+                                        URL_AI_CONFIG+"/slot_"+slot,
+                                        function(jsonObj){
+                                            setTimeout( function(){
+                                                onIOStatusGetConfig(page, URL_AI_VALUE, jsonObj, false);
+                                            }, Advantech.Profile.Parameter.VCOM_CONFIG_WAIT_MS);
+                                        },
+                                        ioStatusErrorCallback);
+                                }else if(e.type ==='Trend'){
+									/*
+                                    page.clearChart();
+                                    Advantech.Utility.TimerDispatchSingleton.getInstance().EnableTimer(function(){
+                                        httpGetOperation(HTTP_GET,
+                                            URL_AI_VALUE+"/slot_"+slot,
+                                            function(data){
+                                                onIOStatusGetValueAndUpdateTrend(page, data);
+                                            },
+                                            ioStatusErrorCallback);
+                                    },
+                                    Advantech.Profile.Parameter.POLLING_RATE);
+									*/
+                                }else if(e.type ==='Status'){
+                                    Advantech.Utility.TimerDispatchSingleton.getInstance().EnableTimer(function(){
+                                        httpGetOperation(HTTP_GET,
+                                            URL_AI_VALUE+"/slot_"+slot,
+                                            function(data){
+                                                onIOStatusGetValue(page, data);
+                                            },
+                                            ioStatusErrorCallback);
+                                    },
+                                    pollingRate);
+                                }else if(e.type ==='MaxVal'){
+                                    page.setPollingValueStrategy(new Advantech.Form.IOForm.AIStatusPollingMaxValStrategy(page));
+                                    Advantech.Utility.TimerDispatchSingleton.getInstance().EnableTimer(function(){
+                                        httpGetOperation(HTTP_GET,
+                                            URL_AI_VALUE+"/slot_"+slot,
+                                            function(data){
+                                                onIOStatusGetValue(page, data, e.type, aiStatusMaxPageTriggerSelect);
+                                                aiStatusMaxPageTriggerSelect = false;
+                                            },
+                                            ioStatusErrorCallback);
+                                    },
+                                    Advantech.Profile.Parameter.POLLING_RATE);
+                                }else if(e.type ==='MinVal'){
+                                    page.setPollingValueStrategy(new Advantech.Form.IOForm.AIStatusPollingMinValStrategy(page));
+                                    Advantech.Utility.TimerDispatchSingleton.getInstance().EnableTimer(function(){
+                                        httpGetOperation(HTTP_GET,
+                                            URL_AI_VALUE+"/slot_"+slot,
+                                            function(data){
+                                                onIOStatusGetValue(page, data, e.type, aiStatusMinPageTriggerSelect);
+                                                aiStatusMinPageTriggerSelect = false;
+                                            },
+                                            ioStatusErrorCallback);
+                                    },
+                                    pollingRate);
+                                }else if(e.type ==='GeneralVal'){
+                                    page.setPollingValueStrategy(new Advantech.Form.IOForm.AIStatusPollingGenValStrategy(page));
+                                    Advantech.Utility.TimerDispatchSingleton.getInstance().EnableTimer(function(){
+                                        httpGetOperation(HTTP_GET,
+                                            URL_AI_VALUE+"/slot_"+slot,
+                                            function(data){
+                                                onIOStatusGetValue(page, data);
+                                            },
+                                            ioStatusErrorCallback);
+                                    },
+                                    pollingRate);
+                                }
+                        });
+                    }else if( e.Type === "UI Setting"){
+                        var page = ioStatusTab.GetUIModePage();
+                        httpGetOperation(HTTP_GET,
+                            URL_UI_CONFIG+"/slot_"+slot,
+                            function(jsonObj){
+                                onIOStatusGetUIConfig(page, jsonObj);
+                            },
+                            ioStatusErrorCallback);
+
+                        page.onSubmitted(function(obj,e){
+                            Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                            httpGetOperation(HTTP_PATCH,
+                                 URL_UI_CONFIG+"/slot_"+slot,
+                                 /*function(){
+                                    httpGetOperation(HTTP_GET,
+                                        URL_UI_CONFIG+"/slot_"+slot,
+                                        function(jsonObj){
+                                            onIOStatusGetUIConfig(page, jsonObj);
+                                        },
+                                        ioStatusErrorCallback);
+                                 },*/
+                                 function(){
+                                    //check write status when AP at Paring mode
+                                    if(Advantech.Data.ModuleData.getInstance().getRfMode()=="1" && Advantech.Profile.VCOM_CONNECTION == false){
+                                        Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+                                        gobalTimer.EnableTimer(function(){
+                                        CheckWriteStatus(
+                                            function(){
+                                                CallUIStatusGetConfig(page);
+                                            });
+                                        }, pollingRate);
+                                    }else{
+                                        setTimeout( function(){
+                                            httpGetOperation(HTTP_GET,
+                                                URL_UI_CONFIG+"/slot_"+slot,
+                                                function(jsonObj){
+                                                    onIOStatusGetUIConfig(page, jsonObj);
+                                                },
+                                                ioStatusErrorCallback);
+                                        }, Advantech.Profile.Parameter.VCOM_CONFIG_WAIT_MS);
+                                    }
+                                 },
+                                 ioStatusErrorCallback,
+                                 JSON.stringify(e));
+                        });
+                    }else if(e.Type &&  e.Type.indexOf("COM") >=0 ){
+                    //else if( e.Type === "COM1"){
+                        //load Angular html file
+                        //Advantech.Utility.loadAjaxContent("TabCom1", "/config/comport.html", null, null, true);
+                        //For multi COM
+                        Advantech.Utility.loadAjaxContent("Tab" + e.Type, "/config/comport.html", null, null, true);
+                        Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                    }else if( e.Type === "Sensor"){
+                        //load Angular html file
+                        Advantech.Utility.loadAjaxContent("TabSensor", "/config/sensor.html", null, null, true);
+                        Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                    }else if( e.Type === "Stack Light"){
+                        //load Angular html file
+                        Advantech.Utility.loadAjaxContent("TabStackLight", "/config/template.html", null, null, true, 'tplStackLight');
+                        Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                    }else{
+                        Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                        //Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<i class='fa fa-fw fa-exclamation-triangle'></i>" + e.Type+" function is not supported" , null);
+                        Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<i class='fa fa-fw fa-exclamation-triangle'></i> This module does not support IO Status" , null);
+                    }
+                });
+                function CheckWriteStatus(callback){
+                    gobalTimer.ClearTimer();
+                    httpGetOperation(HTTP_GET,
+                        URL_LPWAN_WRITESTATUS,
+                        function(jsonObj){
+                            if(jsonObj.Stat == 1){
+                                if(callback != null){
+                                    gobalTimer.EnableTimer(function(){CheckWriteStatus(function(){
+                                        callback();
+                                    })},pollingRate);
+                                }else{
+                                    gobalTimer.EnableTimer(function(){CheckWriteStatus(null)},pollingRate);
+                                }
+                            }else{
+                                Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                                if(jsonObj.Stat == 2){
+                                    Advantech.Form.MessageForm.getInstance().showMessageBox("Write Fail", "<i class='fa fa-fw fa-exclamation-triangle'></i>Write To End Device Fail", null);
+                                }
+                                if(callback != null){
+                                    callback();
+                                }
+                            }
+                        },
+                        ioStatusErrorCallback);
+                }
+                function CallIOStatusGetConfig(page, type){
+                    var url;
+                    if(type == "DI")
+                        url = URL_DI_CONFIG;
+                    else if(type == "DO")
+                        url = URL_DO_CONFIG;
+                    else
+                        url = URL_AI_CONFIG;
+
+                    //for new FW version
+                    if(type == "DI" && !Advantech.Utility.isOldFwVersion(deviceProfile.FwVer) && Advantech.Profile.VCOM_CONNECTION){
+                        performDiConfigLoopGet(diChannelCount,
+                            function(jsonObj){
+                                setTimeout( function(){
+                                    onIOStatusGetConfig(page, URL_DI_VALUE, jsonObj, false);
+                                }, Advantech.Profile.Parameter.VCOM_CONFIG_WAIT_MS);
+                            });
+                    }else{
+                        //old FW version
+                        httpGetOperation(HTTP_GET,
+                            url + "/slot_" + slot,
+                            function(jsonObj){
+                                if(url == URL_DI_CONFIG)
+                                    onIOStatusGetConfig(page, URL_DI_VALUE, jsonObj, false);
+                                else if(url == URL_DO_CONFIG)
+                                    onIOStatusGetConfig(page, URL_DO_VALUE, jsonObj, false);
+                                else
+                                    onIOStatusGetConfig(page, URL_AI_VALUE, jsonObj, false);
+                            },
+                            ioStatusErrorCallback);
+                    }
+                };
+
+                function CallAIStatusGetConfig(page){
+                    httpGetOperation(HTTP_GET,
+                        URL_AI_GEN_CONFIG+"/slot_"+slot,
+                        function(jsonObj){
+                            page.setConfigs(jsonObj);
+                            Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                        },
+                        ioStatusErrorCallback);
+                };
+
+                function CallUIStatusGetConfig(page){
+                    httpGetOperation(HTTP_GET,
+                        URL_UI_CONFIG+"/slot_"+slot,
+                        function(jsonObj){
+                            onIOStatusGetUIConfig(page, jsonObj);
+                        },
+                        ioStatusErrorCallback);
+                };
+
+                function onIOStatusGetUIConfig(page, jsonObj){
+                    page.initialConfigs(jsonObj);
+                    Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                };
+                function onIOStatusGetConfig(page, urlBase, ioJsonObj, isInitial, commonJsonObj){
+                    if(Advantech.Profile.VCOM_CONNECTION){ //Node
+                        if( isInitial == true){
+                            page.initialConfigs(ioJsonObj, commonJsonObj);
+                            page.setConfigs(ioJsonObj);
+                        }
+                        else{
+                            page.setConfigs(ioJsonObj);
+                        }
+                    }
+                    httpGetOperation(HTTP_GET,
+                        urlBase+"/slot_"+slot,
+                        function(data){
+                            onIOStatusGetInitialValue(page, data, isInitial);
+                        },
+                        ioStatusErrorCallback);
+                };
+/*                    function onIOStatusGetInitialValue(page, jsonObj){
+                    if( jsonObj!=null && jsonObj!=undefined){
+                        page.setValues(jsonObj, true);
+                        page.initialCurrentPage();
+                        Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                    }
+                };*/
+                function onIOStatusGetValue(page, jsonObj, tabId, triggerChannelSelect){
+                    page.setValues(jsonObj, false);
+                    if(typeof(page.triggerSelectFirstChannel) != 'undefined'){
+                        page.triggerSelectFirstChannel(tabId, triggerChannelSelect);
+                    }
+                };
+				/*
+                function onIOStatusGetValueAndUpdateTrend(page, jsonObj){
+                    page.updateTrend(jsonObj);
+                };
+				*/
+                function onIOStatusGetInitialValue(page, jsonObj, isInitial){
+                    page.setValues(jsonObj, true);
+                    page.initialCurrentPage();
+                    if(isInitial && typeof(page.triggerSelectFirstChannel) != 'undefined'){
+                        page.triggerSelectFirstChannel(null, true);
+                    }
+                    Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                };
+                function onIOStatusGetAICommonConfig(page, jsonObj, isInitial){
+                        httpGetOperation(HTTP_GET,
+                                            URL_AI_CONFIG+"/slot_"+slot,
+                                            function(ioCfgJson){
+                                                onIOStatusGetConfig(page, URL_AI_VALUE, ioCfgJson, isInitial, jsonObj);
+                                            },
+                                            ioStatusErrorCallback);
+                };
+                function onIOStatusGetProfile(jsonObj) {
+                    diChannelCount = jsonObj.DIn;
+                    ioStatusTab.CreateIOPage(jsonObj, slot);
+				};
+				function ioStatusErrorCallback(code, commonMsg, apiErrorCode, apiErrorMsg) {
+                    Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+                    var returnMsg;
+                    returnMsg = apiErrorCode!=undefined? Advantech.Profile.API_ERROR_CODE_NAME[apiErrorCode] : "";
+                    returnMsg += apiErrorMsg!=undefined && apiErrorMsg!="" ? "<p/>(Reason:" + apiErrorMsg + " error, Error number:" +apiErrorCode+")" : "";
+                    if(returnMsg == "")
+                        returnMsg = commonMsg;
+                    Advantech.Form.MessageForm.getInstance().showMessageBox("Error code: " + code, "<i class='fa fa-fw fa-exclamation-triangle'></i>" + returnMsg , null);
+
+                    if(Advantech.Utility.ErrorCounter.getInstance().getCount() == 5){
+                        Advantech.Utility.ErrorCounter.getInstance().resetCount();
+                        Advantech.Utility.TimerDispatchSingleton.getInstance().ClearTimer();
+                        Advantech.Utility.serverErrorPage("Connection Failed", "Polling failed more than 5 times...Please check connection or related errors!");
+                    }
+                };
+
+                function performDiConfigLoopGet(channelAmount, callbackFun){
+                    var counter = 0;
+                    var dataAmount = 0;
+                    var result ={DICfg:[]};
+                    var length;
+
+                    (function loop(){
+                        var url = URL_DI_CONFIG + '/slot_' + slot + '/idx_' + counter;
+                        httpGetOperation(HTTP_GET,
+                            url,
+                            function(jsonObj){
+                                length = jsonObj.DICfg.length;
+                                for(var i = 0; i < length; i++){//copy element
+                                    result.DICfg.push(jsonObj.DICfg[i]);
+                                }
+
+                                counter++;
+                                dataAmount = dataAmount + length;
+                                if(dataAmount >= channelAmount){
+                                    if(typeof(callbackFun) === 'function')
+                                        callbackFun(result);
+                                }else{
+                                    loop();
+                                }
+                            },
+                            ioStatusErrorCallback);
+                    })();
+                }
+
+                function performDiConfigLoopPatch(arrDIConfig, callbackFun) {
+                    (function loop() {
+                        httpGetOperation(
+                            HTTP_PATCH,
+                            URL_DI_CONFIG + '/slot_' + slot,
+                            function() {
+                                if (arrDIConfig.length > 0) {
+                                    if (Advantech.Data.ModuleData.getInstance().getRfMode() == "1" && Advantech.Profile.VCOM_CONNECTION == false) {
+                                        gobalTimer.EnableTimer(function(){
+                                            CheckWriteStatus(
+                                                function(){loop();}
+                                            );
+                                        }, pollingRate);
+                                    } else {
+                                        loop();
+                                    }
+                                } else {
+                                    if(typeof(callbackFun) === 'function') {
+                                        callbackFun();
+                                    }
+                                }
+                            },
+                            ioStatusErrorCallback,
+                            JSON.stringify({DICfg: [arrDIConfig.shift()]})
+                        );
+                    })();
+                }
+
+                if (!Advantech.Profile.VCOM_CONNECTION) {
+                    var url = URL_PROFILE + "/slot_" + slot;
+                    httpGetOperation(HTTP_GET, url, onIOStatusGetProfile, ioStatusErrorCallback);
+                } else {
+                    //get working mode of IO board: 0: Performance mode, 1: Low power mode
+                    httpGetOperation(HTTP_GET,
+                        URL_GENERAL_CONFIG,
+                        function(jsonObj){
+                            //set working mode of IO board
+                            if(jsonObj.Md){
+                                Advantech.Data.ModuleData.getInstance().setIoMode(jsonObj.Md);//set IO board working mode
+                            }
+                            onIOStatusGetProfile(deviceProfile);
+                        },
+                        ioStatusErrorCallback
+                    );
+                }
+            </script>
+        </div>
+    </div>
+    </div>
+</div>
+</div>

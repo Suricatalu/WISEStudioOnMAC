@@ -1,0 +1,234 @@
+<div class="container-fluid">
+	<!-- Page Heading -->
+	<div class="row">
+		<div class="col-lg-12">
+			<h2 class="page-header"><i class="fa fa-fw fa-rotate-90 fa-sliders"></i> Calibration Setting</h2>
+		</div>
+	</div>
+	<!-- /.row -->
+	<div class="row" id='calibrationMainForm'>
+		<div class="col-lg-12">
+			<div class='form-horizontal' id ='calibrationForm'>
+				<div class="tab-content">
+					<div class="tab-pane active">
+						<div class='panel panel-default'>
+							<div class='panel-body'>
+								<h4 class='page-header'>Sensitivity Setting</h4>
+								<div class='form-group'>
+									<label class='col-sm-3 control-label'>Default Sensitivity</label>
+									<div class='col-sm-8'>
+										<div class='input-group' style='min-width: 20px; max-width: 182px;'>
+											<input type='number' class='form-control' min="-99999.999" max="99999.999" step="0.001" id="HiA" disabled='disabled'>
+											<span class="input-group-addon" style="width: 5px">mV/g</span>
+										</div>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-3 control-label'>User Sensitivity</label>
+									<div class='col-sm-8'>
+										<div class='input-group' style='min-width: 20px; max-width: 182px;'>
+											<input type='number' class='form-control' min="0.001" max="99999.999" step="0.001" id="ReA">
+											<span class="input-group-addon" style="width: 5px">mV/g</span>
+										</div>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-3 control-label'></label>
+									<div class='col-sm-8'>
+										<button class="btn btn-success privilege root admin" onclick="onSensorCommonConfigClick()"><i class="fa fa-check"></i> Submit</button>
+										<button class="btn btn-warning privilege root admin" onclick="onSensorResetSensitivityClick()"><i class="fa fa-refresh "></i> Reset Sensitivity</button>
+									</div>
+								</div>
+								<h4 class='page-header externalFunExist'>
+									Calibration Operation Result
+									<small>Calibration source condition: 1g Peak @ 500Hz</small>
+								</h4>
+								<div class='form-group externalFunExist'>
+									<label class='col-sm-3 control-label'>Calibration</label>
+									<div class='col-sm-8'>
+										<button class="btn btn-success privilege root admin" onclick="onSensorStartCalibrationClick()"><i class="fa fa-play "></i> Start Calibration</button>
+									</div>
+								</div>
+								<div class='form-group externalFunExist'>
+									<label class='col-sm-3 control-label'>Average Sensitivity</label>
+									<div class='col-sm-8'>
+										<div class='input-group' style='min-width: 20px; max-width: 182px;'>
+											<input type='number' class='form-control' min="-99999.999" max="99999.999" step="0.001" id="Val" disabled='disabled'>
+											<span class="input-group-addon" style="width: 5px">mV/g</span>
+										</div>
+									</div>
+								</div>
+								<div class='form-group externalFunExist'>
+									<label class='col-sm-3 control-label'>Maximum Sensitivity</label>
+									<div class='col-sm-8'>
+										<div class='input-group' style='min-width: 20px; max-width: 182px;'>
+											<input type='number' class='form-control' min="-99999.999" max="99999.999" step="0.001" id="Max" disabled='disabled'>
+											<span class="input-group-addon" style="width: 5px">mV/g</span>
+										</div>
+									</div>
+								</div>
+								<div class='form-group externalFunExist'>
+									<label class='col-sm-3 control-label'>Minimum Sensitivity</label>
+									<div class='col-sm-8'>
+										<div class='input-group' style='min-width: 20px; max-width: 182px;'>
+											<input type='number' class='form-control' min="-99999.999" max="99999.999" step="0.001" id="Min" disabled='disabled'>
+											<span class="input-group-addon" style="width: 5px">mV/g</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="progressModal" tabindex="-1" role="dialog" aria-labelledby="calibrationModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="calibrationModalLabel">Calibration</h4>
+			</div>
+			<div class="modal-body center-block">
+				<p id="fileName">Calibrating...</p>
+				<div class="progress progress-striped active">
+				<div class="progress-bar progress-bar-success"  role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+			0%
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	var slotId = SLOT_NUMBER;
+	var externalFunExist = Advantech.Utility.checkExternalFunExist();
+	var TimerID;
+	var progressModal = $("#progressModal");
+	var progressBar = progressModal.find(".progress-bar");
+
+	function loadSensorGenConfig(showCalibrationResult) {
+		$.ajax({
+			type: 'GET',
+			url: URL_SENSOR_GENCONFIG + '/slot_' + slotId,
+			dataType: "json",
+			params: { 's': new Date().getTime() }
+		})
+		.then(function(response) {
+			$("#HiA").val(parseFloat(response.HiA));
+			$("#ReA").val(parseFloat(response.ReA));
+			if (showCalibrationResult) {
+				$("#Val").val(parseFloat(response.Val));
+				$("#Max").val(parseFloat(response.Max));
+				$("#Min").val(parseFloat(response.Min));
+			}
+		}, function(error) {
+			angularShowHttpErrorMessage(error);
+		});
+	}
+
+	function onSensorCommonConfigClick() {
+        var requestData = {};
+		var ReA = $("#ReA").val();
+
+        if(ReA == null || ReA === "" || isNaN(ReA) || ReA < 0.001 || ReA > 99999.999){
+            Advantech.Form.MessageForm.getInstance().showMessageBox("Error", "<i class='fa fa-fw fa-exclamation-triangle'></i>User Sensitivity must between 0.001 ~ 99999.999", null);
+            return;
+        }
+
+        requestData.ReA = ReA.toString();
+
+        Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+		httpGetOperation(HTTP_PATCH, URL_SENSOR_GENCONFIG + '/slot_' + slotId,
+			function() {
+				loadSensorGenConfig(false);
+				Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+			},
+			function(status, msg) {
+				Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+				angularShowHttpErrorMessage({
+					statusText: msg,
+					status: status
+				});
+			},
+			JSON.stringify(requestData));
+    }
+
+	function onSensorResetSensitivityClick() {
+        var requestData = {};
+        requestData.RCD  = 1;
+        Advantech.Form.WaitingForm.getInstance().showPleaseWait();
+		httpGetOperation(HTTP_PATCH, URL_SENSOR_GENCONFIG + '/slot_' + slotId,
+			function() {
+				loadSensorGenConfig(false);
+				Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+			},
+			function(status, msg) {
+				Advantech.Form.WaitingForm.getInstance().hidePleaseWait();
+				angularShowHttpErrorMessage({
+					statusText: msg,
+					status: status
+				});
+			},
+			JSON.stringify(requestData));
+    }
+
+	function onSensorStartCalibrationClick() {
+        if (externalFunExist) {
+            Advantech.Utility.callExternalFun('com_timeout_control', 10000);
+            /* Advantech.Form.WaitingForm.getInstance().showPleaseWait(); */
+			showProgress();
+            setTimeout(function() {
+				httpGetOperation(HTTP_PATCH, URL_SENSOR_GENCONFIG + '/slot_' + slotId,
+					function() {
+						Advantech.Utility.callExternalFun('com_timeout_default', '');
+						loadSensorGenConfig(true);
+						/* Advantech.Form.WaitingForm.getInstance().hidePleaseWait(); */
+						clearTimeout(TimerID);
+						progressBar.attr('aria-valuenow', 100).text("100%").css("width", "100%");
+						setTimeout(function() { progressModal.modal('hide'); }, 800);
+					},
+					function(status, msg) {
+						Advantech.Utility.callExternalFun('com_timeout_default', '');
+						/* Advantech.Form.WaitingForm.getInstance().hidePleaseWait(); */
+						clearTimeout(TimerID);
+						progressModal.modal('hide');
+						angularShowHttpErrorMessage({
+							statusText: msg,
+							status: status
+						});
+					},
+					JSON.stringify({AIC:1}));
+            }, 1000);
+        }
+    };
+
+	function showProgress() {
+		var required_time = 5; //second
+		var percentagePerSecond = Math.floor(100 / required_time);
+		var progress = 0;
+		var barVal = 0;
+
+		progressBar.attr('aria-valuenow', barVal).text(barVal + "%").css("width", barVal + "%");
+
+		progressModal.modal({
+			keyboard: false,
+			show: true,
+			backdrop: false
+		});
+
+		(function loop(){
+			progressBar.attr('aria-valuenow', barVal).text(barVal + "%").css("width", barVal + "%");
+			if (barVal < 99) {
+				TimerID = setTimeout(loop, 1000);
+			}
+			barVal += percentagePerSecond;
+			if (barVal >= 100) {
+				barVal = 99;
+			}
+		})();
+	}
+
+	$(".externalFunExist").toggle(externalFunExist);
+
+	loadSensorGenConfig();
+</script>
