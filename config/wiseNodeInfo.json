@@ -27,6 +27,13 @@
         "restformat": "combined"
     },
 
+    "WISE-2200-T":
+    {
+        "baudrate": 256000,
+        "guifolder": "WISE-2200",
+        "restformat": "combined"
+    },
+
     "WISE-4610":
     {
         "baudrate": 57600,
