@@ -53,3 +53,4 @@ Supported WISE Series
 - WISE-4610
 - WISE-4671
 - WISE-2200-M
+- WISE-2200-T
