@@ -3,6 +3,8 @@ Advantech WISE Studio
 
 *(Not Advantech Official Repo)*
 
+*(Not Safari Support)*
+
 Advantech offers a diverse product line under the WISE Series brand, including the WISE-2200-M, WISE-2410, WISE-4610, and WISE-4671, among others. These products are designed for various industrial IoT applications, such as environmental monitoring, equipment condition monitoring, and remote data collection. Each product offers specific capabilities tailored to meet the needs of industrial automation and smart factory environments.
 
 If a specific component of the WISE Series requires setup via the USB port, users need to install WISE Studio software on Windows. To facilitate cross-platform compatibility, this repository provides a solution for users to install WISE Studio on macOS. After running WISE Studio, it will function as a web server, enabling users to access the configuration webpage for specific WISE products.

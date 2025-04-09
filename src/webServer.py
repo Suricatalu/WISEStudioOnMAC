@@ -23,9 +23,15 @@ request_lock = threading.Lock()
 def serve_index():
     return send_from_directory(app.static_folder, 'index.html')
 
+@app.before_request
+def log_request_info():
+    print(f"Before Request - Path: {request.path}, Method: {request.method}, URL: {request.url}")
+
 # Catch all other paths to serve files directly or process requests
 @app.route('/<path:path>', methods=['GET', 'POST', 'PATCH', 'PUT'])
 def catch_get_all(path):
+    print(f"Request path: {path}")
+    print(f"Request method: {request.method}")
     with request_lock:  # Use lock to ensure only one request is processed at a time, with a timeout to prevent deadlocks
         segments = path.split('/')
         file_path = '/'.join(segments[1:])  # Extract the file path from the segments
@@ -33,9 +39,11 @@ def catch_get_all(path):
 
         try:
             # Try serving the file directly from the directory
+            print(f"Serving file: {file_path}")
             return send_from_directory(app.static_folder, file_path)
         except Exception as e:
             # If the file cannot be served, handle it as a binary REST command
+            print(f"This is REST Command: {path}")
             tmp = process_binary_request(wiseNode, path, json_data)
             return tmp
 
@@ -46,6 +54,17 @@ args = parse_arguments()
 # Set the static folder of the web server
 staticFolder = check_static_folder(args.model)
 app.static_folder = "../WebUtility/" + staticFolder + "/config"
+print(f"Static folder: {app.static_folder}")
+
+# Check if the static folder exists and is a directory
+if not os.path.exists(app.static_folder) or not os.path.isdir(app.static_folder):
+    print(f"Static folder {app.static_folder} does not exist or is not a directory.")
+    sys.exit()
+
+# Check if the serial port is valid
+if not args.serial_port:
+    print("Serial port is required.")
+    sys.exit()
 
 # Get the baudrate for the specified model
 baudrate = check_baudrate(args.model)

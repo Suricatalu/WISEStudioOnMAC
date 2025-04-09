@@ -100,6 +100,7 @@ class WISENode:
             self.ser.timeout = 0.3
         
         restCommand = restMethod + " /" + restUrl + " HTTP/1.1"
+        # print("Rest Command on Serial: ", restCommand)
         self.ser.write(self.__package_wise_frame(restCommand, restContent, format))
         tmp = self.ser.readlines()
 
@@ -108,6 +109,7 @@ class WISENode:
             "content": b''
         }
         if not tmp:
+            print("Timeout on Serial")
             return data
         
         if "logsys_message" in restUrl or "log_message" in restUrl:
@@ -115,7 +117,27 @@ class WISENode:
             return data
 
         data = self._organizeRes(tmp, self.wiseNodInfo["restformat"], restMethod)
+        # print("Response on Serial:", data)
         return data
 
 if __name__ == "__main__":
-    pass
+    import argparse
+    import sys
+
+    parser = argparse.ArgumentParser(description="WISE Node Serial Communication")
+    parser.add_argument("--port", type=str, required=True, help="Serial port for WISE node")
+    parser.add_argument("--model", type=str, required=True, help="Model of the WISE node")
+    args = parser.parse_args()
+
+    # Create WISE node instance for communication
+    wiseNode = WISENode(args.port, args.model)
+    
+    # Example usage: GET /profile/slot_0?s=1744168533202 HTTP/1.1" 200
+    response = wiseNode.send_rest("GET", "profile/slot_0?s=1744166446179")
+    print("Response Header:\n", response["header"])
+    print("Response Content:\n", response["content"])
+
+    # Example usage: GET /sys_info?s=1744166443610 HTTP/1.1" 200
+    response = wiseNode.send_rest("GET", "sys_info?s=1744166443610")
+    print("Response Header:\n", response["header"])
+    print("Response Content:\n", response["content"])
